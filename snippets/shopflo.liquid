@@ -1,0 +1,1354 @@
+{% comment %}
+  {% doc %}
+    Single entry point for ALL Shopflo markup: SVG defs/styles/scripts, the checkout and buy-now
+    buttons, the shop-pass account login proxy, and the shared dummy popup the checkout/buy-now
+    buttons animate into. This file is never rendered as itself - only ever via
+    `{% render 'shopflo', type: '...' %}`. Everything below is written so an AI theme-editing
+    agent (e.g. Shopify Sidekick) can read this doc alone and correctly add/wire up any piece of
+    Shopflo without having to open assets/shopflo-script.js or guess at markup contracts.
+
+    ---------------------------------------------------------------------------------------------
+    HOW TO ADD SHOPFLO TO A THEME - do these in order:
+    ---------------------------------------------------------------------------------------------
+
+    1. RENDER THE SHARED ASSETS EXACTLY ONCE PER PAGE.
+       `{% render 'shopflo', type: 'assets' %}` outputs the SVG defs, the settings-driven <style>
+       block (snippets/shopflo-css-variables.liquid), the Shopflo bundle's own <script> tags, this
+       theme's assets/shopflo-script.js, and the shared dummy-popup overlay markup
+       (#popupOverlay/#popupWrapper) that checkout/buy-now buttons animate into. It belongs in
+       layout/theme.liquid (once, near the end of <body>). Every other `type` depends on this
+       having rendered SOMEWHERE on the page - never render it more than once, and never render
+       any other `type` on a page/layout that doesn't also render this one.
+
+    2. RENDER THE CHECKOUT AND BUY-NOW BUTTONS WHERE THE THEME'S NATIVE ONES WOULD GO.
+       `type: 'checkout'` replaces the theme's native "Check out" button (cart page, cart drawer,
+       cart notification popup). `type: 'buy_now'` replaces a dynamic checkout/buy-now button
+       (product page, product block). Just render it directly, unconditionally - there is NO
+       Liquid-level enable/disable check anywhere, not at the call site and not in this file.
+       Master on/off is the hardcoded `shopflo_enable` value in window.shopfloThemeConfig (see the
+       "Master on/off" comment above the `{% case %}` below); assets/shopflo-script.js reads it at
+       click time and decides there whether to open Shopflo's real checkout/cart or fall back to a
+       plain navigation. Do not add a `settings.*` check, a `{% capture %}`/blank-check, or any
+       other conditional around these render calls - see sections/main-cart-footer.liquid,
+       snippets/cart-drawer.liquid, snippets/cart-notification.liquid, or snippets/buy-buttons.liquid
+       for the plain unconditional call.
+
+    3. RENDER THE ACCOUNT/LOGIN ICON WHERE THE THEME'S NATIVE ACCOUNT LINK WOULD GO.
+       There are three independently-styled slots - `type: 'shop_pass_primary'`,
+       `type: 'shop_pass_secondary'`, and `type: 'shop_pass_tertiary'` (the third exists for cases
+       where two placements aren't enough, e.g. a footer or sidebar account link in addition to
+       header/mobile-menu) - render any/all of them together, wherever an account control should
+       appear, NOT picking a "desktop" vs "mobile" render location. Each instance decides for
+       ITSELF whether it's actually visible at the current viewport width via its own "Device
+       visibility" setting (Theme Editor > Shopflo Shop Pass > Login Button A/B/C > Device
+       visibility: Desktop only / Mobile only / Both) - this is enforced purely with a CSS media
+       query (see .sf-account-visible--desktop-only / --mobile-only in assets/shopflo-styles.css),
+       so wherever you render them, they show/hide themselves correctly at every breakpoint with
+       no extra Liquid logic needed. They stay in sync with each other automatically regardless
+       (see <shopflo-accounts> in assets/shopflo-script.js). Button B and Button C each have their
+       own "Inherit styles from" dropdown - Button B can inherit Button A or Button C; Button C can
+       inherit Button A or Button B (Button A is the root, it has no such setting). EVERY instance
+       you render must be wrapped in
+       `settings.shopflo_customer_account_enabled == 'shopflo'` (Theme Editor > Shopflo Shop Pass >
+       User Login), falling back to Shopify's native account link (`routes.account_url` /
+       `routes.account_login_url` + `{% render 'icon-account' %}`) otherwise - copy the pattern in
+       sections/header.liquid.
+
+       NOTE: if you render an instance inside Dawn's <menu-drawer>/<header-drawer> (e.g. the
+       mobile hamburger menu's utility-links row), its icon-toggle and "Log out" buttons already
+       carry Dawn's own `localization-selector` class - the one thing that opts a button OUT of
+       MenuDrawer.bindEvents()'s `button:not(.localization-selector)` "any button click closes the
+       whole nav drawer" behavior in assets/global.js. Without it, merely toggling the account
+       dropdown open/closed would also close the surrounding mobile nav. The "Account" drawer item
+       deliberately does NOT carry it, since navigating to the account view SHOULD close the mobile
+       nav drawer around it.
+
+    4. IF YOU RENDER ANY shop_pass_primary/shop_pass_secondary/shop_pass_tertiary, ALSO RENDER
+       `{% render 'shopflo', type: 'shop_pass_bundle_markup' %}` ONCE, ANYWHERE IN <body>.
+       This is dummy, permanently-hidden markup that exists PURELY to satisfy the Shopflo bundle
+       script's OWN internal getElementById/onclick lookups - the bundle silently fails its own
+       initialization (never defining window.handleDrawer / window.handleShopifyLogin) without it,
+       which breaks every shop_pass_primary/secondary/tertiary instance too, since they call those
+       same globals. shop_pass_primary/secondary/tertiary themselves do NOT read from or forward
+       clicks to this markup - only the bundle does. Skip this step entirely if you're not
+       rendering any shop_pass_* instance on this theme.
+
+    5. KEEP THE CART COUNT BADGE IN SYNC - see "CART COUNT SYNC" below.
+
+    ---------------------------------------------------------------------------------------------
+    CART TRIGGERS - how any element (not just this snippet's own buttons) can trigger Shopflo:
+    ---------------------------------------------------------------------------------------------
+
+    - ADD-TO-CART dispatches the custom DOM event `shopflo-event:add-to-cart` on `document` right
+      after a successful add-to-cart (see assets/cart-drawer.js / assets/cart-notification.js).
+      `bindDomEvents()` in assets/shopflo-script.js listens for it and always opens Shopflo's
+      cart immediately - this is the only cart-opening flow this theme wires up, so dispatch it
+      unconditionally on every add-to-cart from shared/base theme code.
+
+    - To open Shopflo's CHECKOUT the same way: use the global `window.openThemeFloCheckout()`
+      directly (`onclick="openThemeFloCheckout()"`) for any custom checkout/buy-link that isn't
+      one of this snippet's own buttons - there is no data-attribute/event convention for checkout.
+
+    - ANIMATED checkout/buy-now buttons (the button -> full-screen popup FLIP animation): give the
+      button `class="shopflo-popup-trigger"` plus `data-flo-action="checkout"` or
+      `data-flo-action="buy-now"` - no `onclick` needed, assets/shopflo-script.js binds one
+      delegated document-level click listener for every `.shopflo-popup-trigger` on the page (see
+      `bindPopupMorph()`). This is exactly what `type: 'checkout'` (`#flo-checkout-button`) and
+      `type: 'buy_now'` (`#flo-buy-now-button`) already render internally - only relevant if
+      adding an EXTRA custom button elsewhere that should share the same animated flow instead of
+      calling `openThemeFloCheckout()`/`handleFloBuyNowBtn()` directly (which still works, just
+      without the popup animation).
+
+    ---------------------------------------------------------------------------------------------
+    CART COUNT SYNC - keeping a cart count badge live while Shopflo's cart/checkout is open:
+    ---------------------------------------------------------------------------------------------
+
+    Add the class `flo-cart-icon-bubble` to whichever element renders the cart count badge
+    anywhere in the theme (i.e. wherever `cart.item_count` / `cart.count` is output as a number
+    next to a cart icon - typically a small pill/bubble, e.g. sections/header.liquid's
+    `.cart-count-bubble`). Add it ALONGSIDE any existing class already used for the theme's own
+    native styling/update behavior - do not replace it:
+
+      <div class="cart-count-bubble flo-cart-icon-bubble">
+        <span aria-hidden="true">{{ cart.item_count }}</span>
+      </div>
+
+    Once tagged, Shopflo's own cart/checkout bundle (loaded by `type: 'assets'`) keeps that
+    element's count in sync live whenever the customer adds, removes, or changes item quantities
+    inside Shopflo's OWN cart drawer or checkout overlay - so the header badge never goes stale
+    even though the customer never left the page or triggered a normal Shopify
+    cart/add.js-driven re-render. This sync is handled entirely by the Shopflo bundle itself;
+    no extra code is needed in this theme beyond adding the class to the right element.
+
+    ---------------------------------------------------------------------------------------------
+    OUTBOUND EVENTS - so OTHER code (other apps' modals/popups, custom theme code) can react
+    whenever Shopflo is about to visually open something, e.g. to close themselves out of the way:
+    ---------------------------------------------------------------------------------------------
+
+    - `shopflo-event:checkout-opened` - dispatched on `document` right before Shopflo's real
+      checkout overlay opens, whether triggered by the checkout button or a buy-now button (both
+      open the same underlying checkout, so there's only one event for either) - see
+      `dispatchCheckoutOpened()` in assets/shopflo-script.js. NOT dispatched when Shopflo falls
+      back to a plain `/checkout` navigation instead (nothing in-page is left to close then).
+
+    - `shopflo-event:cart-opened` - dispatched on `document` right before Shopflo's real cart
+      overlay opens, whether from a cart-icon click or an "Auto Open" auto-open after add-to-cart
+      - see `dispatchCartOpened()` in assets/shopflo-script.js. NOT dispatched for the silent
+      background cart load that happens on add-to-cart under "Cart Click" behavior (nothing
+      becomes visible then), and NOT dispatched on the plain `/cart` navigation fallback.
+
+    Shop-pass (account/login) interactions - dispatched by the <shopflo-accounts> custom element
+    itself (see `_dispatchAccountEvent()` in assets/shopflo-script.js), from whichever
+    shop_pass_primary/shop_pass_secondary/shop_pass_tertiary instance the shopper actually
+    interacted with. Real auth state is read straight from two sessionStorage keys the Shopflo
+    bundle itself keeps up to date - `flo_isShopfloSession` and `FLO_SSO_IS_LOGOUT` - there is no
+    hidden markup, DOM observation, or click-forwarding involved for auth detection itself:
+
+    - `shopflo-event:account-drawer-opened` / `shopflo-event:account-drawer-closed` - this theme's
+      OWN Account/Log out dropdown menu, shown only when confidently logged in (a Shopflo session
+      exists and no logout is in progress).
+
+    - `shopflo-event:account-login-opened` - dispatched right before handing a header-icon click to
+      Shopflo's own `window.handleDrawer()` - covers every state that isn't confidently logged in
+      (fresh session, or just logged out), since the bundle itself decides whether to show its
+      login UI or its own account drawer there. Bundle-rendered, not anything this theme renders
+      itself, so there's no matching "closed" event - we have no signal for when it closes.
+
+    - `shopflo-event:account-iframe-opened` / `shopflo-event:account-iframe-closed` - the account
+      management SSO iframe view opened from the drawer's own "Account" item. Fired on BOTH desktop
+      and mobile for "opened" (on mobile it's the bundle's own real sheet doing the opening, not
+      our own proxy markup, but it's still a real shop-pass interaction worth notifying about) -
+      but "closed" only fires on desktop, for the same no-signal-from-the-bundle reason as
+      account-login-opened above. DESKTOP ONLY (800px+): the bundle's real login iframe (appended
+      on `handleShopifyLogin()`) is kept permanently off-screen (see `#flo-shopify-login-iframe` in
+      assets/shopflo-styles.css) - only its src is copied into this theme's own iframe, which is
+      what's actually shown. MOBILE (up to 799px): the bundle's own real sheet+overlay+iframe is
+      left fully visible and untouched instead.
+
+    Listen for any of these the same way you'd listen for any DOM event:
+
+      document.addEventListener('shopflo-event:checkout-opened', () => myModal.close());
+      document.addEventListener('shopflo-event:cart-opened', () => myOtherPopup.close());
+      document.addEventListener('shopflo-event:account-drawer-opened', () => myModal.close());
+
+    @param {string} type - Which piece to render: 'assets' (svg defs/styles/scripts + shared popup markup, default), 'checkout' (checkout button), 'buy_now' (buy-now button), 'shop_pass_primary', 'shop_pass_secondary', or 'shop_pass_tertiary' (account login icon/drawer proxy, independently styled per slot, each self-hiding per its own "Visible on" setting - see <shopflo-accounts> in assets/shopflo-script.js), or 'shop_pass_bundle_markup' (dummy hidden markup the Shopflo bundle script itself needs to initialize correctly - required, once anywhere in <body>, whenever you render any shop_pass_* instance).
+    @param {boolean} [shopflo_badge] - Checkout/buy_now only. Shows the "Powered by Shopflo" badge on the button. Defaults to true.
+    @param {object} [form] - Required when type is 'buy_now'. The product form object, used for the dynamic Shopify payment button fallback.
+    @param {object} [product_obj] - Required when type is 'buy_now'. The product object, used for checking stock.
+    @param {string} [label_account] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Drawer's account menu item label. Defaults to "Account".
+    @param {string} [label_logout] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Drawer's logout menu item label. Defaults to "Log out".
+    @param {boolean} [show_icon] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Whether to render the <svg> icon in either button state. Defaults to true. Pass `false` explicitly for a text-only instance - unlike other boolean params here, this one is NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
+
+    @example
+    Render the shared assets once in the theme layout, near the end of <body>:
+  {% render 'shopflo', type: 'assets' %}
+    @example
+    Render the checkout button, optionally hiding the badge. No enable/disable check needed at the
+    call site - just render it directly, unconditionally:
+  {% render 'shopflo', type: 'checkout', shopflo_badge: true %}
+    @example
+    Render the buy-now button (requires the product form and product object; same unconditional call, no enable/disable check):
+  {% render 'shopflo', type: 'buy_now', product_obj: product, form: form, shopflo_badge: true %}
+    @example
+    Render the account login icon/drawer slots together, in the SAME place (e.g. the header's
+    account-icon spot) - each is styled independently via Theme Editor > Shopflo Shop Pass >
+    Login Button A/B/C (Button B/C mirror another button's style settings when their own "Inherit
+    styles from" points at one), and each shows/hides itself via its own "Device visibility"
+    setting (Desktop only / Mobile only / Both) - no separate desktop/mobile render locations
+    needed. Tertiary (Button C) is optional - only render it if you actually need a third
+    independently-placed/styled instance (e.g. a footer or sidebar account link in addition to
+    header/mobile-menu); most themes only need Primary + Secondary (Button A + Button B). Guard
+    every instance you render with settings.shopflo_customer_account_enabled == 'shopflo',
+    falling back to a native account link:
+  {% render 'shopflo', type: 'shop_pass_primary' %}
+  {% render 'shopflo', type: 'shop_pass_secondary' %}
+  {% render 'shopflo', type: 'shop_pass_tertiary' %}
+    @example
+    Required exactly once, anywhere in <body>, on any page/layout that renders shop_pass_primary/
+    shop_pass_secondary/shop_pass_tertiary - typically alongside `type: 'assets'` in
+    layout/theme.liquid. Skip it entirely if this theme never renders a shop_pass_* instance:
+  {% render 'shopflo', type: 'shop_pass_bundle_markup' %}
+    @example
+    Tag a cart icon's count badge for live sync:
+  <a href="{{ routes.cart_url }}" id="cart-icon-bubble" class="header__icon header__icon--cart">
+    {% render 'icon-cart' %}
+    <div class="cart-count-bubble flo-cart-icon-bubble">
+      <span aria-hidden="true">{{ cart.item_count }}</span>
+    </div>
+  </a>
+  {% enddoc %}
+{% endcomment %}
+
+{%- liquid
+  assign shopflo_snippet_type = type | default: 'assets'
+  assign shopflo_badge = shopflo_badge | default: true
+
+  assign any_selected_checkout_payment_icons = false
+  if settings.shopflo_payment_icon_1_checkout != 'none' or settings.shopflo_payment_icon_2_checkout != 'none' or settings.shopflo_payment_icon_3_checkout != 'none'
+    assign any_selected_checkout_payment_icons = true
+  endif
+
+  assign any_selected_buy_now_payment_icons = false
+  if settings.shopflo_payment_icon_1_buy_now != 'none' or settings.shopflo_payment_icon_2_buy_now != 'none' or settings.shopflo_payment_icon_3_buy_now != 'none'
+    assign any_selected_buy_now_payment_icons = true
+  endif
+-%}
+
+{% comment %}
+  Master on/off: NOT a Theme Editor setting and NOT a Liquid condition anywhere in this file or
+  its callers - 'checkout'/'buy_now' below always render the same Shopflo markup unconditionally.
+  The single source of truth is the hardcoded `shopflo_enable` value in window.shopfloThemeConfig
+  (below, in the 'assets' branch). assets/shopflo-script.js reads this.config.shopflo_enable at
+  click time (see `shouldTriggerFloDirectly()`) and decides THERE whether to open Shopflo's real
+  checkout/cart or fall back to a plain navigation - the button markup itself never changes.
+{% endcomment %}
+
+{% case shopflo_snippet_type %}
+  {% when 'assets' %}
+    <script src="https://bridge.shopflo.com/js/shopflo.bundle.js" async></script>
+
+    {%- liquid
+      # Resolves EVERY style field for Button B/Button C (icon size/color, button background,
+      # padding, radius, text color, and the 6 shadow fields) against Theme Editor > Shopflo
+      # Shop Pass > Login Button B/C > "Inherit styles from" - Button B can inherit Button A or
+      # Button C; Button C can inherit Button A or Button B (Button A is the root - it never
+      # inherits from anything, so it has no such setting). Since B can point at C AND C can
+      # point at B at the same time, a naive single-pass resolution could reference a value that
+      # isn't computed yet - or, if a shopper sets BOTH to inherit from each other, chase its own
+      # tail forever. Liquid can't recurse or loop this dynamically (no functions, no dynamic
+      # property lookup), so this resolves in two fixed passes instead:
+      #
+      #   1. B_PRELIM: resolve B against A directly, or against C's OWN raw fields (not yet
+      #      knowing whether C itself inherits from anything - a deliberately shallow read).
+      #   2. C_FINAL: resolve C against A directly, or against B_PRELIM (so if B inherits from
+      #      A, C inheriting from B correctly ends up with A's values too).
+      #   3. B_FINAL: same as B_PRELIM, EXCEPT when B inherits from C, use C_FINAL instead of
+      #      C's raw fields (so if C inherits from A, B inheriting from C correctly ends up with
+      #      A's values too).
+      #
+      # In the genuine cycle case (B inherits C AND C inherits B), this still always terminates:
+      # B_PRELIM reads C's raw fields, C_FINAL then resolves to that same raw value, and B_FINAL
+      # resolves to C_FINAL - so both sides settle on Button C's own raw fields. Not what either
+      # setting says in isolation, but a safe, deterministic fallback rather than an infinite
+      # chase - exactly the kind of edge case a merchant could accidentally create by pointing
+      # both dropdowns at each other.
+
+      assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_b
+      assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_b
+      assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_b
+      assign account_padding_block_button_b_preliminary = settings.shopflo_account_padding_block_button_b
+      assign account_padding_inline_button_b_preliminary = settings.shopflo_account_padding_inline_button_b
+      assign account_button_radius_button_b_preliminary = settings.shopflo_account_button_radius_button_b
+      assign account_color_button_b_preliminary = settings.shopflo_account_color_button_b
+      assign account_shadow_enabled_button_b_preliminary = settings.show_shopflo_account_button_shadow_button_b
+      assign account_shadow_inset_button_b_preliminary = settings.shopflo_account_shadow_inset_button_b
+      assign account_shadow_horizontal_offset_button_b_preliminary = settings.shopflo_account_shadow_horizontal_offset_button_b
+      assign account_shadow_vertical_offset_button_b_preliminary = settings.shopflo_account_shadow_vertical_offset_button_b
+      assign account_shadow_blur_button_b_preliminary = settings.shopflo_account_shadow_blur_button_b
+      assign account_shadow_spread_button_b_preliminary = settings.shopflo_account_shadow_spread_button_b
+      assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_b
+      if settings.shopflo_account_match_with_button_b == 'button_a'
+        assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_a
+        assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_a
+        assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_a
+        assign account_padding_block_button_b_preliminary = settings.shopflo_account_padding_block_button_a
+        assign account_padding_inline_button_b_preliminary = settings.shopflo_account_padding_inline_button_a
+        assign account_button_radius_button_b_preliminary = settings.shopflo_account_button_radius_button_a
+        assign account_color_button_b_preliminary = settings.shopflo_account_color_button_a
+        assign account_shadow_enabled_button_b_preliminary = settings.show_shopflo_account_button_shadow_button_a
+        assign account_shadow_inset_button_b_preliminary = settings.shopflo_account_shadow_inset_button_a
+        assign account_shadow_horizontal_offset_button_b_preliminary = settings.shopflo_account_shadow_horizontal_offset_button_a
+        assign account_shadow_vertical_offset_button_b_preliminary = settings.shopflo_account_shadow_vertical_offset_button_a
+        assign account_shadow_blur_button_b_preliminary = settings.shopflo_account_shadow_blur_button_a
+        assign account_shadow_spread_button_b_preliminary = settings.shopflo_account_shadow_spread_button_a
+        assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_a
+      elsif settings.shopflo_account_match_with_button_b == 'button_c'
+        assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_c
+        assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_c
+        assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_c
+        assign account_padding_block_button_b_preliminary = settings.shopflo_account_padding_block_button_c
+        assign account_padding_inline_button_b_preliminary = settings.shopflo_account_padding_inline_button_c
+        assign account_button_radius_button_b_preliminary = settings.shopflo_account_button_radius_button_c
+        assign account_color_button_b_preliminary = settings.shopflo_account_color_button_c
+        assign account_shadow_enabled_button_b_preliminary = settings.show_shopflo_account_button_shadow_button_c
+        assign account_shadow_inset_button_b_preliminary = settings.shopflo_account_shadow_inset_button_c
+        assign account_shadow_horizontal_offset_button_b_preliminary = settings.shopflo_account_shadow_horizontal_offset_button_c
+        assign account_shadow_vertical_offset_button_b_preliminary = settings.shopflo_account_shadow_vertical_offset_button_c
+        assign account_shadow_blur_button_b_preliminary = settings.shopflo_account_shadow_blur_button_c
+        assign account_shadow_spread_button_b_preliminary = settings.shopflo_account_shadow_spread_button_c
+        assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_c
+      endif
+
+      assign account_icon_size_button_c_source = settings.shopflo_account_icon_size_button_c
+      assign account_icon_color_button_c_source = settings.shopflo_account_icon_color_button_c
+      assign account_button_background_button_c_source = settings.shopflo_account_button_background_button_c
+      assign account_padding_block_button_c_source = settings.shopflo_account_padding_block_button_c
+      assign account_padding_inline_button_c_source = settings.shopflo_account_padding_inline_button_c
+      assign account_button_radius_button_c_source = settings.shopflo_account_button_radius_button_c
+      assign account_color_button_c_source = settings.shopflo_account_color_button_c
+      assign account_shadow_enabled_button_c_source = settings.show_shopflo_account_button_shadow_button_c
+      assign account_shadow_inset_button_c_source = settings.shopflo_account_shadow_inset_button_c
+      assign account_shadow_horizontal_offset_button_c_source = settings.shopflo_account_shadow_horizontal_offset_button_c
+      assign account_shadow_vertical_offset_button_c_source = settings.shopflo_account_shadow_vertical_offset_button_c
+      assign account_shadow_blur_button_c_source = settings.shopflo_account_shadow_blur_button_c
+      assign account_shadow_spread_button_c_source = settings.shopflo_account_shadow_spread_button_c
+      assign account_shadow_color_button_c_source = settings.shopflo_account_shadow_color_button_c
+      if settings.shopflo_account_match_with_button_c == 'button_a'
+        assign account_icon_size_button_c_source = settings.shopflo_account_icon_size_button_a
+        assign account_icon_color_button_c_source = settings.shopflo_account_icon_color_button_a
+        assign account_button_background_button_c_source = settings.shopflo_account_button_background_button_a
+        assign account_padding_block_button_c_source = settings.shopflo_account_padding_block_button_a
+        assign account_padding_inline_button_c_source = settings.shopflo_account_padding_inline_button_a
+        assign account_button_radius_button_c_source = settings.shopflo_account_button_radius_button_a
+        assign account_color_button_c_source = settings.shopflo_account_color_button_a
+        assign account_shadow_enabled_button_c_source = settings.show_shopflo_account_button_shadow_button_a
+        assign account_shadow_inset_button_c_source = settings.shopflo_account_shadow_inset_button_a
+        assign account_shadow_horizontal_offset_button_c_source = settings.shopflo_account_shadow_horizontal_offset_button_a
+        assign account_shadow_vertical_offset_button_c_source = settings.shopflo_account_shadow_vertical_offset_button_a
+        assign account_shadow_blur_button_c_source = settings.shopflo_account_shadow_blur_button_a
+        assign account_shadow_spread_button_c_source = settings.shopflo_account_shadow_spread_button_a
+        assign account_shadow_color_button_c_source = settings.shopflo_account_shadow_color_button_a
+      elsif settings.shopflo_account_match_with_button_c == 'button_b'
+        assign account_icon_size_button_c_source = account_icon_size_button_b_preliminary
+        assign account_icon_color_button_c_source = account_icon_color_button_b_preliminary
+        assign account_button_background_button_c_source = account_button_background_button_b_preliminary
+        assign account_padding_block_button_c_source = account_padding_block_button_b_preliminary
+        assign account_padding_inline_button_c_source = account_padding_inline_button_b_preliminary
+        assign account_button_radius_button_c_source = account_button_radius_button_b_preliminary
+        assign account_color_button_c_source = account_color_button_b_preliminary
+        assign account_shadow_enabled_button_c_source = account_shadow_enabled_button_b_preliminary
+        assign account_shadow_inset_button_c_source = account_shadow_inset_button_b_preliminary
+        assign account_shadow_horizontal_offset_button_c_source = account_shadow_horizontal_offset_button_b_preliminary
+        assign account_shadow_vertical_offset_button_c_source = account_shadow_vertical_offset_button_b_preliminary
+        assign account_shadow_blur_button_c_source = account_shadow_blur_button_b_preliminary
+        assign account_shadow_spread_button_c_source = account_shadow_spread_button_b_preliminary
+        assign account_shadow_color_button_c_source = account_shadow_color_button_b_preliminary
+      endif
+
+      assign account_icon_size_button_b_source = account_icon_size_button_b_preliminary
+      assign account_icon_color_button_b_source = account_icon_color_button_b_preliminary
+      assign account_button_background_button_b_source = account_button_background_button_b_preliminary
+      assign account_padding_block_button_b_source = account_padding_block_button_b_preliminary
+      assign account_padding_inline_button_b_source = account_padding_inline_button_b_preliminary
+      assign account_button_radius_button_b_source = account_button_radius_button_b_preliminary
+      assign account_color_button_b_source = account_color_button_b_preliminary
+      assign account_shadow_enabled_button_b_source = account_shadow_enabled_button_b_preliminary
+      assign account_shadow_inset_button_b_source = account_shadow_inset_button_b_preliminary
+      assign account_shadow_horizontal_offset_button_b_source = account_shadow_horizontal_offset_button_b_preliminary
+      assign account_shadow_vertical_offset_button_b_source = account_shadow_vertical_offset_button_b_preliminary
+      assign account_shadow_blur_button_b_source = account_shadow_blur_button_b_preliminary
+      assign account_shadow_spread_button_b_source = account_shadow_spread_button_b_preliminary
+      assign account_shadow_color_button_b_source = account_shadow_color_button_b_preliminary
+      if settings.shopflo_account_match_with_button_b == 'button_c'
+        assign account_icon_size_button_b_source = account_icon_size_button_c_source
+        assign account_icon_color_button_b_source = account_icon_color_button_c_source
+        assign account_button_background_button_b_source = account_button_background_button_c_source
+        assign account_padding_block_button_b_source = account_padding_block_button_c_source
+        assign account_padding_inline_button_b_source = account_padding_inline_button_c_source
+        assign account_button_radius_button_b_source = account_button_radius_button_c_source
+        assign account_color_button_b_source = account_color_button_c_source
+        assign account_shadow_enabled_button_b_source = account_shadow_enabled_button_c_source
+        assign account_shadow_inset_button_b_source = account_shadow_inset_button_c_source
+        assign account_shadow_horizontal_offset_button_b_source = account_shadow_horizontal_offset_button_c_source
+        assign account_shadow_vertical_offset_button_b_source = account_shadow_vertical_offset_button_c_source
+        assign account_shadow_blur_button_b_source = account_shadow_blur_button_c_source
+        assign account_shadow_spread_button_b_source = account_shadow_spread_button_c_source
+        assign account_shadow_color_button_b_source = account_shadow_color_button_c_source
+      endif
+
+      # Builds a real box-shadow value for the Shopflo Shop Pass button (per slot) from Theme
+      # Editor > Shopflo Shop Pass > Login Button A/B/C > Enable button shadow + Shadow
+      # direction/horizontal offset/vertical offset/blur/spread/color - 'none' entirely when
+      # that slot's checkbox is off, so a disabled shadow costs nothing and can't accidentally
+      # leak a stray box-shadow from a leftover setting value.
+      assign account_button_shadow_primary = 'none'
+      if settings.show_shopflo_account_button_shadow_button_a
+        assign account_button_shadow_primary = settings.shopflo_account_shadow_horizontal_offset_button_a | append: 'px ' | append: settings.shopflo_account_shadow_vertical_offset_button_a | append: 'px ' | append: settings.shopflo_account_shadow_blur_button_a | append: 'px ' | append: settings.shopflo_account_shadow_spread_button_a | append: 'px ' | append: settings.shopflo_account_shadow_color_button_a
+        if settings.shopflo_account_shadow_inset_button_a == 'inset'
+          assign account_button_shadow_primary = account_button_shadow_primary | append: ' inset'
+        endif
+      endif
+
+      assign account_button_shadow_secondary = 'none'
+      if account_shadow_enabled_button_b_source
+        assign account_button_shadow_secondary = account_shadow_horizontal_offset_button_b_source | append: 'px ' | append: account_shadow_vertical_offset_button_b_source | append: 'px ' | append: account_shadow_blur_button_b_source | append: 'px ' | append: account_shadow_spread_button_b_source | append: 'px ' | append: account_shadow_color_button_b_source
+        if account_shadow_inset_button_b_source == 'inset'
+          assign account_button_shadow_secondary = account_button_shadow_secondary | append: ' inset'
+        endif
+      endif
+
+      assign account_button_shadow_tertiary = 'none'
+      if account_shadow_enabled_button_c_source
+        assign account_button_shadow_tertiary = account_shadow_horizontal_offset_button_c_source | append: 'px ' | append: account_shadow_vertical_offset_button_c_source | append: 'px ' | append: account_shadow_blur_button_c_source | append: 'px ' | append: account_shadow_spread_button_c_source | append: 'px ' | append: account_shadow_color_button_c_source
+        if account_shadow_inset_button_c_source == 'inset'
+          assign account_button_shadow_tertiary = account_button_shadow_tertiary | append: ' inset'
+        endif
+      endif
+    -%}
+
+    {% style %}
+      :root {
+        --sf-checkout-height: {{ settings.shopflo_button_height_checkout | append: 'px' }};
+        --sf-checkout-padding: {{ settings.shopflo_button_padding_checkout | append: 'px' }};
+        --sf-checkout-font-size: {{ settings.shopflo_font_size_checkout | append: 'px' }};
+        --sf-checkout-letter-spacing: {{ settings.shopflo_letter_spacing_checkout | append: 'px' }};
+        --sf-checkout-background: {{ settings.shopflo_background_color_checkout }};
+        --sf-checkout-color: {{ settings.shopflo_text_color_checkout }};
+        --sf-checkout-border-color: {{ settings.shopflo_border_color_checkout }};
+        --sf-checkout-border-width: {{ settings.shopflo_border_width_checkout | append: 'px' }};
+        --sf-checkout-border-radius: {{ settings.shopflo_corner_radius_checkout | append: 'px' }};
+        --sf-checkout-hover-background: {{ settings.shopflo_hover_background_checkout | default: settings.shopflo_background_color_checkout }};
+
+        {% if settings.shopflo_match_checkout_layout_buy_now %}
+          --sf-buy-now-height: {{ settings.shopflo_button_height_checkout | append: 'px' }};
+          --sf-buy-now-padding: {{ settings.shopflo_button_padding_checkout | append: 'px' }};
+          --sf-buy-now-font-size: {{ settings.shopflo_font_size_checkout | append: 'px' }};
+          --sf-buy-now-letter-spacing: {{ settings.shopflo_letter_spacing_checkout | append: 'px' }};
+        {% else %}
+          --sf-buy-now-height: {{ settings.shopflo_button_height_buy_now | append: 'px' }};
+          --sf-buy-now-padding: {{ settings.shopflo_button_padding_buy_now | append: 'px' }};
+          --sf-buy-now-font-size: {{ settings.shopflo_font_size_buy_now | append: 'px' }};
+          --sf-buy-now-letter-spacing: {{ settings.shopflo_letter_spacing_buy_now | append: 'px' }};
+        {% endif %}
+
+        {% if settings.shopflo_match_checkout_style_buy_now %}
+          --sf-buy-now-background: {{ settings.shopflo_background_color_checkout }};
+          --sf-buy-now-color: {{ settings.shopflo_text_color_checkout }};
+          --sf-buy-now-border-color: {{ settings.shopflo_border_color_checkout }};
+          --sf-buy-now-border-width: {{ settings.shopflo_border_width_checkout | append: 'px' }};
+          --sf-buy-now-border-radius: {{ settings.shopflo_corner_radius_checkout | append: 'px' }};
+        {% else %}
+          --sf-buy-now-background: {{ settings.shopflo_background_color_buy_now }};
+          --sf-buy-now-color: {{ settings.shopflo_text_color_buy_now }};
+          --sf-buy-now-border-color: {{ settings.shopflo_border_color_buy_now }};
+          --sf-buy-now-border-width: {{ settings.shopflo_border_width_buy_now | append: 'px' }};
+          --sf-buy-now-border-radius: {{ settings.shopflo_corner_radius_buy_now | append: 'px' }};
+        {% endif %}
+
+        {% if settings.shopflo_match_checkout_animation_buy_now %}
+          --sf-buy-now-hover-background: {{ settings.shopflo_hover_background_checkout | default: settings.shopflo_background_color_checkout }};
+        {% else %}
+          --sf-buy-now-hover-background: {{ settings.shopflo_hover_background_buy_now | default: settings.shopflo_background_color_buy_now }};
+        {% endif %}
+
+        --shopflo-checkout-promo-background: {{ settings.shopflo_promo_background_checkout }};
+        --shopflo-checkout-promo-color: {{ settings.shopflo_promo_color_checkout }};
+        --shopflo-checkout-promo-font-size: {{ settings.shopflo_promo_font_size_checkout | append: 'px' }};
+        --shopflo-checkout-promo-letter-spacing: {{ settings.shopflo_promo_letter_spacing_checkout | append: 'px' }};
+        --shopflo-checkout-promo-gap: {{ settings.shopflo_promo_gap_checkout | append: 'px' }};
+        --shopflo-checkout-promo-border-radius: {{ settings.shopflo_promo_border_radius_checkout | append: 'px' }};
+
+        {% if settings.shopflo_match_checkout_promo_buy_now == true %}
+          --shopflo-buy-now-promo-background: {{ settings.shopflo_promo_background_checkout }};
+          --shopflo-buy-now-promo-color: {{ settings.shopflo_promo_color_checkout }};
+          --shopflo-buy-now-promo-font-size: {{ settings.shopflo_promo_font_size_checkout | append: 'px' }};
+          --shopflo-buy-now-promo-letter-spacing: {{ settings.shopflo_promo_letter_spacing_checkout | append: 'px' }};
+          --shopflo-buy-now-promo-gap: {{ settings.shopflo_promo_gap_checkout | append: 'px' }};
+          --shopflo-buy-now-promo-border-radius: {{ settings.shopflo_promo_border_radius_checkout | append: 'px' }};
+        {% else %}
+          --shopflo-buy-now-promo-background: {{ settings.shopflo_promo_background_buy_now }};
+          --shopflo-buy-now-promo-color: {{ settings.shopflo_promo_color_buy_now }};
+          --shopflo-buy-now-promo-font-size: {{ settings.shopflo_promo_font_size_buy_now | append: 'px' }};
+          --shopflo-buy-now-promo-letter-spacing: {{ settings.shopflo_promo_letter_spacing_buy_now | append: 'px' }};
+          --shopflo-buy-now-promo-gap: {{ settings.shopflo_promo_gap_buy_now | append: 'px' }};
+          --shopflo-buy-now-promo-border-radius: {{ settings.shopflo_promo_border_radius_buy_now | append: 'px' }};
+        {% endif %}
+
+        --sf-payment-icon-size: {{ settings.shopflo_payment_icon_size_checkout | append: 'px' }};
+        --sf-payment-icon-overlap_checkout: {{ settings.shopflo_payment_icon_overlap_checkout | append: 'px' }};
+        --sf-payment-icon-background_checkout_1: {{ settings.shopflo_payment_icon_background_checkout_1 }};
+        --sf-payment-icon-background_checkout_2: {{ settings.shopflo_payment_icon_background_checkout_2 }};
+        --sf-payment-icon-background_checkout_3: {{ settings.shopflo_payment_icon_background_checkout_3 }};
+
+        {% if settings.shopflo_match_checkout_icon_buy_now %}
+          --sf-buy-now-payment-icon-size: {{ settings.shopflo_payment_icon_size_checkout | append: 'px' }};
+          --sf-buy-now-payment-icon-overlap: {{ settings.shopflo_payment_icon_overlap_checkout | append: 'px' }};
+          --sf-buy-now-payment-icon-background-1: {{ settings.shopflo_payment_icon_background_checkout_1 }};
+          --sf-buy-now-payment-icon-background-2: {{ settings.shopflo_payment_icon_background_checkout_2 }};
+          --sf-buy-now-payment-icon-background-3: {{ settings.shopflo_payment_icon_background_checkout_3 }};
+        {% else %}
+          --sf-buy-now-payment-icon-size: {{ settings.shopflo_payment_icon_size_buy_now | append: 'px' }};
+          --sf-buy-now-payment-icon-overlap: {{ settings.shopflo_payment_icon_overlap_buy_now | append: 'px' }};
+          --sf-buy-now-payment-icon-background-1: {{ settings.shopflo_payment_icon_background_buy_now_1 }};
+          --sf-buy-now-payment-icon-background-2: {{ settings.shopflo_payment_icon_background_buy_now_2 }};
+          --sf-buy-now-payment-icon-background-3: {{ settings.shopflo_payment_icon_background_buy_now_3 }};
+        {% endif %}
+
+
+
+        {% comment %}
+          Mirrors Shopflo's own injected .flo-checkout-wrapper box model exactly (see its bundle
+          stylesheet), so the dummy popup lands at the same size/shape the real checkout overlay
+          will occupy - full-bleed on mobile, a centered 25em/60% panel from 768px up - and the
+          handoff in assets/shopflo-script.js doesn't visibly resize when it takes over.
+        {% endcomment %}
+        --popup-w: 100%;
+        --popup-h: 100%;
+        --popup-radius: 0px;
+        --duration: 0.5s;
+        --ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+        {% comment %}
+          Account login icon/button - three independent slots (Button A/B/C in the Theme
+          Editor, still 'primary'/'secondary'/'tertiary' internally - see the "Shopflo Accounts
+          (shop_pass)" section in assets/shopflo-styles.css for how .shopflo-accounts--primary /
+          --secondary / --tertiary remap these -primary/-secondary/-tertiary vars onto the
+          generic --shopflo-account-* names the shared markup rules actually consume.
+        {% endcomment %}
+        --shopflo-account-icon-size-primary: {{ settings.shopflo_account_icon_size_button_a | append: 'px' }};
+        --shopflo-account-icon-color-primary: {{ settings.shopflo_account_icon_color_button_a }};
+        --shopflo-account-button-padding-inline-primary: {{ settings.shopflo_account_padding_inline_button_a | append: 'px' }};
+        --shopflo-account-button-padding-block-primary: {{ settings.shopflo_account_padding_block_button_a | append: 'px' }};
+        --shopflo-account-button-bg-primary: {{ settings.shopflo_account_button_background_button_a }};
+        --shopflo-account-button-radius-primary: {{ settings.shopflo_account_button_radius_button_a | append: 'px' }};
+        --shopflo-account-label-color-primary: {{ settings.shopflo_account_color_button_a }};
+        --shopflo-account-button-shadow-primary: {{ account_button_shadow_primary }};
+
+        {% comment %}
+          "Inherit styles from" (Theme Editor > Shopflo Shop Pass > Login Button B/C) resolved
+          above (before this {% style %} block), NOT re-derived here - the
+          account_*_button_b_source / account_*_button_c_source captures already account for it,
+          including the two-pass B<->C cross-resolution.
+        {% endcomment %}
+        --shopflo-account-icon-size-secondary: {{ account_icon_size_button_b_source | append: 'px' }};
+        --shopflo-account-icon-color-secondary: {{ account_icon_color_button_b_source }};
+        --shopflo-account-button-padding-inline-secondary: {{ account_padding_inline_button_b_source | append: 'px' }};
+        --shopflo-account-button-padding-block-secondary: {{ account_padding_block_button_b_source | append: 'px' }};
+        --shopflo-account-button-bg-secondary: {{ account_button_background_button_b_source }};
+        --shopflo-account-button-radius-secondary: {{ account_button_radius_button_b_source | append: 'px' }};
+        --shopflo-account-label-color-secondary: {{ account_color_button_b_source }};
+        --shopflo-account-button-shadow-secondary: {{ account_button_shadow_secondary }};
+
+        --shopflo-account-icon-size-tertiary: {{ account_icon_size_button_c_source | append: 'px' }};
+        --shopflo-account-icon-color-tertiary: {{ account_icon_color_button_c_source }};
+        --shopflo-account-button-padding-inline-tertiary: {{ account_padding_inline_button_c_source | append: 'px' }};
+        --shopflo-account-button-padding-block-tertiary: {{ account_padding_block_button_c_source | append: 'px' }};
+        --shopflo-account-button-bg-tertiary: {{ account_button_background_button_c_source }};
+        --shopflo-account-button-radius-tertiary: {{ account_button_radius_button_c_source | append: 'px' }};
+        --shopflo-account-label-color-tertiary: {{ account_color_button_c_source }};
+        --shopflo-account-button-shadow-tertiary: {{ account_button_shadow_tertiary }};
+      }
+
+      @media (min-width: 768px) {
+        :root {
+          --popup-w: 25em;
+          --popup-h: 60%;
+          --popup-radius: 28px;
+        }
+      }
+    {% endstyle %}
+
+    {{ 'shopflo-styles.css' | asset_url | stylesheet_tag }}
+
+    <script src="{{ 'shopflo-script.js' | asset_url }}" defer></script>
+
+    {%- comment %}
+      Single shared dummy popup used by every Buy Now / Checkout trigger on the page (see
+      .shopflo-popup-trigger buttons below). It plays the button -> full-screen FLIP animation
+      under our full control, then assets/shopflo-script.js hands off to the real Shopflo
+      checkout once the expand transition finishes.
+    {%- endcomment %}
+    <div class="dummy-popup-overlay" id="popupOverlay">
+      <div class="dummy-popup-wrapper" id="popupWrapper">
+        <div class="dummy-popup-content" id="popupContent">
+          {% comment %} <button type="button" class="dummy-popup-close" id="popupClose" aria-label="Close">&times;</button> {% endcomment %}
+          <div class="dummy-popup-iframe" id="popupIframe"></div>
+        </div>
+      </div>
+    </div>
+
+    {%- liquid
+      assign shopflo_customer_account_swap = false
+      if settings.shopflo_customer_account_enabled == 'shopflo'
+        assign shopflo_customer_account_swap = true
+      endif
+    -%}
+    {% comment %} Freeze this object for making immutable and for shadow dom refer to tan clan [example: "https://www.fonekart.shop/"] and also need to consider about quick view flow [example: https://mavinclub.com/]  {% endcomment %}
+    <script>
+      window.shopfloThemeConfig = {
+        {% comment %} Single source of truth for whether Shopflo is enabled - a plain hardcoded
+        literal, not a Theme Editor setting or Liquid variable. assets/shopflo-script.js reads
+        this.config.shopflo_enable at click time (see shouldTriggerFloDirectly()) and decides
+        there whether to open Shopflo's real checkout/cart or fall back to a plain navigation -
+        the checkout/buy_now markup itself always renders the same way regardless. {% endcomment %}
+        shopflo_enable: true,
+        shopflo_enable_popup_animation: false,
+        shopflo_international_redirect_enabled: {{ settings.shopflo_international_redirect_enabled | default: false | json }},
+        shopflo_customer_account_swap: {{ shopflo_customer_account_swap | default: false | json }},
+        shopflo_theme_cart_enabled: true,
+        shopflo_intercept_cart_page_redirect: false,
+        shopflo_third_party_cart_mutation: {
+          enabled: false,
+          is_shadow_dom: false,
+          checkout_parent_wrapper: {
+            type: "class",
+            selector: ".cart-drawer__items"
+          },
+          checkout_button: {
+            type: "class",
+            selector: ".cart-drawer__checkout"
+          }
+        }
+      };
+    </script>
+
+    {% comment %} Add puls animation while checkout is open with plus animation of shield as well also add support for removing the cart icon dot in case empty cart {% endcomment %}
+
+    {% when 'shop_pass_bundle_markup' %}
+    {%- comment -%}
+      Dummy markup that exists PURELY to satisfy the Shopflo bundle script's OWN internal
+      getElementById/onclick lookups - it expects these exact ids to exist somewhere in the DOM
+      for its own account/login wiring to initialize correctly, independently of anything this
+      theme itself reads or writes. shop_pass_primary/shop_pass_secondary/shop_pass_tertiary
+      (see <shopflo-accounts> in assets/shopflo-script.js) do NOT read from or forward clicks to
+      any of this - they're driven entirely by their own sessionStorage-based logic. This exists
+      only because the bundle itself silently fails its own initialization (never defining
+      window.handleDrawer / window.handleShopifyLogin) when it can't find this markup, which
+      breaks shop_pass_primary/secondary/tertiary too, since they call those same globals.
+
+      Covers BOTH variants the bundle's header script builds: the desktop set
+      (#flo-login-button-header-logo / #loggedin-icons / #icon-close-shopflo / #icon-shopflo /
+      #shopflo-drawer-desktop / #account-button-desktop / #logout-button-desktop) and the
+      "-mobile" suffixed equivalents (#flo-login-button-header-logo-mobile /
+      #loggedin-icons-mobile / #icon-close-shopflo-mobile / #icon-shopflo-mobile /
+      #shopflo-drawer-mobile / #logout-button-mobile). The mobile drawer's account link has no
+      id in the bundle's own markup either - only the desktop one gets #account-button-desktop -
+      so none is added here. Both sets are required: the bundle's init runs the same
+      getElementById lookups regardless of viewport, so omitting the mobile half reproduces the
+      exact same silent-failure bug this markup exists to prevent, just on small screens.
+
+      Render this ONCE, ANYWHERE in <body> (not <head> - a <div>/<button> isn't valid there, and
+      while browsers do silently relocate invalid head content to the start of body per the HTML
+      parsing spec, that's not something to rely on for markup you're intentionally adding).
+      Order relative to shop_pass_primary/secondary/tertiary or the bundle's own <script> tag
+      doesn't matter - the onclick attributes below resolve window.handleDrawer/
+      handleShopifyLogin lazily at click time, not at parse time.
+
+      Kept permanently off-screen via .shopflo-accounts-hidden (position: fixed; left:
+      -99999px; ...) in assets/shopflo-styles.css - NOT display:none/visibility:hidden/zero-size
+      clipping. The bundle's own scripts toggle inline styles on these elements directly, and
+      either hiding technique can silently fight that, and zero-size clipping breaks
+      handleDrawer's internal position:absolute layout for the (also-hidden, unused) drawers
+      below. .header--icon and .header--icon--mobile both stay on the wrapper too, since the
+      bundle's header script also uses them as its own "already injected, skip" guards
+      (querySelector(".header--icon") / querySelector(".header--icon--mobile")) before building
+      the real desktop/mobile replacement nodes - dropping either class here would just move the
+      missing-markup failure from "globals never defined" to "guard never satisfied," not fix it.
+    {%- endcomment -%}
+    <div id="shopflo-accounts-hidden-root" class="shopflo-accounts-hidden header--icon header--icon--mobile" aria-hidden="true" inert>
+      {%- comment -%} Desktop {%- endcomment -%}
+
+      {%- comment -%} Not-logged-in trigger — bundle wires this by id (getElementById), not inline onclick. {%- endcomment -%}
+      <div id="flo-login-button-header-logo" tabindex="-1"></div>
+
+      {%- comment -%} Logged-in icon + close icon — toggled by handleDrawer(). {%- endcomment -%}
+      <div id="loggedin-icons">
+        <div id="icon-close-shopflo" onclick="handleDrawer()" tabindex="-1"></div>
+        <div id="icon-shopflo" onclick="handleDrawer()" tabindex="-1"></div>
+      </div>
+
+      {%- comment -%}
+        Dropdown drawer — display/position toggled by handleDrawer().
+        Kept as a real, normally-laid-out box (not clipped to zero size)
+        so handleDrawer's internal absolute positioning keeps working —
+        only the outer wrapper above is moved off-screen (see CSS).
+      {%- endcomment -%}
+      <div id="shopflo-drawer-desktop">
+        <ul>
+          <a
+            id="account-button-desktop"
+            href="javascript:void(0);"
+            onclick="handleShopifyLogin(event,'/account')"
+            tabindex="-1"
+          >
+            <p>Account</p>
+          </a>
+        </ul>
+        <button id="logout-button-desktop" type="button" tabindex="-1"><p>Log out</p></button>
+      </div>
+
+      {%- comment -%} Mobile — same ids/wiring as desktop above, "-mobile" suffixed. {%- endcomment -%}
+
+      {%- comment -%} Not-logged-in trigger — bundle wires this by id (getElementById), not inline onclick. {%- endcomment -%}
+      <div id="flo-login-button-header-logo-mobile" tabindex="-1"></div>
+
+      {%- comment -%} Logged-in icon + close icon — toggled by handleDrawer(). {%- endcomment -%}
+      <div id="loggedin-icons-mobile">
+        <div id="icon-close-shopflo-mobile" onclick="handleDrawer()" tabindex="-1"></div>
+        <div id="icon-shopflo-mobile" onclick="handleDrawer()" tabindex="-1"></div>
+      </div>
+
+      {%- comment -%}
+        Dropdown drawer — display/position toggled by handleDrawer().
+        No id on this account link — the bundle's own mobile markup doesn't give it one
+        either (only #account-button-desktop exists on the desktop side).
+      {%- endcomment -%}
+      <div id="shopflo-drawer-mobile">
+        <ul>
+          <a
+            href="javascript:void(0);"
+            onclick="handleShopifyLogin(event,'/account')"
+            tabindex="-1"
+          >
+            <p>Account</p>
+          </a>
+        </ul>
+        <button id="logout-button-mobile" type="button" tabindex="-1"><p>Logout</p></button>
+      </div>
+    </div>
+
+  {% when 'checkout' %}
+    {%- liquid
+      assign checkout_icon_1 = settings.shopflo_payment_icon_checkout_1
+      assign checkout_icon_2 = settings.shopflo_payment_icon_checkout_2
+      assign checkout_icon_3 = settings.shopflo_payment_icon_checkout_3
+      assign checkout_icons_list = checkout_icon_1 | append: '|' | append: checkout_icon_2 | append: '|' | append: checkout_icon_3 | split: '|'
+
+      assign any_selected_checkout_payment_icons = false
+      if checkout_icon_1 != 'none' or checkout_icon_2 != 'none' or checkout_icon_3 != 'none'
+        assign any_selected_checkout_payment_icons = true
+      endif
+
+      # Badge SVG defs (filter/gradient) below must have unique ids per render - a cart drawer's
+      # checkout button (hidden until opened) coexists in the DOM with e.g. a product page's
+      # buy-now button on the very same page, and this same badge markup is duplicated in the
+      # 'buy_now' case below too. section.id keys it to whichever section rendered this call.
+      assign shopflo_badge_uid = section.id | append: '-checkout' | default: 'checkout'
+    -%}
+
+    {% capture checkout_wrapper_class %} shopflo-checkout__wrapper {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if settings.shopflo_promo_text_checkout != blank %} sf-promo-banner__layout--{{ settings.shopflo_promo_banner_layout_checkout }} {% endif %}{% endcapture %}
+
+    {% capture checkout_button_class %}
+    shopflo-checkout__button shopflo-popup-trigger {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if settings.shopflo_shadow_style_checkout != 'none' %} sf-button-shadow--{{ settings.shopflo_shadow_style_checkout }} {%
+    endif %} {% if settings.shopflo_hover_effect_checkout != 'none' %} sf-button-hover--{{ settings.shopflo_hover_effect_checkout }} {% endif %} {% if settings.shopflo_payment_icons_checkout == true %} sf-checkout-payment-icon--{{ settings.shopflo_payment_icon_position_checkout }} {% endif %}
+    {% endcapture %}
+
+    <div class="{{ checkout_wrapper_class }}">
+      {%- if settings.shopflo_promo_text_checkout != blank -%}
+        <div class="shopflo-checkout--promo sf-full-width sf-label--{{ settings.shopflo_promo_text_alignment_checkout }}">
+          <span class="shopflo-checkout--promo__text">{{ settings.shopflo_promo_text_checkout }}</span>
+        </div>
+      {%- endif -%}
+
+      <button type="button" id="flo-checkout-button" data-flo-action="checkout" class="{{ checkout_button_class }}">
+        <span class="shopflo-payment-icons__wrapper">
+          {%- if settings.shopflo_payment_icons_checkout == true and any_selected_checkout_payment_icons == true -%}
+            {%- for icon in checkout_icons_list -%}
+              {%- unless icon == 'none' -%}
+                <span class="shopflo-icon shopflo-payment-icon--{{ icon }}">
+                  {%- case icon -%}
+                    {%- when 'phonepe' -%}
+                      <svg class="shopflo-svg shopflo-svg--phonepe" viewBox="0 0 48 48" fill="none">
+                        <g clip-path="url(#a)">
+                          <path d="M24 48c13.255 0 24-10.745 24-24S37.255 0 24 0 0 10.745 0 24s10.745 24 24 24" fill="#5f259f" />
+                          <path
+                            d="M33.077 18.78a1.48 1.48 0 0 0-1.452-1.452h-2.681l-6.145-7.039c-.559-.67-1.453-.893-2.346-.67l-2.123.67c-.335.112-.447.559-.223.782l6.703 6.37H14.642c-.336 0-.559.223-.559.558v1.117c0 .782.67 1.452 1.452 1.452H17.1v5.363c0 4.023 2.122 6.37 5.698 6.37 1.117 0 2.012-.113 3.129-.56v3.576c0 1.006.781 1.788 1.787 1.788h1.564c.336 0 .67-.335.67-.67V20.457h2.57c.336 0 .56-.224.56-.559zm-7.15 9.61c-.67.335-1.565.447-2.235.447-1.788 0-2.681-.894-2.681-2.906v-5.363h4.916z"
+                            fill="#fff" />
+                        </g>
+                      </svg>
+                    {%- when 'googlepay' -%}
+                      <svg class="shopflo-svg shopflo-svg--gpay" viewBox="-3 -3 44 37" fill="none">
+                        <g clip-path="url(#a)">
+                          <path
+                            d="M32.832 6.218c-2.43-.492-6.35-1.157-7.444 1.131-3.346 5.796-5.267 11.862-6.713 14.464.152.088 6.817 3.955 7.288 4.183 1.498.728 4 .4 5.066-1.522 2.956-5.331 2.204-3.943 5.345-9.384 2.03-3.515-.508-8.258-3.542-8.872"
+                            fill="#ea4335" />
+                          <path
+                            d="M11.804 29.747c-1.632-1.867-2.83-5.602-1.395-7.694 4.19-7.257 7.543-11.65 10.18-16.052 1.399.807 7.002 3.986 7.375 4.314 1.252 1.098 2.29 3.196 1.158 5.08-3.14 5.226-4.427 7.591-7.618 13.118-2.03 3.517-7.661 3.566-9.7 1.234"
+                            fill="#fdbd00" />
+                          <path
+                            d="M26.83 2.519C23.565.611 21.887.861 20.132 1.143c-1.597.399-3.755 1.559-4.665 3.05-2.295 3.758-4.469 7.478-7.285 12.519-.867 1.552-.223 3.46.577 4.217.543.513 4.534 2.715 5.27 3.032 1.042.448 2.603.136 3.544-.833.26-.267 6.215-10.495 7.892-13.512.707-1.272 1.345-1.977 2.403-2.656 2.045-1.073 3.642-1.211 6.087-.317 0 0-5.322-3.085-7.125-4.124"
+                            fill="#2da94f" />
+                          <path
+                            d="M5.824 26.522c-3.285-1.874-3.907-3.452-4.541-5.114-.453-1.581-.527-4.03.308-5.564 2.109-3.867 2.093-3.886 5.05-8.846.912-1.527 2.886-1.923 3.941-1.608.716.213 4.619 2.568 5.261 3.048.91.678 1.42 2.185 1.051 3.485-.102.359-3.832 6.906-5.606 9.867-.749 1.25-1.04 2.154-1.099 3.41.093 2.307.771 3.76 2.768 5.43 0 0-5.332-3.067-7.133-4.108"
+                            fill="#297aec" />
+                        </g>
+                      </svg>
+                    {%- when 'paytm' -%}
+                      <svg class="shopflo-svg shopflo-svg--paytm" viewBox="-4 -2 46 17" fill="none">
+                        <g clip-path="url(#a)">
+                          <path
+                            d="M37.872 3.516a2.53 2.53 0 0 0-2.39-1.694h-.022c-.718 0-1.365.299-1.825.778a2.52 2.52 0 0 0-1.825-.778h-.024c-.63 0-1.207.231-1.65.613v-.194a.373.373 0 0 0-.371-.346H28.07a.374.374 0 0 0-.374.375v9.197c0 .208.167.375.374.375h1.694a.37.37 0 0 0 .369-.323l-.001-6.602q0-.035.003-.067a.62.62 0 0 1 .584-.567h.312a.623.623 0 0 1 .587.633l.007 6.57c0 .208.168.376.374.376h1.694c.2 0 .362-.159.372-.357l-.001-6.597a.62.62 0 0 1 .587-.634h.312a.62.62 0 0 1 .587.634l.007 6.56c0 .209.168.376.374.376h1.694a.375.375 0 0 0 .374-.375V4.412c0-.48-.054-.685-.128-.896M26.406 1.92h-.968V.345A.342.342 0 0 0 25.03.01c-1.073.295-.858 1.782-2.819 1.91h-.19a.4.4 0 0 0-.082.009h-.002.002a.374.374 0 0 0-.294.364v1.694c0 .206.169.375.376.375h1.022l-.002 7.181c0 .205.166.37.37.37h1.675a.37.37 0 0 0 .37-.37V4.362h.95a.375.375 0 0 0 .374-.375V2.294a.375.375 0 0 0-.375-.375"
+                            fill="#54c1f0" />
+                          <path
+                            d="M20.313 1.92h-1.694a.374.374 0 0 0-.373.373v3.502a.396.396 0 0 1-.397.39h-.709a.396.396 0 0 1-.397-.396l-.007-3.496a.375.375 0 0 0-.374-.374h-1.694a.374.374 0 0 0-.374.374v3.839c0 1.457 1.04 2.497 2.498 2.497 0 0 1.094 0 1.128.006a.394.394 0 0 1 .005.783l-.028.006-2.477.009a.374.374 0 0 0-.374.374V11.5c0 .207.167.374.374.374h2.769c1.46 0 2.498-1.038 2.498-2.497V2.294a.374.374 0 0 0-.374-.375M4.069 1.918H.367A.367.367 0 0 0 0 2.286v9.202c0 .204.153.37.343.376h1.725a.374.374 0 0 0 .374-.375l.007-2.574h1.62c1.356 0 2.3-.94 2.3-2.302V4.224c0-1.361-.944-2.305-2.3-2.305M3.92 6.067a.397.397 0 0 1-.397.398H2.45V4.372h1.074c.22 0 .397.177.397.397zm6.758-4.139h-2.35c-.208 0-.376.158-.376.352v1.588c0 .205.178.372.398.372h2.238a.39.39 0 0 1 .337.358v.219c-.02.192-.159.332-.328.348H9.49c-1.473 0-2.523.979-2.523 2.354v1.969c0 1.367.902 2.34 2.366 2.34h3.07c.552 0 .999-.418.999-.932V4.47c0-1.558-.803-2.542-2.723-2.542m.27 7.335a.4.4 0 0 1-.023.117.4.4 0 0 1-.377.256h-.705c-.22 0-.4-.168-.4-.373V7.815l.002-.002c0-.205.178-.37.398-.37h.705c.22 0 .399.166.399.372z"
+                            fill="#233266" />
+                        </g>
+                      </svg>
+                    {%- when 'bhim' -%}
+                      <svg class="shopflo-svg shopflo-svg--bhim" viewBox="-4 -4 46 16" fill="none">
+                        <path d="M36.138 0 38 3.401l-3.914 3.407z" fill="#2b8b4b" />
+                        <path d="m34.833 0 1.862 3.401-3.914 3.407z" fill="#d9782d" />
+                        <path
+                          d="M9.101 6.58a.9.9 0 0 0 .361-.481l.62-2.04q.086-.276-.075-.468c-.108-.127-.26-.19-.469-.19a.98.98 0 0 0 .583-.196.84.84 0 0 0 .354-.475l.621-2.04q.087-.293-.063-.494-.154-.198-.469-.196H2.495L.443 6.758h8.075a.85.85 0 0 0 .583-.178M3.559 1.336h5.32a.5.5 0 0 1 .336.241.9.9 0 0 1 .025.399l-.012.044-.051.171a.99.99 0 0 1-.798.551H3.135zM8.347 4.94c-.145.279-.43.475-.779.52H2.312l.424-1.394h5.307a.5.5 0 0 1 .387.361 1 1 0 0 1 .012.12c0 .02 0 .045-.006.064v.025zM21.007.025l-2.013 6.739h-1.45l.81-2.704h-5.827l-.81 2.704h-1.444L12.287.025h1.45l-.81 2.717h5.826l.81-2.717zm.425 6.758h-1.457L22.002.051h1.457zM33.598.038l-.601 2.001-1.413 4.712h-1.45l.956-3.217-3.825 3.224-2.312-3.642-1.089 3.635h-1.45l1.558-5.187.456-1.532h.025l.975 1.488 2.11 3.224zM0 8.588l.26-.994h.29c.082 0 .146 0 .177.012q.059.01.089.038a.14.14 0 0 1 .057.089.2.2 0 0 1 0 .12.28.28 0 0 1-.215.21.2.2 0 0 1 .139.082.2.2 0 0 1 .013.164.3.3 0 0 1-.057.114.3.3 0 0 1-.095.095.4.4 0 0 1-.133.057c-.051.013-.127.02-.241.02H0zm.215-.133H.28q.096.002.145-.006c.032-.007.064-.013.083-.026a.3.3 0 0 0 .07-.05.18.18 0 0 0 .038-.158.1.1 0 0 0-.051-.058l-.057-.019c-.026 0-.051-.006-.089-.006h-.12zm.114-.443H.4a.5.5 0 0 0 .196-.032c.045-.019.07-.057.083-.108q.019-.085-.02-.114a.4.4 0 0 0-.183-.031h-.07zm1.267.576.127-.481h.563l-.126.481h.183l.26-.994h-.184l-.095.367h-.563l.095-.367h-.184l-.26.994zm2.261 0-.063-.26h-.456l-.197.26h-.196l.823-1.039.285 1.039zm-.418-.393h.323l-.057-.228c0-.012-.006-.031-.006-.05s-.007-.038-.007-.064c-.012.02-.025.045-.038.064a.4.4 0 0 1-.038.05zm1.495-.05-.114.443h-.178l.26-.994h.26q.112.002.177.012a.2.2 0 0 1 .095.045.15.15 0 0 1 .057.095.3.3 0 0 1-.006.126.34.34 0 0 1-.114.19.4.4 0 0 1-.216.083l.279.456h-.209l-.266-.444h-.025zm.044-.127h.032a.5.5 0 0 0 .202-.032q.058-.03.076-.107.02-.085-.019-.114c-.031-.026-.088-.032-.183-.032h-.032zm1.805.57-.063-.26h-.456l-.203.26h-.196l.823-1.039.285 1.039zm-.412-.393h.323l-.057-.228q-.007-.02-.006-.05c0-.02-.006-.038-.006-.064a.3.3 0 0 0-.032.064q-.019.03-.038.05zm2.014-.468.038-.14h-.798l-.038.14h.304l-.221.861h.183l.222-.861zm1.565.861.26-.994h-.19l-.26.994zm.924 0 .184-.69.038.057a.4.4 0 0 0 .044.05l.583.621.272-1.032h-.17l-.178.69a.4.4 0 0 1-.044-.07c-.013-.019-.032-.038-.045-.057l-.57-.608-.272 1.039zm2.502-.861.032-.14h-.792l-.038.14h.304l-.222.861h.19l.222-.861zm1.045.861.038-.146h-.456l.082-.323h.456l.038-.139h-.456l.064-.253h.456l.038-.14h-.646l-.26.995h.646zm.988-.443-.114.443h-.177l.26-.994h.259q.114.002.171.012a.2.2 0 0 1 .095.045.15.15 0 0 1 .057.095.3.3 0 0 1-.006.126.34.34 0 0 1-.114.19.4.4 0 0 1-.216.083l.279.456h-.209l-.266-.444h-.019zm.044-.127h.032a.5.5 0 0 0 .203-.032q.057-.03.076-.107.018-.085-.02-.114c-.031-.026-.088-.032-.183-.032h-.032zm1.235.57.12-.469h.457l.038-.139h-.456l.063-.247h.456l.038-.14h-.64l-.26.995zm1.843 0-.063-.26h-.456l-.203.26h-.196l.823-1.039.285 1.039zm-.418-.393h.323l-.057-.228q-.008-.02-.006-.05c0-.02-.006-.038-.006-.064l-.038.064-.032.05zm2.35-.525a.6.6 0 0 0-.348-.101.8.8 0 0 0-.247.037.7.7 0 0 0-.222.114 1 1 0 0 0-.177.171.7.7 0 0 0-.102.203.5.5 0 0 0-.006.209.4.4 0 0 0 .082.171c.045.05.102.082.171.108q.103.038.235.038.103.001.196-.026a.7.7 0 0 0 .184-.07l.044-.183a.73.73 0 0 1-.405.127q-.173-.002-.26-.108c-.057-.07-.076-.158-.044-.266a.5.5 0 0 1 .19-.272.56.56 0 0 1 .513-.076.5.5 0 0 1 .145.088zm1.108.918.038-.146h-.456l.083-.323h.456l.038-.139h-.456l.063-.253h.456l.038-.14h-.64l-.26.995h.64zm1.856 0 .12-.469h.456l.038-.139h-.456l.064-.247h.456l.038-.14h-.64l-.26.995zm2.445-.494a.6.6 0 0 1-.102.203.8.8 0 0 1-.177.17.83.83 0 0 1-.469.152.7.7 0 0 1-.228-.037.41.41 0 0 1-.26-.279.44.44 0 0 1 .007-.203q.028-.106.095-.202a.8.8 0 0 1 .177-.171.84.84 0 0 1 .475-.152q.124 0 .228.038a.45.45 0 0 1 .171.114.4.4 0 0 1 .089.17.4.4 0 0 1-.006.197m-.197 0a.4.4 0 0 0 .007-.146.2.2 0 0 0-.057-.12.3.3 0 0 0-.114-.082.4.4 0 0 0-.152-.026.54.54 0 0 0-.323.108.4.4 0 0 0-.12.12.38.38 0 0 0-.076.291.3.3 0 0 0 .056.121q.048.055.114.082a.4.4 0 0 0 .152.026.54.54 0 0 0 .323-.108 1 1 0 0 0 .127-.12c.025-.051.05-.095.063-.146m1.058.05-.114.444h-.177l.26-.994h.259q.112.002.177.012a.2.2 0 0 1 .095.045.15.15 0 0 1 .057.095.3.3 0 0 1-.006.126.34.34 0 0 1-.114.19.4.4 0 0 1-.215.083l.278.456h-.209l-.266-.444h-.025zm.044-.126h.032a.5.5 0 0 0 .203-.032q.057-.03.076-.107.019-.085-.02-.114c-.031-.026-.088-.032-.183-.032h-.032zm3.078.57h.171l-.006-1.039-.494.627-.019.026q-.055.068-.082.107c-.007-.031-.013-.063-.02-.088-.006-.026-.006-.038-.012-.051l-.171-.627-.545 1.039h.171l.254-.494q.02-.04.031-.07c.007-.025.02-.044.026-.063 0 .019.006.044.006.063.006.019.006.044.013.063l.158.545.437-.532c.019-.025.038-.044.05-.07.013-.025.026-.044.039-.07 0 .02-.007.045-.007.07q-.008.055-.006.064v.5zm2.116-.494a.7.7 0 0 1-.095.203.8.8 0 0 1-.178.17.84.84 0 0 1-.475.152.7.7 0 0 1-.228-.037.41.41 0 0 1-.26-.279.44.44 0 0 1 .007-.203q.028-.106.095-.202a.8.8 0 0 1 .177-.171.84.84 0 0 1 .475-.152q.126 0 .222.038a.4.4 0 0 1 .26.285.34.34 0 0 1 0 .196m-.197 0a.4.4 0 0 0 .007-.146.3.3 0 0 0-.057-.12.3.3 0 0 0-.114-.082.53.53 0 0 0-.481.082.4.4 0 0 0-.121.12.38.38 0 0 0-.076.291.4.4 0 0 0 .057.121q.048.055.114.082a.4.4 0 0 0 .152.026 1 1 0 0 0 .171-.026.5.5 0 0 0 .158-.082.5.5 0 0 0 .19-.266m.938.494.177-.69.038.057c.013.019.025.038.044.05l.583.621.272-1.032h-.17l-.178.69-.05-.07c-.013-.019-.032-.038-.045-.057l-.57-.608-.272 1.039zm2.242 0 .038-.146h-.456l.082-.323h.456l.038-.139h-.456l.063-.253h.456l.038-.14h-.64l-.259.995h.64zm1.133 0 .12-.456.539-.538h-.19l-.336.335-.038.038c-.012.013-.025.032-.038.045-.006-.02-.006-.032-.012-.045a.1.1 0 0 1-.013-.031l-.152-.336h-.196l.247.538-.12.456h.19z"
+                          fill="#6d6e71" />
+                      </svg>
+                    {%- when 'cred' -%}
+                      <svg class="shopflo-svg shopflo-svg--cred" viewBox="-12 -12 57 60" fill="none">
+                        <path
+                          d="M16.87 38.328c-.218 0-.415-.059-.613-.158L.633 29.37A1.2 1.2 0 0 1 0 28.3V1.226A1.22 1.22 0 0 1 1.226 0h31.268a1.22 1.22 0 0 1 1.226 1.226v27.075c0 .435-.257.85-.633 1.068L17.463 38.17a1.07 1.07 0 0 1-.593.158M2.472 27.61l14.398 8.109 14.418-8.109V2.452H2.472z"
+                          fill="#000" />
+                        <path
+                          d="M16.87 26.086c-.218 0-.415-.06-.613-.158l-4.944-2.808a1.2 1.2 0 0 1-.633-1.068V16.91h2.452v4.41l3.738 2.096 4.351-2.452 1.206 2.136-4.944 2.808c-.218.119-.395.178-.613.178"
+                          fill="#000" />
+                        <path
+                          d="M16.87 32.217c-.218 0-.415-.06-.613-.158L5.953 26.264a1.22 1.22 0 0 1-.633-1.068v-13.27A1.22 1.22 0 0 1 6.546 10.7h15.11v2.452H7.772v11.352l9.058 5.103 9.058-5.103v-5.32h2.492v5.993c0 .435-.257.85-.633 1.067L17.444 32.04c-.178.139-.357.178-.574.178"
+                          fill="#000" />
+                        <path d="M28.38 14.497h-2.452V7.812H9.671V5.36h17.463a1.22 1.22 0 0 1 1.227 1.226v7.91z" fill="#000" />
+                      </svg>
+                    {%- when 'mobiqwik' -%}
+                      <svg class="shopflo-svg shopflo-svg--mobiqwik" viewBox="-9 -8 53 47" fill="none">
+                        <g clip-path="url(#a)">
+                          <path
+                            d="M36.766 11.442a1.426 1.426 0 1 0-2.852.006 1.426 1.426 0 0 0 2.852-.006m-6.683-8.294L27.92 24.925c.485.059 1.236 0 1.37-.767.207-1.17 1.994-19.402 1.994-19.402s.328-.86-1.215-1.608zm5 11.309s-1.236.362-2.844.637l-1.005 9.682s-.136 2.063-1.652 2.063h-1.837l-.021.21s-.23 1.42-1.466 1.605c-1.237.186-25.182 0-25.182 0S.065 28.47.022 27.523s0-20.457 0-20.457a2.05 2.05 0 0 1 1.74-1.438c.551-.071 4.701-.755 9.587-1.568L12.982.968a1.856 1.856 0 0 1 3.191-.09 1.78 1.78 0 0 0-1.162-.57h-.167a1.82 1.82 0 0 0-1.608.966L1.206 24.12a1.815 1.815 0 0 0 3.21 1.691l8.659-16.445v13.582a1.797 1.797 0 0 0 1.793 1.79c1.117 0 1.856-1.394 1.918-1.521l4.762-9.188v7.948a1.79 1.79 0 0 0 3.581 0V6.667a1.788 1.788 0 0 0-3.451-.662l-.028.043-4.672 9.021-1.148 2.412.829-2.996V3.173c6.163-1.03 11.89-1.995 11.89-1.995s1.516-.368 1.608 1.237l-.067.677c.519-.111 2.968-.535 3.135 1.546l-.343 4.948s.42.31 2.248-.408c0 0 2.57-1.02 2.845 1.528 0 0 .498 2.61-2.891 3.766zm1.052-3.006a.795.795 0 1 1 0-.01z"
+                            fill="#2172b9" />
+                        </g>
+                      </svg>
+                  {%- endcase -%}
+                </span>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </span>
+
+        <span class="shopflo-checkout__button--label sf-label--{{ settings.shopflo_label_alignment_checkout }} sf-text--{{ settings.shopflo_font_weight_checkout }}">
+          {{- settings.shopflo_button_label_checkout -}}
+        </span>
+
+        {%- if shopflo_badge -%}
+          <span class="shopflo-icon shopflo-badge-icon--shield">
+            <svg class="shopflo-svg--badge" viewBox="0 0 32 32" fill="none">
+              <g filter="url(#shopflo-badge-a-{{ shopflo_badge_uid }})" shape-rendering="crispEdges"><path d="M16 29.334S26.668 24 26.668 16V6.667l-10.666-4-10.667 4V16c0 8 10.667 13.334 10.667 13.334" fill="url(#shopflo-badge-b-{{ shopflo_badge_uid }})" fill-opacity=".4"/><path d="M16 29.334S26.668 24 26.668 16V6.667l-10.666-4-10.667 4V16c0 8 10.667 13.334 10.667 13.334" stroke="url(#shopflo-badge-c-{{ shopflo_badge_uid }})" stroke-opacity=".4" stroke-linecap="round" stroke-linejoin="round"/></g><path d="m19.32 10.359-4.8 4.796a2.36 2.36 0 0 1-3.338 0 2.36 2.36 0 0 1 0-3.336l3.13-3.128a2.36 2.36 0 0 1 3.339 0zm-6.445 9.376 4.799-4.796a2.36 2.36 0 0 1 3.338 0 2.36 2.36 0 0 1 0 3.336l-3.13 3.127a2.36 2.36 0 0 1-3.337 0z" opacity=".7" fill="#fff"/><defs><linearGradient id="shopflo-badge-b-{{ shopflo_badge_uid }}" x1="7.649" y1="7.074" x2="19.936" y2="26.806" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".4"/><stop offset=".516" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".2"/></linearGradient><linearGradient id="shopflo-badge-c-{{ shopflo_badge_uid }}" x1="5.334" y1="4.302" x2="16.001" y2="29.334" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".4"/></linearGradient><filter id="shopflo-badge-a-{{ shopflo_badge_uid }}" x="4.834" y="2.167" width="22.333" height="28.666" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="1"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow_14504_99984"/><feBlend in="SourceGraphic" in2="effect1_dropShadow_14504_99984" result="shape"/></filter></defs>
+            </svg>
+          </span>
+        {%- endif -%}
+      </button>
+    </div>
+  {% when 'buy_now' %}
+    {%- liquid
+      # Badge SVG defs (filter/gradient) below must have unique ids per render - see the same
+      # comment in the 'checkout' case above. section.id alone isn't enough here since a
+      # collection/carousel section could render multiple products' buy-now buttons at once, so
+      # product_obj.id is folded in too.
+      assign shopflo_badge_uid = section.id | append: '-buy-now-' | append: product_obj.id | default: 'buy-now'
+
+      assign render_shopflo_buy_now_button = true
+      if settings.shopflo_out_of_stock_buy_now == 'hide' and product_obj.selected_or_first_available_variant.available == false
+        assign render_shopflo_buy_now_button = false
+      endif
+
+      assign disable_shopflo_buy_now_button = false
+      if settings.shopflo_out_of_stock_buy_now == 'disable' and product_obj.selected_or_first_available_variant.available == false
+        assign disable_shopflo_buy_now_button = true
+      endif
+
+      assign buy_now_full_width = settings.shopflo_full_width_buy_now
+      assign buy_now_label_alignment = settings.shopflo_label_alignment_buy_now
+      assign buy_now_font_weight = 'normal'
+      if settings.shopflo_bold_text_buy_now
+        assign buy_now_font_weight = 'bold'
+      endif
+
+      if settings.shopflo_match_checkout_layout_buy_now
+        assign buy_now_full_width = settings.shopflo_full_width_checkout
+        assign buy_now_label_alignment = settings.shopflo_label_alignment_checkout
+        assign buy_now_font_weight = settings.shopflo_font_weight_checkout
+      endif
+
+      assign buy_now_shadow_style = settings.shopflo_shadow_style_buy_now
+      if settings.shopflo_match_checkout_style_buy_now
+        assign buy_now_shadow_style = settings.shopflo_shadow_style_checkout
+      endif
+
+      assign buy_now_hover_effect = settings.shopflo_hover_effect_buy_now
+      if settings.shopflo_match_checkout_animation_buy_now
+        assign buy_now_hover_effect = settings.shopflo_hover_effect_checkout
+      endif
+
+      assign buy_now_icons_enabled = settings.shopflo_payment_icons_buy_now
+      assign buy_now_icon_position = settings.shopflo_payment_icon_position_buy_now
+      assign buy_now_icon_1 = settings.shopflo_payment_icon_1_buy_now
+      assign buy_now_icon_2 = settings.shopflo_payment_icon_2_buy_now
+      assign buy_now_icon_3 = settings.shopflo_payment_icon_3_buy_now
+      if settings.shopflo_match_checkout_icon_buy_now
+        assign buy_now_icons_enabled = settings.shopflo_payment_icons_checkout
+        assign buy_now_icon_position = settings.shopflo_payment_icon_position_checkout
+        assign buy_now_icon_1 = settings.shopflo_payment_icon_checkout_1
+        assign buy_now_icon_2 = settings.shopflo_payment_icon_checkout_2
+        assign buy_now_icon_3 = settings.shopflo_payment_icon_checkout_3
+      endif
+      assign buy_now_icons_list = buy_now_icon_1 | append: '|' | append: buy_now_icon_2 | append: '|' | append: buy_now_icon_3 | split: '|'
+
+      assign any_selected_buy_now_payment_icons = false
+      if buy_now_icon_1 != 'none' or buy_now_icon_2 != 'none' or buy_now_icon_3 != 'none'
+        assign any_selected_buy_now_payment_icons = true
+      endif
+
+      assign buy_now_promo_text = settings.shopflo_promo_text_buy_now
+      assign buy_now_promo_alignment = settings.shopflo_promo_text_alignment_buy_now
+      assign buy_now_promo_banner_layout = settings.shopflo_promo_banner_layout_buy_now
+      if settings.shopflo_match_checkout_promo_buy_now
+        assign buy_now_promo_text = settings.shopflo_promo_text_checkout
+        assign buy_now_promo_alignment = settings.shopflo_promo_text_alignment_checkout
+        assign buy_now_promo_banner_layout = settings.shopflo_promo_banner_layout_checkout
+      endif
+    -%}
+
+    {% capture buy_now_wrapper_class %} shopflo-buy-now__wrapper {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_promo_text != blank %} sf-promo-banner__layout--{{ buy_now_promo_banner_layout }} {% endif %}{% endcapture %}
+
+    {% capture buy_now_button_class %}
+    shopflo-buy-now__button shopflo-popup-trigger {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_shadow_style != 'none' %} sf-button-shadow--{{ buy_now_shadow_style }} {%
+    endif %} {% if buy_now_hover_effect != 'none' %} sf-button-hover--{{ buy_now_hover_effect }} {% endif %} {% if buy_now_icons_enabled == true %} sf-buy-now-payment-icon--{{ buy_now_icon_position }} {% endif %}
+    {% endcapture %}
+
+    {%- if render_shopflo_buy_now_button -%}
+      <div class="{{ buy_now_wrapper_class }}">
+        {%- if buy_now_promo_text != blank -%}
+          <div class="shopflo-buy-now--promo sf-full-width sf-label--{{ buy_now_promo_alignment }}">
+            <span class="shopflo-buy-now--promo__text">{{ buy_now_promo_text }}</span>
+          </div>
+        {%- endif -%}
+
+        <button
+          type="button"
+          id="flo-buy-now-button"
+          name="flo-buy-now-button"
+          data-flo-action="buy-now"
+          class="{{ buy_now_button_class }}"
+          {% if disable_shopflo_buy_now_button %}
+            disabled
+          {% endif %}
+        >
+          <span class="shopflo-payment-icons__wrapper">
+            {%- if buy_now_icons_enabled == true and any_selected_buy_now_payment_icons == true -%}
+              {%- for icon in buy_now_icons_list -%}
+                {%- unless icon == 'none' -%}
+                  <span class="shopflo-icon shopflo-payment-icon--{{ icon }}">
+                    {%- case icon -%}
+                      {%- when 'phonepe' -%}
+                        <svg class="shopflo-svg shopflo-svg--phonepe" viewBox="0 0 48 48" fill="none">
+                          <g clip-path="url(#a)">
+                            <path d="M24 48c13.255 0 24-10.745 24-24S37.255 0 24 0 0 10.745 0 24s10.745 24 24 24" fill="#5f259f" />
+                            <path
+                              d="M33.077 18.78a1.48 1.48 0 0 0-1.452-1.452h-2.681l-6.145-7.039c-.559-.67-1.453-.893-2.346-.67l-2.123.67c-.335.112-.447.559-.223.782l6.703 6.37H14.642c-.336 0-.559.223-.559.558v1.117c0 .782.67 1.452 1.452 1.452H17.1v5.363c0 4.023 2.122 6.37 5.698 6.37 1.117 0 2.012-.113 3.129-.56v3.576c0 1.006.781 1.788 1.787 1.788h1.564c.336 0 .67-.335.67-.67V20.457h2.57c.336 0 .56-.224.56-.559zm-7.15 9.61c-.67.335-1.565.447-2.235.447-1.788 0-2.681-.894-2.681-2.906v-5.363h4.916z"
+                              fill="#fff" />
+                          </g>
+                        </svg>
+                      {%- when 'googlepay' -%}
+                        <svg class="shopflo-svg shopflo-svg--gpay" viewBox="-3 -3 44 37" fill="none">
+                          <g clip-path="url(#a)">
+                            <path
+                              d="M32.832 6.218c-2.43-.492-6.35-1.157-7.444 1.131-3.346 5.796-5.267 11.862-6.713 14.464.152.088 6.817 3.955 7.288 4.183 1.498.728 4 .4 5.066-1.522 2.956-5.331 2.204-3.943 5.345-9.384 2.03-3.515-.508-8.258-3.542-8.872"
+                              fill="#ea4335" />
+                            <path
+                              d="M11.804 29.747c-1.632-1.867-2.83-5.602-1.395-7.694 4.19-7.257 7.543-11.65 10.18-16.052 1.399.807 7.002 3.986 7.375 4.314 1.252 1.098 2.29 3.196 1.158 5.08-3.14 5.226-4.427 7.591-7.618 13.118-2.03 3.517-7.661 3.566-9.7 1.234"
+                              fill="#fdbd00" />
+                            <path
+                              d="M26.83 2.519C23.565.611 21.887.861 20.132 1.143c-1.597.399-3.755 1.559-4.665 3.05-2.295 3.758-4.469 7.478-7.285 12.519-.867 1.552-.223 3.46.577 4.217.543.513 4.534 2.715 5.27 3.032 1.042.448 2.603.136 3.544-.833.26-.267 6.215-10.495 7.892-13.512.707-1.272 1.345-1.977 2.403-2.656 2.045-1.073 3.642-1.211 6.087-.317 0 0-5.322-3.085-7.125-4.124"
+                              fill="#2da94f" />
+                            <path
+                              d="M5.824 26.522c-3.285-1.874-3.907-3.452-4.541-5.114-.453-1.581-.527-4.03.308-5.564 2.109-3.867 2.093-3.886 5.05-8.846.912-1.527 2.886-1.923 3.941-1.608.716.213 4.619 2.568 5.261 3.048.91.678 1.42 2.185 1.051 3.485-.102.359-3.832 6.906-5.606 9.867-.749 1.25-1.04 2.154-1.099 3.41.093 2.307.771 3.76 2.768 5.43 0 0-5.332-3.067-7.133-4.108"
+                              fill="#297aec" />
+                          </g>
+                        </svg>
+                      {%- when 'paytm' -%}
+                        <svg class="shopflo-svg shopflo-svg--paytm" viewBox="-4 -2 46 17" fill="none">
+                          <g clip-path="url(#a)">
+                            <path
+                              d="M37.872 3.516a2.53 2.53 0 0 0-2.39-1.694h-.022c-.718 0-1.365.299-1.825.778a2.52 2.52 0 0 0-1.825-.778h-.024c-.63 0-1.207.231-1.65.613v-.194a.373.373 0 0 0-.371-.346H28.07a.374.374 0 0 0-.374.375v9.197c0 .208.167.375.374.375h1.694a.37.37 0 0 0 .369-.323l-.001-6.602q0-.035.003-.067a.62.62 0 0 1 .584-.567h.312a.623.623 0 0 1 .587.633l.007 6.57c0 .208.168.376.374.376h1.694c.2 0 .362-.159.372-.357l-.001-6.597a.62.62 0 0 1 .587-.634h.312a.62.62 0 0 1 .587.634l.007 6.56c0 .209.168.376.374.376h1.694a.375.375 0 0 0 .374-.375V4.412c0-.48-.054-.685-.128-.896M26.406 1.92h-.968V.345A.342.342 0 0 0 25.03.01c-1.073.295-.858 1.782-2.819 1.91h-.19a.4.4 0 0 0-.082.009h-.002.002a.374.374 0 0 0-.294.364v1.694c0 .206.169.375.376.375h1.022l-.002 7.181c0 .205.166.37.37.37h1.675a.37.37 0 0 0 .37-.37V4.362h.95a.375.375 0 0 0 .374-.375V2.294a.375.375 0 0 0-.375-.375"
+                              fill="#54c1f0" />
+                            <path
+                              d="M20.313 1.92h-1.694a.374.374 0 0 0-.373.373v3.502a.396.396 0 0 1-.397.39h-.709a.396.396 0 0 1-.397-.396l-.007-3.496a.375.375 0 0 0-.374-.374h-1.694a.374.374 0 0 0-.374.374v3.839c0 1.457 1.04 2.497 2.498 2.497 0 0 1.094 0 1.128.006a.394.394 0 0 1 .005.783l-.028.006-2.477.009a.374.374 0 0 0-.374.374V11.5c0 .207.167.374.374.374h2.769c1.46 0 2.498-1.038 2.498-2.497V2.294a.374.374 0 0 0-.374-.375M4.069 1.918H.367A.367.367 0 0 0 0 2.286v9.202c0 .204.153.37.343.376h1.725a.374.374 0 0 0 .374-.375l.007-2.574h1.62c1.356 0 2.3-.94 2.3-2.302V4.224c0-1.361-.944-2.305-2.3-2.305M3.92 6.067a.397.397 0 0 1-.397.398H2.45V4.372h1.074c.22 0 .397.177.397.397zm6.758-4.139h-2.35c-.208 0-.376.158-.376.352v1.588c0 .205.178.372.398.372h2.238a.39.39 0 0 1 .337.358v.219c-.02.192-.159.332-.328.348H9.49c-1.473 0-2.523.979-2.523 2.354v1.969c0 1.367.902 2.34 2.366 2.34h3.07c.552 0 .999-.418.999-.932V4.47c0-1.558-.803-2.542-2.723-2.542m.27 7.335a.4.4 0 0 1-.023.117.4.4 0 0 1-.377.256h-.705c-.22 0-.4-.168-.4-.373V7.815l.002-.002c0-.205.178-.37.398-.37h.705c.22 0 .399.166.399.372z"
+                              fill="#233266" />
+                          </g>
+                        </svg>
+                      {%- when 'bhim' -%}
+                        <svg class="shopflo-svg shopflo-svg--bhim" viewBox="-4 -4 46 16" fill="none">
+                          <path d="M36.138 0 38 3.401l-3.914 3.407z" fill="#2b8b4b" />
+                          <path d="m34.833 0 1.862 3.401-3.914 3.407z" fill="#d9782d" />
+                          <path
+                            d="M9.101 6.58a.9.9 0 0 0 .361-.481l.62-2.04q.086-.276-.075-.468c-.108-.127-.26-.19-.469-.19a.98.98 0 0 0 .583-.196.84.84 0 0 0 .354-.475l.621-2.04q.087-.293-.063-.494-.154-.198-.469-.196H2.495L.443 6.758h8.075a.85.85 0 0 0 .583-.178M3.559 1.336h5.32a.5.5 0 0 1 .336.241.9.9 0 0 1 .025.399l-.012.044-.051.171a.99.99 0 0 1-.798.551H3.135zM8.347 4.94c-.145.279-.43.475-.779.52H2.312l.424-1.394h5.307a.5.5 0 0 1 .387.361 1 1 0 0 1 .012.12c0 .02 0 .045-.006.064v.025zM21.007.025l-2.013 6.739h-1.45l.81-2.704h-5.827l-.81 2.704h-1.444L12.287.025h1.45l-.81 2.717h5.826l.81-2.717zm.425 6.758h-1.457L22.002.051h1.457zM33.598.038l-.601 2.001-1.413 4.712h-1.45l.956-3.217-3.825 3.224-2.312-3.642-1.089 3.635h-1.45l1.558-5.187.456-1.532h.025l.975 1.488 2.11 3.224zM0 8.588l.26-.994h.29c.082 0 .146 0 .177.012q.059.01.089.038a.14.14 0 0 1 .057.089.2.2 0 0 1 0 .12.28.28 0 0 1-.215.21.2.2 0 0 1 .139.082.2.2 0 0 1 .013.164.3.3 0 0 1-.057.114.3.3 0 0 1-.095.095.4.4 0 0 1-.133.057c-.051.013-.127.02-.241.02H0zm.215-.133H.28q.096.002.145-.006c.032-.007.064-.013.083-.026a.3.3 0 0 0 .07-.05.18.18 0 0 0 .038-.158.1.1 0 0 0-.051-.058l-.057-.019c-.026 0-.051-.006-.089-.006h-.12zm.114-.443H.4a.5.5 0 0 0 .196-.032c.045-.019.07-.057.083-.108q.019-.085-.02-.114a.4.4 0 0 0-.183-.031h-.07zm1.267.576.127-.481h.563l-.126.481h.183l.26-.994h-.184l-.095.367h-.563l.095-.367h-.184l-.26.994zm2.261 0-.063-.26h-.456l-.197.26h-.196l.823-1.039.285 1.039zm-.418-.393h.323l-.057-.228c0-.012-.006-.031-.006-.05s-.007-.038-.007-.064c-.012.02-.025.045-.038.064a.4.4 0 0 1-.038.05zm1.495-.05-.114.443h-.178l.26-.994h.26q.112.002.177.012a.2.2 0 0 1 .095.045.15.15 0 0 1 .057.095.3.3 0 0 1-.006.126.34.34 0 0 1-.114.19.4.4 0 0 1-.216.083l.279.456h-.209l-.266-.444h-.025zm.044-.127h.032a.5.5 0 0 0 .202-.032q.058-.03.076-.107.02-.085-.019-.114c-.031-.026-.088-.032-.183-.032h-.032zm1.805.57-.063-.26h-.456l-.203.26h-.196l.823-1.039.285 1.039zm-.412-.393h.323l-.057-.228q-.007-.02-.006-.05c0-.02-.006-.038-.006-.064a.3.3 0 0 0-.032.064q-.019.03-.038.05zm2.014-.468.038-.14h-.798l-.038.14h.304l-.221.861h.183l.222-.861zm1.565.861.26-.994h-.19l-.26.994zm.924 0 .184-.69.038.057a.4.4 0 0 0 .044.05l.583.621.272-1.032h-.17l-.178.69a.4.4 0 0 1-.044-.07c-.013-.019-.032-.038-.045-.057l-.57-.608-.272 1.039zm2.502-.861.032-.14h-.792l-.038.14h.304l-.222.861h.19l.222-.861zm1.045.861.038-.146h-.456l.082-.323h.456l.038-.139h-.456l.064-.253h.456l.038-.14h-.646l-.26.995h.646zm.988-.443-.114.443h-.177l.26-.994h.259q.114.002.171.012a.2.2 0 0 1 .095.045.15.15 0 0 1 .057.095.3.3 0 0 1-.006.126.34.34 0 0 1-.114.19.4.4 0 0 1-.216.083l.279.456h-.209l-.266-.444h-.019zm.044-.127h.032a.5.5 0 0 0 .203-.032q.057-.03.076-.107.018-.085-.02-.114c-.031-.026-.088-.032-.183-.032h-.032zm1.235.57.12-.469h.457l.038-.139h-.456l.063-.247h.456l.038-.14h-.64l-.26.995zm1.843 0-.063-.26h-.456l-.203.26h-.196l.823-1.039.285 1.039zm-.418-.393h.323l-.057-.228q-.008-.02-.006-.05c0-.02-.006-.038-.006-.064l-.038.064-.032.05zm2.35-.525a.6.6 0 0 0-.348-.101.8.8 0 0 0-.247.037.7.7 0 0 0-.222.114 1 1 0 0 0-.177.171.7.7 0 0 0-.102.203.5.5 0 0 0-.006.209.4.4 0 0 0 .082.171c.045.05.102.082.171.108q.103.038.235.038.103.001.196-.026a.7.7 0 0 0 .184-.07l.044-.183a.73.73 0 0 1-.405.127q-.173-.002-.26-.108c-.057-.07-.076-.158-.044-.266a.5.5 0 0 1 .19-.272.56.56 0 0 1 .513-.076.5.5 0 0 1 .145.088zm1.108.918.038-.146h-.456l.083-.323h.456l.038-.139h-.456l.063-.253h.456l.038-.14h-.64l-.26.995h.64zm1.856 0 .12-.469h.456l.038-.139h-.456l.064-.247h.456l.038-.14h-.64l-.26.995zm2.445-.494a.6.6 0 0 1-.102.203.8.8 0 0 1-.177.17.83.83 0 0 1-.469.152.7.7 0 0 1-.228-.037.41.41 0 0 1-.26-.279.44.44 0 0 1 .007-.203q.028-.106.095-.202a.8.8 0 0 1 .177-.171.84.84 0 0 1 .475-.152q.124 0 .228.038a.45.45 0 0 1 .171.114.4.4 0 0 1 .089.17.4.4 0 0 1-.006.197m-.197 0a.4.4 0 0 0 .007-.146.2.2 0 0 0-.057-.12.3.3 0 0 0-.114-.082.4.4 0 0 0-.152-.026.54.54 0 0 0-.323.108.4.4 0 0 0-.12.12.38.38 0 0 0-.076.291.3.3 0 0 0 .056.121q.048.055.114.082a.4.4 0 0 0 .152.026.54.54 0 0 0 .323-.108 1 1 0 0 0 .127-.12c.025-.051.05-.095.063-.146m1.058.05-.114.444h-.177l.26-.994h.259q.112.002.177.012a.2.2 0 0 1 .095.045.15.15 0 0 1 .057.095.3.3 0 0 1-.006.126.34.34 0 0 1-.114.19.4.4 0 0 1-.215.083l.278.456h-.209l-.266-.444h-.025zm.044-.126h.032a.5.5 0 0 0 .203-.032q.057-.03.076-.107.019-.085-.02-.114c-.031-.026-.088-.032-.183-.032h-.032zm3.078.57h.171l-.006-1.039-.494.627-.019.026q-.055.068-.082.107c-.007-.031-.013-.063-.02-.088-.006-.026-.006-.038-.012-.051l-.171-.627-.545 1.039h.171l.254-.494q.02-.04.031-.07c.007-.025.02-.044.026-.063 0 .019.006.044.006.063.006.019.006.044.013.063l.158.545.437-.532c.019-.025.038-.044.05-.07.013-.025.026-.044.039-.07 0 .02-.007.045-.007.07q-.008.055-.006.064v.5zm2.116-.494a.7.7 0 0 1-.095.203.8.8 0 0 1-.178.17.84.84 0 0 1-.475.152.7.7 0 0 1-.228-.037.41.41 0 0 1-.26-.279.44.44 0 0 1 .007-.203q.028-.106.095-.202a.8.8 0 0 1 .177-.171.84.84 0 0 1 .475-.152q.126 0 .222.038a.4.4 0 0 1 .26.285.34.34 0 0 1 0 .196m-.197 0a.4.4 0 0 0 .007-.146.3.3 0 0 0-.057-.12.3.3 0 0 0-.114-.082.53.53 0 0 0-.481.082.4.4 0 0 0-.121.12.38.38 0 0 0-.076.291.4.4 0 0 0 .057.121q.048.055.114.082a.4.4 0 0 0 .152.026 1 1 0 0 0 .171-.026.5.5 0 0 0 .158-.082.5.5 0 0 0 .19-.266m.938.494.177-.69.038.057c.013.019.025.038.044.05l.583.621.272-1.032h-.17l-.178.69-.05-.07c-.013-.019-.032-.038-.045-.057l-.57-.608-.272 1.039zm2.242 0 .038-.146h-.456l.082-.323h.456l.038-.139h-.456l.063-.253h.456l.038-.14h-.64l-.259.995h.64zm1.133 0 .12-.456.539-.538h-.19l-.336.335-.038.038c-.012.013-.025.032-.038.045-.006-.02-.006-.032-.012-.045a.1.1 0 0 1-.013-.031l-.152-.336h-.196l.247.538-.12.456h.19z"
+                            fill="#6d6e71" />
+                        </svg>
+                      {%- when 'cred' -%}
+                        <svg class="shopflo-svg shopflo-svg--cred" viewBox="-12 -12 57 60" fill="none">
+                          <path
+                            d="M16.87 38.328c-.218 0-.415-.059-.613-.158L.633 29.37A1.2 1.2 0 0 1 0 28.3V1.226A1.22 1.22 0 0 1 1.226 0h31.268a1.22 1.22 0 0 1 1.226 1.226v27.075c0 .435-.257.85-.633 1.068L17.463 38.17a1.07 1.07 0 0 1-.593.158M2.472 27.61l14.398 8.109 14.418-8.109V2.452H2.472z"
+                            fill="#000" />
+                          <path
+                            d="M16.87 26.086c-.218 0-.415-.06-.613-.158l-4.944-2.808a1.2 1.2 0 0 1-.633-1.068V16.91h2.452v4.41l3.738 2.096 4.351-2.452 1.206 2.136-4.944 2.808c-.218.119-.395.178-.613.178"
+                            fill="#000" />
+                          <path
+                            d="M16.87 32.217c-.218 0-.415-.06-.613-.158L5.953 26.264a1.22 1.22 0 0 1-.633-1.068v-13.27A1.22 1.22 0 0 1 6.546 10.7h15.11v2.452H7.772v11.352l9.058 5.103 9.058-5.103v-5.32h2.492v5.993c0 .435-.257.85-.633 1.067L17.444 32.04c-.178.139-.357.178-.574.178"
+                            fill="#000" />
+                          <path d="M28.38 14.497h-2.452V7.812H9.671V5.36h17.463a1.22 1.22 0 0 1 1.227 1.226v7.91z" fill="#000" />
+                        </svg>
+                      {%- when 'mobiqwik' -%}
+                        <svg class="shopflo-svg shopflo-svg--mobiqwik" viewBox="-9 -8 53 47" fill="none">
+                          <g clip-path="url(#a)">
+                            <path
+                              d="M36.766 11.442a1.426 1.426 0 1 0-2.852.006 1.426 1.426 0 0 0 2.852-.006m-6.683-8.294L27.92 24.925c.485.059 1.236 0 1.37-.767.207-1.17 1.994-19.402 1.994-19.402s.328-.86-1.215-1.608zm5 11.309s-1.236.362-2.844.637l-1.005 9.682s-.136 2.063-1.652 2.063h-1.837l-.021.21s-.23 1.42-1.466 1.605c-1.237.186-25.182 0-25.182 0S.065 28.47.022 27.523s0-20.457 0-20.457a2.05 2.05 0 0 1 1.74-1.438c.551-.071 4.701-.755 9.587-1.568L12.982.968a1.856 1.856 0 0 1 3.191-.09 1.78 1.78 0 0 0-1.162-.57h-.167a1.82 1.82 0 0 0-1.608.966L1.206 24.12a1.815 1.815 0 0 0 3.21 1.691l8.659-16.445v13.582a1.797 1.797 0 0 0 1.793 1.79c1.117 0 1.856-1.394 1.918-1.521l4.762-9.188v7.948a1.79 1.79 0 0 0 3.581 0V6.667a1.788 1.788 0 0 0-3.451-.662l-.028.043-4.672 9.021-1.148 2.412.829-2.996V3.173c6.163-1.03 11.89-1.995 11.89-1.995s1.516-.368 1.608 1.237l-.067.677c.519-.111 2.968-.535 3.135 1.546l-.343 4.948s.42.31 2.248-.408c0 0 2.57-1.02 2.845 1.528 0 0 .498 2.61-2.891 3.766zm1.052-3.006a.795.795 0 1 1 0-.01z"
+                              fill="#2172b9" />
+                          </g>
+                        </svg>
+                    {%- endcase -%}
+                  </span>
+                {%- endunless -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </span>
+
+          <span class="shopflo-buy-now__button--label sf-label--{{ buy_now_label_alignment }} sf-text--{{ buy_now_font_weight }}">
+            {{- settings.shopflo_button_label_buy_now -}}
+          </span>
+
+          {%- if shopflo_badge -%}
+            <span class="shopflo-icon shopflo-badge-icon--shield">
+              <svg class="shopflo-svg--badge" viewBox="0 0 32 32" fill="none">
+                <g filter="url(#shopflo-badge-a-{{ shopflo_badge_uid }})" shape-rendering="crispEdges"><path d="M16 29.334S26.668 24 26.668 16V6.667l-10.666-4-10.667 4V16c0 8 10.667 13.334 10.667 13.334" fill="url(#shopflo-badge-b-{{ shopflo_badge_uid }})" fill-opacity=".4"/><path d="M16 29.334S26.668 24 26.668 16V6.667l-10.666-4-10.667 4V16c0 8 10.667 13.334 10.667 13.334" stroke="url(#shopflo-badge-c-{{ shopflo_badge_uid }})" stroke-opacity=".4" stroke-linecap="round" stroke-linejoin="round"/></g><path d="m19.32 10.359-4.8 4.796a2.36 2.36 0 0 1-3.338 0 2.36 2.36 0 0 1 0-3.336l3.13-3.128a2.36 2.36 0 0 1 3.339 0zm-6.445 9.376 4.799-4.796a2.36 2.36 0 0 1 3.338 0 2.36 2.36 0 0 1 0 3.336l-3.13 3.127a2.36 2.36 0 0 1-3.337 0z" opacity=".7" fill="#fff"/><defs><linearGradient id="shopflo-badge-b-{{ shopflo_badge_uid }}" x1="7.649" y1="7.074" x2="19.936" y2="26.806" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".4"/><stop offset=".516" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".2"/></linearGradient><linearGradient id="shopflo-badge-c-{{ shopflo_badge_uid }}" x1="5.334" y1="4.302" x2="16.001" y2="29.334" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".4"/></linearGradient><filter id="shopflo-badge-a-{{ shopflo_badge_uid }}" x="4.834" y="2.167" width="22.333" height="28.666" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="1"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow_14504_99984"/><feBlend in="SourceGraphic" in2="effect1_dropShadow_14504_99984" result="shape"/></filter></defs>
+              </svg>
+            </span>
+          {%- endif -%}
+        </button>
+      </div>
+    {%- endif -%}
+
+    {% if settings.shopflo_international_redirect_enabled == true %}
+      <div id="shopify-buy-now__button--wrapper">
+        {{ form | payment_button }}
+      </div>
+    {% endif %}
+
+  {% when 'shop_pass_primary', 'shop_pass_secondary', 'shop_pass_tertiary' %}
+    {%- comment -%}
+      Account/login icon + dropdown proxy. Three independent, fully separately-styled slots -
+      type: 'shop_pass_primary', type: 'shop_pass_secondary', and type: 'shop_pass_tertiary'
+      (Theme Editor > Shopflo Shop Pass > Login Button A/B/C) - each with its own icon
+      size/color/padding/radius/label settings, AND its own "Device visibility" setting
+      (Desktop only / Mobile only / Both), enforced purely via CSS media query (see
+      .sf-account-visible--desktop-only / --mobile-only in assets/shopflo-styles.css). Render
+      any/all of them together, wherever an account control should appear - there's no need to
+      pick a "desktop" vs "mobile" render location, each instance hides/shows itself at the
+      right breakpoint on its own. Safe to render multiple times on the same page regardless:
+      every instance is fully independent and reads the SAME two sessionStorage keys directly for
+      auth state - there is no cross-instance sync to maintain, since logging out reloads the
+      page (every instance just re-reads the keys fresh on load). The one thing still shared
+      across instances is the bundle's real login iframe. DESKTOP ONLY (800px+): it's kept
+      permanently off-screen (see #flo-shopify-login-iframe in assets/shopflo-styles.css), and
+      each instance's "Account" click copies its src into that instance's OWN iframe, so the
+      visible copy is always local to whichever slot the shopper clicked. MOBILE (up to 799px):
+      left fully untouched - the bundle's own real sheet+overlay+iframe renders and shows/hides
+      itself, and this theme's own drawer/overlay just steps out of the way. See the
+      <shopflo-accounts> custom element in assets/shopflo-script.js.
+
+      Fully safe to restyle or restructure everything inside <shopflo-accounts>...</shopflo-accounts>
+      - only the data-flo-trigger / data-flo-state attributes are load-bearing.
+
+      NOTE: real logged-in/out state is resolved client-side from two sessionStorage keys the
+      Shopflo bundle itself owns and keeps up to date - `flo_isShopfloSession` and
+      `FLO_SSO_IS_LOGOUT` (both are either the string "true" or absent, never a literal "false") -
+      not from Shopify's `customer` object, since Shopflo's own auth session is separate from
+      Shopify's native customer session. Confidently "logged in" means a session exists AND no
+      logout is in progress; every other combination defers the click straight to the bundle's
+      own `window.handleDrawer()` rather than guessing (see _resolveSessionState() in
+      assets/shopflo-script.js). This is resolved fresh on every header-icon click, so it always
+      reflects the current state, not whatever was true on page load.
+    {%- endcomment -%}
+    {%- liquid
+      assign account_slot = 'primary'
+      if shopflo_snippet_type == 'shop_pass_secondary'
+        assign account_slot = 'secondary'
+      elsif shopflo_snippet_type == 'shop_pass_tertiary'
+        assign account_slot = 'tertiary'
+      endif
+
+      assign account_variant_class = 'shopflo-accounts--primary'
+      assign account_iframe_id = 'shopflo-theme-accounts-iframe-primary'
+      assign account_visible_on = settings.shopflo_account_visible_on_button_a
+      assign account_drawer_position = settings.shopflo_account_dropdown_vertical_button_a
+      if account_slot == 'secondary'
+        assign account_variant_class = 'shopflo-accounts--secondary'
+        assign account_iframe_id = 'shopflo-theme-accounts-iframe-secondary'
+        assign account_visible_on = settings.shopflo_account_visible_on_button_b
+        assign account_drawer_position = settings.shopflo_account_dropdown_vertical_button_b
+      elsif account_slot == 'tertiary'
+        assign account_variant_class = 'shopflo-accounts--tertiary'
+        assign account_iframe_id = 'shopflo-theme-accounts-iframe-tertiary'
+        assign account_visible_on = settings.shopflo_account_visible_on_button_c
+        assign account_drawer_position = settings.shopflo_account_dropdown_vertical_button_c
+      endif
+
+      # "Dropdown position" (Theme Editor > Shopflo Shop Pass > Login Button A/B/C) is ONE
+      # combined setting ("above-left" / "above-right" / "below-left" / "below-right") - split
+      # it into the two separate data attributes assets/shopflo-script.js's
+      # _computeDrawerPosition() actually reads (data-drawer-vertical / data-drawer-horizontal),
+      # so that file never needs to know this is stored as one dash-joined value rather than two.
+      assign account_drawer_position_parts = account_drawer_position | split: '-'
+      assign account_drawer_vertical = account_drawer_position_parts[0] | default: 'below'
+      assign account_drawer_horizontal = account_drawer_position_parts[1] | default: 'right'
+
+      # "Device visibility" is independent of "Inherit styles from" - it's a placement choice,
+      # not a style one, so it always reads this slot's OWN setting even when styles are matched.
+      case account_visible_on
+        when 'desktop'
+          assign account_visible_class = 'sf-account-visible--desktop-only'
+        when 'mobile'
+          assign account_visible_class = 'sf-account-visible--mobile-only'
+        else
+          assign account_visible_class = ''
+      endcase
+
+      # "Inherit styles from" (Theme Editor > Shopflo Shop Pass > Login Button B/C) hides that
+      # slot's own text/layout fields and reads them straight off the matched slot instead -
+      # Button B can inherit Button A or Button C; Button C can inherit Button A or Button B.
+      # Since either can point at the other, this resolves in the same two-pass order as the
+      # style vars above (see the long comment in the 'assets' case): B_PRELIM against A or C's
+      # raw fields, then B_FINAL swapped to C_FINAL if B points at C - so a genuine A<-B<-C or
+      # A<-C<-B chain resolves correctly, and a B<->C cycle still terminates (both settle on
+      # Button C's own raw fields) rather than looping.
+      assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_b
+      assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_b
+      if settings.shopflo_account_match_with_button_b == 'button_a'
+        assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_a
+        assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_a
+      elsif settings.shopflo_account_match_with_button_b == 'button_c'
+        assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_c
+        assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_c
+      endif
+
+      assign account_label_text_button_c = settings.shopflo_account_text_button_c
+      assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_c
+      if settings.shopflo_account_match_with_button_c == 'button_a'
+        assign account_label_text_button_c = settings.shopflo_account_text_button_a
+        assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_a
+      elsif settings.shopflo_account_match_with_button_c == 'button_b'
+        assign account_label_text_button_c = account_label_text_button_b_preliminary
+        assign account_button_layout_button_c = account_button_layout_button_b_preliminary
+      endif
+
+      assign account_label_text_button_b = account_label_text_button_b_preliminary
+      assign account_button_layout_button_b = account_button_layout_button_b_preliminary
+      if settings.shopflo_account_match_with_button_b == 'button_c'
+        assign account_label_text_button_b = account_label_text_button_c
+        assign account_button_layout_button_b = account_button_layout_button_c
+      endif
+
+      if account_slot == 'primary'
+        assign account_label_text = settings.shopflo_account_text_button_a
+        assign account_button_layout = settings.shopflo_account_button_layout_button_a
+      elsif account_slot == 'secondary'
+        assign account_label_text = account_label_text_button_b
+        assign account_button_layout = account_button_layout_button_b
+      else
+        assign account_label_text = account_label_text_button_c
+        assign account_button_layout = account_button_layout_button_c
+      endif
+
+      assign label_account = label_account | default: 'Account'
+      assign label_logout = label_logout | default: 'Log out'
+
+      assign show_account_label = false
+      if account_label_text != blank
+        assign show_account_label = true
+      endif
+
+      # show_icon: whether to render the <svg> at all in either button state - a render
+      # parameter (not a Theme Editor setting), so a caller can drop just the icon for a
+      # particular instance (e.g. a text-only "Account" link somewhere) without affecting
+      # every other shop_pass_primary/shop_pass_secondary/shop_pass_tertiary instance on the
+      # page. Defaults to true - every existing call site keeps rendering the icon unchanged.
+      # NOT `show_icon | default: true` - the default filter treats an explicit `false` the same
+      # as "not passed" and would silently flip it back to true, defeating the parameter entirely.
+      assign show_icon_param = show_icon
+      assign show_icon = true
+      if show_icon_param == false
+        assign show_icon = false
+      endif
+
+      # localization-selector is Dawn's OWN opt-out marker (see button:not(.localization-selector)
+      # in assets/global.js's MenuDrawer.bindEvents()) for buttons that must NOT close the
+      # mobile nav drawer they happen to render inside (e.g. shop_pass_secondary in the header's
+      # menu-drawer__utility-links) - added here purely to borrow that exclusion, not for its
+      # literal localization styling/behavior (verified it has no effect without the sibling
+      # classes/markup those rules require). Toggling the account dropdown open/closed should
+      # never close the whole nav drawer around it. The "Account" drawer item deliberately does
+      # NOT get this class - it's the one action that SHOULD close the nav drawer, since it opens
+      # a real account view.
+      assign account_icon_button_class = 'shopflo-accounts__icon-button localization-selector'
+      if show_account_label and account_button_layout == 'icon_right'
+        assign account_icon_button_class = account_icon_button_class | append: ' sf-account-layout--icon-right'
+      endif
+    -%}
+
+    <shopflo-accounts
+      class="shopflo-accounts {{ account_variant_class }} {{ account_visible_class }}"
+      data-drawer-vertical="{{ account_drawer_vertical }}"
+      data-drawer-horizontal="{{ account_drawer_horizontal }}"
+    >
+      {%- comment -%} Logged-out state: same header-icon trigger as the logged-in button below — real state decides where the click goes {%- endcomment -%}
+      <button
+        type="button"
+        class="{{ account_icon_button_class }}"
+        data-flo-trigger="header-icon"
+        data-flo-state="login-icon"
+        data-flo-visible="true"
+        aria-label="Your account"
+      >
+        {%- if show_icon -%}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 29 29"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <g stroke="currentColor">
+              <path d="M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <path d="M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z" fill="#01CCA7" stroke="#01CCA7" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        {%- endif -%}
+        {%- if show_account_label -%}
+          <span class="shopflo-accounts__label">{{ account_label_text }}</span>
+        {%- endif -%}
+      </button>
+
+      {%- comment -%} Logged-in state: same header-icon trigger, opens the proxy drawer once resolved state says logged-in {%- endcomment -%}
+      <div class="shopflo-accounts__logged-in" data-flo-state="account-icon" data-flo-visible="false">
+        <button
+          type="button"
+          class="{{ account_icon_button_class }}"
+          data-flo-trigger="header-icon"
+          aria-label="Account menu"
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          {%- if show_icon -%}
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 29 29"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <g stroke="currentColor">
+                <path d="M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <path d="M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z" fill="#01CCA7" stroke="#01CCA7" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          {%- endif -%}
+          {%- if show_account_label -%}
+            <span class="shopflo-accounts__label">{{ account_label_text }}</span>
+          {%- endif -%}
+        </button>
+
+        <div class="shopflo-accounts__drawer" data-flo-state="drawer" data-flo-visible="false" role="menu">
+          <ul class="shopflo-accounts__drawer-list">
+            <li role="none">
+              <button
+                type="button"
+                class="shopflo-accounts__drawer-item"
+                role="menuitem"
+                data-flo-trigger="account-login"
+              >
+                {{ label_account }}
+              </button>
+            </li>
+            <li role="none">
+              {%- comment -%}
+                localization-selector: same nav-drawer-close opt-out as the header-icon buttons
+                above - logging out reloads the page itself, so it doesn't need the theme's
+                mobile nav drawer to close it first.
+              {%- endcomment -%}
+              <button
+                type="button"
+                class="shopflo-accounts__drawer-item localization-selector"
+                role="menuitem"
+                data-flo-trigger="account-logout"
+              >
+                {{ label_logout }}
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        {%- comment -%}
+          Our OWN copy of the account-login iframe, not the bundle's original — sibling of
+          .shopflo-accounts__drawer. JS copies the src from the bundle's real
+          #flo-shopify-login-iframe once it appears, into this one, since the real one is kept
+          permanently off-screen (see assets/shopflo-styles.css) on every device, and this one
+          lives in normal visible proxy markup that can be styled/positioned freely. The id is
+          unique per slot (not otherwise load-bearing - the JS scopes lookups to this instance
+          via data-flo-state) purely to keep valid, non-duplicate-id markup when multiple slots
+          are rendered on the same page.
+
+          IMPORTANT: if the iframe's content talks back to the parent page via postMessage keyed
+          to a specific iframe reference, this copy will NOT receive that — verify the login
+          flow actually completes end-to-end through this copy, not just that it renders.
+        {%- endcomment -%}
+        <iframe
+          src="about:blank"
+          id="{{ account_iframe_id }}"
+          class="shopflo-accounts__drawer-iframe"
+          data-flo-state="drawer-iframe"
+          data-flo-visible="false"
+          title="Account"
+        ></iframe>
+
+        {%- comment -%}
+          Closes the dropdown or iframe view - only ever shown while one of them is open, so a
+          click on it always means "close", not a toggle.
+        {%- endcomment -%}
+        <div
+          class="shopflo-accounts__overlay"
+          data-flo-trigger="close-drawer"
+          data-flo-state="account-drawer-overlay"
+          data-flo-visible="false"
+          aria-hidden="true"
+        ></div>
+      </div>
+    </shopflo-accounts>
+{% endcase %}
