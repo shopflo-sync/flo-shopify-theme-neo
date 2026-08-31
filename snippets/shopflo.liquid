@@ -274,6 +274,7 @@
       # both dropdowns at each other.
 
       assign account_font_size_button_b_preliminary = settings.shopflo_account_font_size_button_b
+      assign account_icon_gap_button_b_preliminary = settings.shopflo_account_icon_gap_button_b
       assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_b
       assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_b
       assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_b
@@ -290,6 +291,7 @@
       assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_b
       if settings.shopflo_account_match_with_button_b == 'button_a'
         assign account_font_size_button_b_preliminary = settings.shopflo_account_font_size_button_a
+        assign account_icon_gap_button_b_preliminary = settings.shopflo_account_icon_gap_button_a
         assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_a
         assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_a
         assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_a
@@ -306,6 +308,7 @@
         assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_a
       elsif settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_font_size_button_b_preliminary = settings.shopflo_account_font_size_button_c
+        assign account_icon_gap_button_b_preliminary = settings.shopflo_account_icon_gap_button_c
         assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_c
         assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_c
         assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_c
@@ -323,6 +326,7 @@
       endif
 
       assign account_font_size_button_c_source = settings.shopflo_account_font_size_button_c
+      assign account_icon_gap_button_c_source = settings.shopflo_account_icon_gap_button_c
       assign account_icon_size_button_c_source = settings.shopflo_account_icon_size_button_c
       assign account_icon_color_button_c_source = settings.shopflo_account_icon_color_button_c
       assign account_button_background_button_c_source = settings.shopflo_account_button_background_button_c
@@ -339,6 +343,7 @@
       assign account_shadow_color_button_c_source = settings.shopflo_account_shadow_color_button_c
       if settings.shopflo_account_match_with_button_c == 'button_a'
         assign account_font_size_button_c_source = settings.shopflo_account_font_size_button_a
+        assign account_icon_gap_button_c_source = settings.shopflo_account_icon_gap_button_a
         assign account_icon_size_button_c_source = settings.shopflo_account_icon_size_button_a
         assign account_icon_color_button_c_source = settings.shopflo_account_icon_color_button_a
         assign account_button_background_button_c_source = settings.shopflo_account_button_background_button_a
@@ -355,6 +360,7 @@
         assign account_shadow_color_button_c_source = settings.shopflo_account_shadow_color_button_a
       elsif settings.shopflo_account_match_with_button_c == 'button_b'
         assign account_font_size_button_c_source = account_font_size_button_b_preliminary
+        assign account_icon_gap_button_c_source = account_icon_gap_button_b_preliminary
         assign account_icon_size_button_c_source = account_icon_size_button_b_preliminary
         assign account_icon_color_button_c_source = account_icon_color_button_b_preliminary
         assign account_button_background_button_c_source = account_button_background_button_b_preliminary
@@ -372,6 +378,7 @@
       endif
 
       assign account_font_size_button_b_source = account_font_size_button_b_preliminary
+      assign account_icon_gap_button_b_source = account_icon_gap_button_b_preliminary
       assign account_icon_size_button_b_source = account_icon_size_button_b_preliminary
       assign account_icon_color_button_b_source = account_icon_color_button_b_preliminary
       assign account_button_background_button_b_source = account_button_background_button_b_preliminary
@@ -388,6 +395,7 @@
       assign account_shadow_color_button_b_source = account_shadow_color_button_b_preliminary
       if settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_font_size_button_b_source = account_font_size_button_c_source
+        assign account_icon_gap_button_b_source = account_icon_gap_button_c_source
         assign account_icon_size_button_b_source = account_icon_size_button_c_source
         assign account_icon_color_button_b_source = account_icon_color_button_c_source
         assign account_button_background_button_b_source = account_button_background_button_c_source
@@ -544,6 +552,7 @@
           generic --shopflo-account-* names the shared markup rules actually consume.
         {% endcomment %}
         --shopflo-account-label-font-size-primary: {{ settings.shopflo_account_font_size_button_a | append: 'px' }};
+        --shopflo-account-icon-gap-primary: {{ settings.shopflo_account_icon_gap_button_a | append: 'px' }};
         --shopflo-account-icon-size-primary: {{ settings.shopflo_account_icon_size_button_a | append: 'px' }};
         --shopflo-account-icon-color-primary: {{ settings.shopflo_account_icon_color_button_a }};
         --shopflo-account-button-padding-inline-primary: {{ settings.shopflo_account_padding_inline_button_a | append: 'px' }};
@@ -560,6 +569,7 @@
           including the two-pass B<->C cross-resolution.
         {% endcomment %}
         --shopflo-account-label-font-size-secondary: {{ account_font_size_button_b_source | append: 'px' }};
+        --shopflo-account-icon-gap-secondary: {{ account_icon_gap_button_b_source | append: 'px' }};
         --shopflo-account-icon-size-secondary: {{ account_icon_size_button_b_source | append: 'px' }};
         --shopflo-account-icon-color-secondary: {{ account_icon_color_button_b_source }};
         --shopflo-account-button-padding-inline-secondary: {{ account_padding_inline_button_b_source | append: 'px' }};
@@ -570,6 +580,7 @@
         --shopflo-account-button-shadow-secondary: {{ account_button_shadow_secondary }};
 
         --shopflo-account-label-font-size-tertiary: {{ account_font_size_button_c_source | append: 'px' }};
+        --shopflo-account-icon-gap-tertiary: {{ account_icon_gap_button_c_source | append: 'px' }};
         --shopflo-account-icon-size-tertiary: {{ account_icon_size_button_c_source | append: 'px' }};
         --shopflo-account-icon-color-tertiary: {{ account_icon_color_button_c_source }};
         --shopflo-account-button-padding-inline-tertiary: {{ account_padding_inline_button_c_source | append: 'px' }};
@@ -1205,40 +1216,56 @@
       # Button C's own raw fields) rather than looping.
       assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_b
       assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_b
+      assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_b
       if settings.shopflo_account_match_with_button_b == 'button_a'
         assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_a
         assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_a
+        assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_a
       elsif settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_c
         assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_c
+        assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_c
       endif
 
       assign account_label_text_button_c = settings.shopflo_account_text_button_c
       assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_c
+      assign account_bold_text_button_c = settings.shopflo_account_bold_text_button_c
       if settings.shopflo_account_match_with_button_c == 'button_a'
         assign account_label_text_button_c = settings.shopflo_account_text_button_a
         assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_a
+        assign account_bold_text_button_c = settings.shopflo_account_bold_text_button_a
       elsif settings.shopflo_account_match_with_button_c == 'button_b'
         assign account_label_text_button_c = account_label_text_button_b_preliminary
         assign account_button_layout_button_c = account_button_layout_button_b_preliminary
+        assign account_bold_text_button_c = account_bold_text_button_b_preliminary
       endif
 
       assign account_label_text_button_b = account_label_text_button_b_preliminary
       assign account_button_layout_button_b = account_button_layout_button_b_preliminary
+      assign account_bold_text_button_b = account_bold_text_button_b_preliminary
       if settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_label_text_button_b = account_label_text_button_c
         assign account_button_layout_button_b = account_button_layout_button_c
+        assign account_bold_text_button_b = account_bold_text_button_c
       endif
 
       if account_slot == 'primary'
         assign account_label_text = settings.shopflo_account_text_button_a
         assign account_button_layout = settings.shopflo_account_button_layout_button_a
+        assign account_bold_text = settings.shopflo_account_bold_text_button_a
       elsif account_slot == 'secondary'
         assign account_label_text = account_label_text_button_b
         assign account_button_layout = account_button_layout_button_b
+        assign account_bold_text = account_bold_text_button_b
       else
         assign account_label_text = account_label_text_button_c
         assign account_button_layout = account_button_layout_button_c
+        assign account_bold_text = account_bold_text_button_c
+      endif
+
+      assign account_font_weight = 'normal'
+      if account_bold_text
+        assign account_font_weight = 'bold'
       endif
 
       assign label_account = label_account | default: 'Account'
@@ -1308,7 +1335,7 @@
           </svg>
         {%- endif -%}
         {%- if show_account_label -%}
-          <span class="shopflo-accounts__label">{{ account_label_text }}</span>
+          <span class="shopflo-accounts__label sf-text--{{ account_font_weight }}">{{ account_label_text }}</span>
         {%- endif -%}
       </button>
 
@@ -1339,7 +1366,7 @@
             </svg>
           {%- endif -%}
           {%- if show_account_label -%}
-            <span class="shopflo-accounts__label">{{ account_label_text }}</span>
+            <span class="shopflo-accounts__label sf-text--{{ account_font_weight }}">{{ account_label_text }}</span>
           {%- endif -%}
         </button>
 

@@ -2725,6 +2725,12 @@
         "default": 14
       },
       {
+        "type": "checkbox",
+        "id": "shopflo_account_bold_text_button_a",
+        "label": "Bold text",
+        "default": true
+      },
+      {
         "type": "range",
         "id": "shopflo_account_icon_size_button_a",
         "label": "Icon size",
@@ -2749,6 +2755,16 @@
             "label": "Icon right"
           }
         ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_gap_button_a",
+        "label": "Icon spacing",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 6
       },
       {
         "type": "color_background",
@@ -2960,6 +2976,13 @@
         "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
       },
       {
+        "type": "checkbox",
+        "id": "shopflo_account_bold_text_button_b",
+        "label": "Bold text",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
         "type": "range",
         "id": "shopflo_account_icon_size_button_b",
         "label": "Icon size",
@@ -2986,6 +3009,17 @@
             "label": "Icon right"
           }
         ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_gap_button_b",
+        "label": "Icon spacing",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 6,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
       },
       {
         "type": "color_background",
@@ -3204,6 +3238,13 @@
         "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
       },
       {
+        "type": "checkbox",
+        "id": "shopflo_account_bold_text_button_c",
+        "label": "Bold text",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
         "type": "range",
         "id": "shopflo_account_icon_size_button_c",
         "label": "Icon size",
@@ -3230,6 +3271,17 @@
             "label": "Icon right"
           }
         ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_gap_button_c",
+        "label": "Icon spacing",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 6,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
       },
       {
         "type": "color_background",
