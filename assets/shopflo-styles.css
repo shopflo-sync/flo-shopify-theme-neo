@@ -280,6 +280,21 @@
     gap: var(--shopflo-checkout-promo-gap);
 }
 
+/* Attached banner + button meet with zero gap, forming one pill (see the paired border-radius
+   rules below). Without this, the hover-driven transform on this wrapper (see "Attached: apply
+   the effect..." further down) can promote the button (already position:relative) and the promo
+   banner (plain static box) to separate compositing layers, which round their shared edge to the
+   nearest device pixel independently - exposing a stray hairline (page background showing
+   through, reads as a white line) between them for the duration of the hover. Forcing this
+   wrapper to render as a single flattened layer keeps that edge rounded consistently instead. */
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached {
+    backface-visibility: hidden;
+}
+
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached {
+    backface-visibility: hidden;
+}
+
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button {
     border-radius: 0 0 var(--sf-checkout-border-radius) var(--sf-checkout-border-radius);
 }
@@ -328,6 +343,183 @@
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--separate {
     gap: var(--shopflo-buy-now-promo-gap);
+}
+
+/* ==========================================================================
+   Checkout / Buy Now button — promo banner, "Top of button" layout
+   (settings.shopflo_promo_banner_layout_checkout/_buy_now == 'top_of_button')
+   ==========================================================================
+   Unlike "attached"/"separate" (which sit in normal flex flow, in-line with
+   the button), "top_of_button" renders the promo banner as a real DOM CHILD
+   of the button itself (see snippets/shopflo.liquid) and pins it as a small
+   absolutely-positioned badge over one corner - settings.
+   shopflo_promo_position_checkout/_buy_now (Position on button:
+   top_left/top_right/bottom_left/bottom_right) picks which corner via the
+   .sf-promo-position--* classes below. The button is already
+   position:relative (see "core layout & wrapper" above), so it's the
+   positioning context here with no extra rule needed. Being a real child
+   also means the badge automatically inherits every hover/animation effect
+   applied to the button (transform, filter, box-shadow, the ::before/::after
+   sweeps) for free - no separate mirroring rules needed, unlike "attached"
+   further below.
+   ========================================================================== */
+.shopflo-checkout__button .shopflo-checkout--promo {
+    position: absolute;
+    z-index: 1;
+    width: auto;
+    max-width: calc(100% - 0.8rem);
+    border-radius: var(--shopflo-checkout-promo-border-radius);
+}
+
+.shopflo-buy-now__button .shopflo-buy-now--promo {
+    position: absolute;
+    z-index: 1;
+    width: auto;
+    max-width: calc(100% - 0.8rem);
+    border-radius: var(--shopflo-buy-now-promo-border-radius);
+}
+
+/* Truncate rather than wrap/overflow - these badges sit in a fixed corner with limited room. */
+.shopflo-checkout__button .shopflo-checkout--promo__text,
+.shopflo-buy-now__button .shopflo-buy-now--promo__text {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sf-promo-position--top_left {
+    top: -0.6rem;
+    left: 0.6rem;
+}
+
+.sf-promo-position--top_right {
+    top: -0.6rem;
+    right: 0.6rem;
+}
+
+.sf-promo-position--bottom_left {
+    bottom: -0.6rem;
+    left: 0.6rem;
+}
+
+.sf-promo-position--bottom_right {
+    bottom: -0.6rem;
+    right: 0.6rem;
+}
+
+/* ==========================================================================
+   Checkout / Buy Now button — promo banner mirrors the button's own hover
+   effect (settings.shopflo_hover_effect_checkout/_buy_now) when "Banner
+   Layout" is "Attached" (flush against the button, forming one rounded
+   pill - see the border-radius pairing further above): the effect is
+   applied to the WRAPPER as a single unit instead of to the button alone,
+   so the pill moves/scales/shines together rather than visibly tearing at
+   the seam. The button's own individual hover effect is explicitly
+   cancelled here for that reason - the wrapper-level rule is the only
+   source of the effect while attached.
+
+   "Top of button" needs no equivalent treatment here - as noted above, the
+   promo banner is a real DOM child of the button in that layout, so it
+   already moves/scales/shines with the button natively.
+
+   "Separate" has a real gap between banner and button, so it's left out
+   entirely - the banner isn't part of the button's shape there, so it
+   shouldn't move/react with it at all.
+   ========================================================================== */
+
+/* --- Attached: cancel the button's own individual effect - the wrapper-level
+   rules below are the only source of the effect for this layout. --- */
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled]),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled]) {
+    transform: none;
+    box-shadow: none;
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled]),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled]) {
+    transform: none;
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]) {
+    filter: none;
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]) {
+    filter: none;
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--shine::after,
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--shine::after {
+    display: none;
+}
+
+/* --- Attached: apply the effect once, to the wrapper - button + banner move as one unit. --- */
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled])),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled])) {
+    transform: translateY(-2px);
+    box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22);
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled])),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled])) {
+    transform: scale(1.02);
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])) {
+    filter: brightness(0.9);
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])) {
+    filter: brightness(1.12);
+}
+
+/* shine needs position:relative on the wrapper for its ::after (inset:0) to size against the
+   whole pill instead of just the button - deliberately no overflow:hidden here, since inset:0 +
+   an explicit border-radius already bounds the sweep exactly, and overflow:hidden would clip any
+   persistent (non-hover) button box-shadow from settings.shopflo_shadow_style_checkout/_buy_now. */
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine),
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine) {
+    position: relative;
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--sf-checkout-border-radius);
+    pointer-events: none;
+    background: linear-gradient(115deg,
+            transparent 38%,
+            rgba(255, 255, 255, 0.45) 50%,
+            transparent 62%);
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    transition: background-position 0.6s ease;
+}
+
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: var(--sf-buy-now-border-radius);
+    pointer-events: none;
+    background: linear-gradient(115deg,
+            transparent 38%,
+            rgba(255, 255, 255, 0.45) 50%,
+            transparent 62%);
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    transition: background-position 0.6s ease;
+}
+
+.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine:hover:not([disabled]))::after,
+.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine:hover:not([disabled]))::after {
+    background-position: -120% 0;
 }
 
 .shopflo-buy-now__wrapper {
@@ -526,6 +718,17 @@
 /* ==========================================================================
    Checkout / Buy Now button — promo banner
    ========================================================================== */
+/* Purely decorative - never a click target. In "Top of button" layout the
+   badge is a DOM child of the button (see snippets/shopflo.liquid), so a
+   click on it already bubbles up to the button's own shopflo-popup-trigger
+   handler (see bindPopupMorph() in assets/shopflo-script.js) regardless;
+   pointer-events:none here just keeps it from ever being its own
+   hit-target (e.g. text selection) in any layout. */
+.shopflo-checkout--promo,
+.shopflo-buy-now--promo {
+    pointer-events: none;
+}
+
 .shopflo-checkout--promo {
     background: var(--shopflo-checkout-promo-background);
     display: flex;
@@ -557,7 +760,6 @@
     background: var(--shopflo-buy-now-promo-background);
     display: flex;
     align-items: center;
-    padding: 0.4rem;
     overflow: hidden;
 }
 
@@ -570,7 +772,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    padding-inline: 0.4rem;
+    padding: 0.2rem 0.4rem;
 }
 
 .shopflo-buy-now--promo__text p {

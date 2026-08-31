@@ -634,7 +634,7 @@
 
     {% comment %} Add puls animation while checkout is open with plus animation of shield as well also add support for removing the cart icon dot in case empty cart {% endcomment %}
 
-    {% when 'shop_pass_bundle_markup' %}
+  {% when 'shop_pass_bundle_markup' %}
     {%- comment -%}
       Dummy markup that exists PURELY to satisfy the Shopflo bundle script's OWN internal
       getElementById/onclick lookups - it expects these exact ids to exist somewhere in the DOM
@@ -675,7 +675,12 @@
       the real desktop/mobile replacement nodes - dropping either class here would just move the
       missing-markup failure from "globals never defined" to "guard never satisfied," not fix it.
     {%- endcomment -%}
-    <div id="shopflo-accounts-hidden-root" class="shopflo-accounts-hidden header--icon header--icon--mobile" aria-hidden="true" inert>
+    <div
+      id="shopflo-accounts-hidden-root"
+      class="shopflo-accounts-hidden header--icon header--icon--mobile"
+      aria-hidden="true"
+      inert
+    >
       {%- comment -%} Desktop {%- endcomment -%}
 
       {%- comment -%} Not-logged-in trigger — bundle wires this by id (getElementById), not inline onclick. {%- endcomment -%}
@@ -754,23 +759,44 @@
       # buy-now button on the very same page, and this same badge markup is duplicated in the
       # 'buy_now' case below too. section.id keys it to whichever section rendered this call.
       assign shopflo_badge_uid = section.id | append: '-checkout' | default: 'checkout'
+
+      # richtext setting - a merchant-cleared field can still come back as e.g. "<p></p>" or
+      # "<p>&nbsp;</p>" (non-blank as raw HTML), so strip tags/nbsp before checking presence.
+      # Computed BEFORE checkout_wrapper_class below - that capture's sf-promo-banner__layout--*
+      # class must agree with whether the promo div actually renders, or the button ends up
+      # styled (e.g. flat-topped border-radius) for a banner that was never rendered at all.
+      assign shopflo_promo_text_check = settings.shopflo_promo_text_checkout | strip_html | remove: '&nbsp;' | strip
+      assign shopflo_promo_text_checkout_present = false
+      unless shopflo_promo_text_check == blank
+        assign shopflo_promo_text_checkout_present = true
+      endunless
     -%}
 
-    {% capture checkout_wrapper_class %} shopflo-checkout__wrapper {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if settings.shopflo_promo_text_checkout != blank %} sf-promo-banner__layout--{{ settings.shopflo_promo_banner_layout_checkout }} {% endif %}{% endcapture %}
+    {% capture checkout_wrapper_class %} shopflo-checkout__wrapper {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if shopflo_promo_text_checkout_present %} sf-promo-banner__layout--{{ settings.shopflo_promo_banner_layout_checkout }} {% endif %}{% endcapture %}
 
     {% capture checkout_button_class %}
     shopflo-checkout__button shopflo-popup-trigger {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if settings.shopflo_shadow_style_checkout != 'none' %} sf-button-shadow--{{ settings.shopflo_shadow_style_checkout }} {%
     endif %} {% if settings.shopflo_hover_effect_checkout != 'none' %} sf-button-hover--{{ settings.shopflo_hover_effect_checkout }} {% endif %} {% if settings.shopflo_payment_icons_checkout == true %} sf-checkout-payment-icon--{{ settings.shopflo_payment_icon_position_checkout }} {% endif %}
     {% endcapture %}
 
-    <div class="{{ checkout_wrapper_class }}">
-      {%- if settings.shopflo_promo_text_checkout != blank -%}
-        <div class="shopflo-checkout--promo sf-full-width sf-label--{{ settings.shopflo_promo_text_alignment_checkout }}">
+    {%- capture checkout_promo_markup -%}
+      {%- if shopflo_promo_text_checkout_present -%}
+        <div class="shopflo-checkout--promo sf-full-width sf-label--{{ settings.shopflo_promo_text_alignment_checkout }} sf-promo-position--{{ settings.shopflo_promo_position_checkout }}">
           <span class="shopflo-checkout--promo__text">{{ settings.shopflo_promo_text_checkout }}</span>
         </div>
       {%- endif -%}
+    {%- endcapture -%}
+
+    <div class="{{ checkout_wrapper_class }}">
+      {%- if shopflo_promo_text_checkout_present and settings.shopflo_promo_banner_layout_checkout != 'top_of_button' -%}
+        {{ checkout_promo_markup }}
+      {%- endif -%}
 
       <button type="button" id="flo-checkout-button" data-flo-action="checkout" class="{{ checkout_button_class }}">
+        {%- if shopflo_promo_text_checkout_present and settings.shopflo_promo_banner_layout_checkout == 'top_of_button' -%}
+          {{ checkout_promo_markup }}
+        {%- endif -%}
+
         <span class="shopflo-payment-icons__wrapper">
           {%- if settings.shopflo_payment_icons_checkout == true and any_selected_checkout_payment_icons == true -%}
             {%- for icon in checkout_icons_list -%}
@@ -926,26 +952,43 @@
       assign buy_now_promo_text = settings.shopflo_promo_text_buy_now
       assign buy_now_promo_alignment = settings.shopflo_promo_text_alignment_buy_now
       assign buy_now_promo_banner_layout = settings.shopflo_promo_banner_layout_buy_now
+      assign buy_now_promo_position = settings.shopflo_promo_position_buy_now
       if settings.shopflo_match_checkout_promo_buy_now
         assign buy_now_promo_text = settings.shopflo_promo_text_checkout
         assign buy_now_promo_alignment = settings.shopflo_promo_text_alignment_checkout
         assign buy_now_promo_banner_layout = settings.shopflo_promo_banner_layout_checkout
+        assign buy_now_promo_position = settings.shopflo_promo_position_checkout
       endif
+
+      # richtext setting - a merchant-cleared field can still come back as e.g. "<p></p>" or
+      # "<p>&nbsp;</p>" (non-blank as raw HTML), so strip tags/nbsp before checking presence -
+      # same treatment as shopflo_promo_text_checkout_present above.
+      assign shopflo_promo_text_check_buy_now = buy_now_promo_text | strip_html | remove: '&nbsp;' | strip
+      assign shopflo_promo_text_buy_now_present = false
+      unless shopflo_promo_text_check_buy_now == blank
+        assign shopflo_promo_text_buy_now_present = true
+      endunless
     -%}
 
-    {% capture buy_now_wrapper_class %} shopflo-buy-now__wrapper {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_promo_text != blank %} sf-promo-banner__layout--{{ buy_now_promo_banner_layout }} {% endif %}{% endcapture %}
+    {% capture buy_now_wrapper_class %} shopflo-buy-now__wrapper {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if shopflo_promo_text_buy_now_present %} sf-promo-banner__layout--{{ buy_now_promo_banner_layout }} {% endif %}{% endcapture %}
 
     {% capture buy_now_button_class %}
     shopflo-buy-now__button shopflo-popup-trigger {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_shadow_style != 'none' %} sf-button-shadow--{{ buy_now_shadow_style }} {%
     endif %} {% if buy_now_hover_effect != 'none' %} sf-button-hover--{{ buy_now_hover_effect }} {% endif %} {% if buy_now_icons_enabled == true %} sf-buy-now-payment-icon--{{ buy_now_icon_position }} {% endif %}
     {% endcapture %}
 
+    {%- capture buy_now_promo_markup -%}
+      {%- if shopflo_promo_text_buy_now_present -%}
+        <div class="shopflo-buy-now--promo sf-full-width sf-label--{{ buy_now_promo_alignment }} sf-promo-position--{{ buy_now_promo_position }}">
+          <span class="shopflo-buy-now--promo__text">{{ buy_now_promo_text }}</span>
+        </div>
+      {%- endif -%}
+    {%- endcapture -%}
+
     {%- if render_shopflo_buy_now_button -%}
       <div class="{{ buy_now_wrapper_class }}">
-        {%- if buy_now_promo_text != blank -%}
-          <div class="shopflo-buy-now--promo sf-full-width sf-label--{{ buy_now_promo_alignment }}">
-            <span class="shopflo-buy-now--promo__text">{{ buy_now_promo_text }}</span>
-          </div>
+        {%- if shopflo_promo_text_buy_now_present and buy_now_promo_banner_layout != 'top_of_button' -%}
+          {{ buy_now_promo_markup }}
         {%- endif -%}
 
         <button
@@ -958,6 +1001,10 @@
             disabled
           {% endif %}
         >
+          {%- if shopflo_promo_text_buy_now_present and buy_now_promo_banner_layout == 'top_of_button' -%}
+            {{ buy_now_promo_markup }}
+          {%- endif -%}
+
           <span class="shopflo-payment-icons__wrapper">
             {%- if buy_now_icons_enabled == true and any_selected_buy_now_payment_icons == true -%}
               {%- for icon in buy_now_icons_list -%}

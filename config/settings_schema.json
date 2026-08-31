@@ -1979,6 +1979,52 @@
         "label": "Text"
       },
       {
+        "type": "select",
+        "id": "shopflo_promo_banner_layout_checkout",
+        "label": "Banner Layout",
+        "default": "attached",
+        "options": [
+          {
+            "value": "attached",
+            "label": "Attached"
+          },
+          {
+            "value": "separate",
+            "label": "Separate"
+          },
+          {
+            "value": "top_of_button",
+            "label": "Top of button"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_promo_position_checkout",
+        "label": "Position on button",
+        "default": "top_right",
+        "options": [
+          {
+            "value": "top_left",
+            "label": "Top left"
+          },
+          {
+            "value": "top_right",
+            "label": "Top right"
+          },
+          {
+            "value": "bottom_left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "bottom_right",
+            "label": "Bottom right"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank and settings.shopflo_promo_banner_layout_checkout == 'top_of_button' }}"
+      },
+      {
         "type": "range",
         "id": "shopflo_promo_font_size_checkout",
         "label": "Font size",
@@ -2022,23 +2068,6 @@
         "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
       },
       {
-        "type": "select",
-        "id": "shopflo_promo_banner_layout_checkout",
-        "label": "Banner Layout",
-        "default": "attached",
-        "options": [
-          {
-            "value": "attached",
-            "label": "Attached"
-          },
-          {
-            "value": "separate",
-            "label": "Separate"
-          }
-        ],
-        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
-      },
-      {
         "type": "range",
         "id": "shopflo_promo_gap_checkout",
         "label": "Gap",
@@ -2058,7 +2087,7 @@
         "step": 1,
         "unit": "px",
         "default": 0,
-        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank and settings.shopflo_promo_banner_layout_checkout == 'separate' }}"
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank and settings.shopflo_promo_banner_layout_checkout != 'attached' }}"
       }
     ]
   },
@@ -2498,6 +2527,52 @@
         "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false }}"
       },
       {
+        "type": "select",
+        "id": "shopflo_promo_banner_layout_buy_now",
+        "label": "Banner Layout",
+        "default": "attached",
+        "options": [
+          {
+            "value": "attached",
+            "label": "Attached"
+          },
+          {
+            "value": "separate",
+            "label": "Separate"
+          },
+          {
+            "value": "top_of_button",
+            "label": "Top of button"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_promo_position_buy_now",
+        "label": "Position on button",
+        "default": "top_right",
+        "options": [
+          {
+            "value": "top_left",
+            "label": "Top left"
+          },
+          {
+            "value": "top_right",
+            "label": "Top right"
+          },
+          {
+            "value": "bottom_left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "bottom_right",
+            "label": "Bottom right"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank and settings.shopflo_promo_banner_layout_buy_now == 'top_of_button' }}"
+      },
+      {
         "type": "range",
         "id": "shopflo_promo_font_size_buy_now",
         "label": "Font size",
@@ -2541,23 +2616,6 @@
         "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
       },
       {
-        "type": "select",
-        "id": "shopflo_promo_banner_layout_buy_now",
-        "label": "Banner Layout",
-        "default": "attached",
-        "options": [
-          {
-            "value": "attached",
-            "label": "Attached"
-          },
-          {
-            "value": "separate",
-            "label": "Separate"
-          }
-        ],
-        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
-      },
-      {
         "type": "range",
         "id": "shopflo_promo_gap_buy_now",
         "label": "Gap",
@@ -2577,7 +2635,7 @@
         "step": 1,
         "unit": "px",
         "default": 0,
-        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank and settings.shopflo_promo_banner_layout_buy_now == 'separate' }}"
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank and settings.shopflo_promo_banner_layout_buy_now != 'attached' }}"
       }
     ]
   },
