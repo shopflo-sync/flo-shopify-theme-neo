@@ -974,6 +974,7 @@ shopflo-accounts {
    names onto the right slot's values for everything nested inside it - no rule duplication
    needed below. */
 .shopflo-accounts--primary {
+    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-primary);
     --shopflo-account-icon-size: var(--shopflo-account-icon-size-primary);
     --shopflo-account-icon-color: var(--shopflo-account-icon-color-primary);
     --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-primary);
@@ -999,6 +1000,7 @@ shopflo-accounts {
 }
 
 .shopflo-accounts--secondary {
+    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-secondary);
     --shopflo-account-icon-size: var(--shopflo-account-icon-size-secondary);
     --shopflo-account-icon-color: var(--shopflo-account-icon-color-secondary);
     --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-secondary);
@@ -1016,6 +1018,7 @@ shopflo-accounts {
 }
 
 .shopflo-accounts--tertiary {
+    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-tertiary);
     --shopflo-account-icon-size: var(--shopflo-account-icon-size-tertiary);
     --shopflo-account-icon-color: var(--shopflo-account-icon-color-tertiary);
     --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-tertiary);
@@ -1110,7 +1113,7 @@ shopflo-accounts {
 }
 
 .shopflo-accounts__label {
-    font-size: 14px;
+    font-size: var(--shopflo-account-label-font-size, 14px);
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;

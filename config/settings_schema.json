@@ -2716,6 +2716,16 @@
       },
       {
         "type": "range",
+        "id": "shopflo_account_font_size_button_a",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      },
+      {
+        "type": "range",
         "id": "shopflo_account_icon_size_button_a",
         "label": "Icon size",
         "min": 16,
@@ -2936,6 +2946,17 @@
         "label": "Button text",
         "default": "Login",
         "info": "Leave blank to display icon only.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_font_size_button_b",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 14,
         "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
       },
       {
@@ -3169,6 +3190,17 @@
         "label": "Button text",
         "default": "Login",
         "info": "Leave blank to display icon only.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_font_size_button_c",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 14,
         "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
       },
       {

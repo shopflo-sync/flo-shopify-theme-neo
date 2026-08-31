@@ -273,6 +273,7 @@
       # chase - exactly the kind of edge case a merchant could accidentally create by pointing
       # both dropdowns at each other.
 
+      assign account_font_size_button_b_preliminary = settings.shopflo_account_font_size_button_b
       assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_b
       assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_b
       assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_b
@@ -288,6 +289,7 @@
       assign account_shadow_spread_button_b_preliminary = settings.shopflo_account_shadow_spread_button_b
       assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_b
       if settings.shopflo_account_match_with_button_b == 'button_a'
+        assign account_font_size_button_b_preliminary = settings.shopflo_account_font_size_button_a
         assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_a
         assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_a
         assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_a
@@ -303,6 +305,7 @@
         assign account_shadow_spread_button_b_preliminary = settings.shopflo_account_shadow_spread_button_a
         assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_a
       elsif settings.shopflo_account_match_with_button_b == 'button_c'
+        assign account_font_size_button_b_preliminary = settings.shopflo_account_font_size_button_c
         assign account_icon_size_button_b_preliminary = settings.shopflo_account_icon_size_button_c
         assign account_icon_color_button_b_preliminary = settings.shopflo_account_icon_color_button_c
         assign account_button_background_button_b_preliminary = settings.shopflo_account_button_background_button_c
@@ -319,6 +322,7 @@
         assign account_shadow_color_button_b_preliminary = settings.shopflo_account_shadow_color_button_c
       endif
 
+      assign account_font_size_button_c_source = settings.shopflo_account_font_size_button_c
       assign account_icon_size_button_c_source = settings.shopflo_account_icon_size_button_c
       assign account_icon_color_button_c_source = settings.shopflo_account_icon_color_button_c
       assign account_button_background_button_c_source = settings.shopflo_account_button_background_button_c
@@ -334,6 +338,7 @@
       assign account_shadow_spread_button_c_source = settings.shopflo_account_shadow_spread_button_c
       assign account_shadow_color_button_c_source = settings.shopflo_account_shadow_color_button_c
       if settings.shopflo_account_match_with_button_c == 'button_a'
+        assign account_font_size_button_c_source = settings.shopflo_account_font_size_button_a
         assign account_icon_size_button_c_source = settings.shopflo_account_icon_size_button_a
         assign account_icon_color_button_c_source = settings.shopflo_account_icon_color_button_a
         assign account_button_background_button_c_source = settings.shopflo_account_button_background_button_a
@@ -349,6 +354,7 @@
         assign account_shadow_spread_button_c_source = settings.shopflo_account_shadow_spread_button_a
         assign account_shadow_color_button_c_source = settings.shopflo_account_shadow_color_button_a
       elsif settings.shopflo_account_match_with_button_c == 'button_b'
+        assign account_font_size_button_c_source = account_font_size_button_b_preliminary
         assign account_icon_size_button_c_source = account_icon_size_button_b_preliminary
         assign account_icon_color_button_c_source = account_icon_color_button_b_preliminary
         assign account_button_background_button_c_source = account_button_background_button_b_preliminary
@@ -365,6 +371,7 @@
         assign account_shadow_color_button_c_source = account_shadow_color_button_b_preliminary
       endif
 
+      assign account_font_size_button_b_source = account_font_size_button_b_preliminary
       assign account_icon_size_button_b_source = account_icon_size_button_b_preliminary
       assign account_icon_color_button_b_source = account_icon_color_button_b_preliminary
       assign account_button_background_button_b_source = account_button_background_button_b_preliminary
@@ -380,6 +387,7 @@
       assign account_shadow_spread_button_b_source = account_shadow_spread_button_b_preliminary
       assign account_shadow_color_button_b_source = account_shadow_color_button_b_preliminary
       if settings.shopflo_account_match_with_button_b == 'button_c'
+        assign account_font_size_button_b_source = account_font_size_button_c_source
         assign account_icon_size_button_b_source = account_icon_size_button_c_source
         assign account_icon_color_button_b_source = account_icon_color_button_c_source
         assign account_button_background_button_b_source = account_button_background_button_c_source
@@ -535,6 +543,7 @@
           --secondary / --tertiary remap these -primary/-secondary/-tertiary vars onto the
           generic --shopflo-account-* names the shared markup rules actually consume.
         {% endcomment %}
+        --shopflo-account-label-font-size-primary: {{ settings.shopflo_account_font_size_button_a | append: 'px' }};
         --shopflo-account-icon-size-primary: {{ settings.shopflo_account_icon_size_button_a | append: 'px' }};
         --shopflo-account-icon-color-primary: {{ settings.shopflo_account_icon_color_button_a }};
         --shopflo-account-button-padding-inline-primary: {{ settings.shopflo_account_padding_inline_button_a | append: 'px' }};
@@ -550,6 +559,7 @@
           account_*_button_b_source / account_*_button_c_source captures already account for it,
           including the two-pass B<->C cross-resolution.
         {% endcomment %}
+        --shopflo-account-label-font-size-secondary: {{ account_font_size_button_b_source | append: 'px' }};
         --shopflo-account-icon-size-secondary: {{ account_icon_size_button_b_source | append: 'px' }};
         --shopflo-account-icon-color-secondary: {{ account_icon_color_button_b_source }};
         --shopflo-account-button-padding-inline-secondary: {{ account_padding_inline_button_b_source | append: 'px' }};
@@ -559,6 +569,7 @@
         --shopflo-account-label-color-secondary: {{ account_color_button_b_source }};
         --shopflo-account-button-shadow-secondary: {{ account_button_shadow_secondary }};
 
+        --shopflo-account-label-font-size-tertiary: {{ account_font_size_button_c_source | append: 'px' }};
         --shopflo-account-icon-size-tertiary: {{ account_icon_size_button_c_source | append: 'px' }};
         --shopflo-account-icon-color-tertiary: {{ account_icon_color_button_c_source }};
         --shopflo-account-button-padding-inline-tertiary: {{ account_padding_inline_button_c_source | append: 'px' }};
