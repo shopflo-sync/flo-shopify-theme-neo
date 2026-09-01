@@ -81,13 +81,24 @@
 
     - ADD-TO-CART dispatches the custom DOM event `shopflo-event:add-to-cart` on `document` right
       after a successful add-to-cart (see assets/cart-drawer.js / assets/cart-notification.js).
-      `bindDomEvents()` in assets/shopflo-script.js listens for it and always opens Shopflo's
-      cart immediately - this is the only cart-opening flow this theme wires up, so dispatch it
-      unconditionally on every add-to-cart from shared/base theme code.
+      `bindDomEvents()` in assets/shopflo-script.js listens for it and opens Shopflo's cart
+      immediately - the only cart-opening flow this theme wires up, so dispatch it unconditionally
+      on every add-to-cart from shared/base theme code - falling back to a plain `/cart`
+      navigation (same fallback as the cart icon's `openThemeFloCart()`) whenever
+      shouldTriggerFloDirectly() is false (shopflo_enable off, or an internationally-redirected
+      shopper).
 
     - To open Shopflo's CHECKOUT the same way: use the global `window.openThemeFloCheckout()`
       directly (`onclick="openThemeFloCheckout()"`) for any custom checkout/buy-link that isn't
       one of this snippet's own buttons - there is no data-attribute/event convention for checkout.
+
+    - The header cart ICON (e.g. sections/header.liquid's `<a href="{{ routes.cart_url }}">`) is a
+      plain link to the cart PAGE with no Shopflo wiring by default - clicking it just navigates
+      there normally. Set `shopflo_intercept_cart_page_redirect: true` in the `window.shopfloThemeConfig`
+      literal below (off by default, same hardcoded-not-a-setting convention as `shopflo_enable`)
+      to have `bindCartPageRedirectIntercept()` in assets/shopflo-script.js intercept clicks on
+      ANY link whose href resolves to `routes.cart_url` and open Shopflo's cart instead - no markup
+      changes needed at the link itself.
 
     - ANIMATED checkout/buy-now buttons (the button -> full-screen popup FLIP animation): give the
       button `class="shopflo-popup-trigger"` plus `data-flo-action="checkout"` or
@@ -647,7 +658,14 @@
         shopflo_international_redirect_enabled: {{ settings.shopflo_international_redirect_enabled | default: false | json }},
         shopflo_customer_account_swap: {{ shopflo_customer_account_swap | default: false | json }},
         shopflo_theme_cart_enabled: true,
+        {% comment %} When true, bindCartPageRedirectIntercept() in assets/shopflo-script.js
+        intercepts clicks on any link pointing at the cart PAGE (routes.cart_url, below) and opens
+        Shopflo's cart overlay instead of letting the native /cart page load - e.g. the header
+        cart icon at sections/header.liquid, which is otherwise a plain <a href="{{ routes.cart_url }}">
+        with no Shopflo wiring at all. A plain hardcoded literal, same as shopflo_enable above -
+        not a Theme Editor setting. {% endcomment %}
         shopflo_intercept_cart_page_redirect: false,
+        shopflo_cart_url: {{ routes.cart_url | json }},
         shopflo_third_party_cart_mutation: {
           enabled: false,
           is_shadow_dom: false,

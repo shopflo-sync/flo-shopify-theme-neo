@@ -18,6 +18,7 @@ class ShopfloTheme {
     this.bindBuyNowAtcSync();
     this.bindBuyNowIntlFallback();
     this.bindDomEvents();
+    this.bindCartPageRedirectIntercept();
     this.bindPopupMorph();
   }
 
@@ -157,11 +158,16 @@ class ShopfloTheme {
   }
 
   // shopflo-event:add-to-cart fires right after every successful add-to-cart (see
-  // assets/cart-drawer.js / assets/cart-notification.js) - always opens Shopflo's cart
-  // immediately, the only flow this theme wires up.
+  // assets/cart-drawer.js / assets/cart-notification.js) - opens Shopflo's cart immediately when
+  // it should trigger directly (see shouldTriggerFloDirectly()), otherwise falls back to a plain
+  // '/cart' navigation - same fallback as clicking the cart icon (openThemeFloCart()) - rather
+  // than leaving the shopper on the product page with no feedback (cart-drawer.js's own native
+  // open() call is deliberately commented out, and cart-notification.js's native open() ignores
+  // shopflo_enable entirely, so without this the shopper could see nothing happen at all).
   bindDomEvents() {
     document.addEventListener('shopflo-event:add-to-cart', () => {
       if (!this.shouldTriggerFloDirectly()) {
+        window.location.href = '/cart';
         return;
       }
       if (typeof window.handleFloCartBtn !== 'function') {
@@ -169,6 +175,37 @@ class ShopfloTheme {
       }
       this.dispatchCartOpened();
       window.handleFloCartBtn();
+    });
+  }
+
+  // Intercepts clicks on any link pointing at the cart PAGE (window.shopfloThemeConfig's
+  // shopflo_cart_url, i.e. routes.cart_url - e.g. the header cart icon in sections/header.liquid,
+  // which is otherwise a plain <a href="{{ routes.cart_url }}"> with no Shopflo wiring at all) and
+  // opens Shopflo's cart instead of letting the native /cart page load - only when
+  // this.config.shopflo_intercept_cart_page_redirect is explicitly true (hardcoded in
+  // snippets/shopflo.liquid, same as shopflo_enable - see bindDomEvents() above). Left OFF
+  // (false/unset) is a no-op: every such link just does its plain native navigation, same as
+  // before this method existed.
+  //
+  // Routed through openThemeFloCart() itself rather than duplicating its logic, so the disabled
+  // (shouldTriggerFloDirectly() false) case still ends up at the same '/cart' page the browser's
+  // own default action would have reached anyway - intercepting never changes the outcome there,
+  // only the mechanism.
+  bindCartPageRedirectIntercept() {
+    if (this.config.shopflo_intercept_cart_page_redirect !== true) return;
+    const cartPath = this.config.shopflo_cart_url;
+    if (!cartPath) return;
+
+    document.addEventListener('click', (event) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const link = event.target.closest('a[href]');
+      if (!link || link.pathname !== cartPath) return;
+      if (link.target && link.target !== '_self') return;
+
+      event.preventDefault();
+      this.openThemeFloCart();
     });
   }
 

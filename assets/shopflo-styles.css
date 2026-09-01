@@ -710,6 +710,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+    min-width: fit-content;
 }
 
 .shopflo-badge-icon--shield {
