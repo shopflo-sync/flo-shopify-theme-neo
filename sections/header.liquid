@@ -236,7 +236,9 @@
                     setting, so a separate mobile-drawer render would just duplicate it.
                   {%- endcomment -%}
                   {%- if shop.customer_accounts_enabled -%}
-                    {%- if settings.shopflo_customer_account_enabled == 'shopify' -%}
+                    {%- if settings.shopflo_customer_account_enabled == 'shopflo' -%}
+                      {% render 'shopflo', type: 'shop_pass_primary' %}
+                      {%- else -%}
                       <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="menu-drawer__account link focus-inset h5 medium-hide large-up-hide">
                         {% render 'icon-account' %}
                         {%- liquid
@@ -247,8 +249,6 @@
                           endif
                         -%}
                       </a>
-                    {%- else -%}
-                      {% render 'shopflo', type: 'shop_pass_primary' %}
                     {%- endif -%}
                   {%- endif -%}
                   {%- if section.settings.enable_country_selector or section.settings.enable_language_selector -%}
