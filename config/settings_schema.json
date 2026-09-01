@@ -2684,6 +2684,12 @@
         ]
       },
       {
+        "type": "checkbox",
+        "id": "shopflo_account_full_width_button_a",
+        "label": "Full width",
+        "default": false
+      },
+      {
         "type": "select",
         "id": "shopflo_account_dropdown_vertical_button_a",
         "label": "Dropdown position",
@@ -2911,6 +2917,13 @@
             "label": "Both"
           }
         ]
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_full_width_button_b",
+        "label": "Full width",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
       },
       {
         "type": "select",
@@ -3173,6 +3186,13 @@
             "label": "Both"
           }
         ]
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_full_width_button_c",
+        "label": "Full width",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
       },
       {
         "type": "select",

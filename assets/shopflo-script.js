@@ -20,6 +20,7 @@ class ShopfloTheme {
     this.bindDomEvents();
     this.bindCartPageRedirectIntercept();
     this.bindPopupMorph();
+    this.bindLabelWidthGuard();
   }
 
   isDomesticTimezone() {
@@ -206,6 +207,56 @@ class ShopfloTheme {
 
       event.preventDefault();
       this.openThemeFloCart();
+    });
+  }
+
+  // UI check: if the button's own label ends up squeezed to <=60% of the button's width (long or
+  // translated label text competing with the payment icons row and the "Powered by Shopflo" badge
+  // for room), hide both so the label - already flex-grow:1 in assets/shopflo-styles.css - can
+  // claim that freed-up space instead of truncating/wrapping awkwardly.
+  //
+  // Re-evaluated on window resize (debounced) and web-font load, NOT via a ResizeObserver on the
+  // button itself: a non-"Full width" button's own outer size shrinks to fit its content, so
+  // hiding its icons/badge would itself shrink the button, which a self-observing ResizeObserver
+  // would then react to again - an infinite show/hide oscillation. Reacting only to external
+  // signals sidesteps that: every evaluation removes the squeeze class FIRST (restoring icons/
+  // badge to their natural state) before measuring, so a run never reacts to a state a previous
+  // run of this same code produced.
+  bindLabelWidthGuard() {
+    const SQUEEZE_CLASS = 'sf-label-squeezed';
+    const SQUEEZE_RATIO = 0.6;
+
+    const buttons = document.querySelectorAll('.shopflo-checkout__button, .shopflo-buy-now__button');
+    if (!buttons.length) return;
+
+    const evaluate = () => {
+      buttons.forEach((button) => {
+        button.classList.remove(SQUEEZE_CLASS);
+
+        const label = button.querySelector(
+          '.shopflo-checkout__button--label, .shopflo-buy-now__button--label'
+        );
+        if (!label) return;
+
+        const buttonWidth = button.getBoundingClientRect().width;
+        if (!buttonWidth) return;
+
+        const labelWidth = label.getBoundingClientRect().width;
+        if (labelWidth / buttonWidth <= SQUEEZE_RATIO) {
+          button.classList.add(SQUEEZE_CLASS);
+        }
+      });
+    };
+
+    evaluate();
+    if (window.document.fonts && window.document.fonts.ready) {
+      window.document.fonts.ready.then(evaluate);
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(evaluate, 150);
     });
   }
 
@@ -621,6 +672,48 @@ const ShopfloAccountsConfig = {
   debug: true,
 };
 
+/**
+ * Safe sessionStorage read - sessionStorage access can throw synchronously (not just return
+ * null) in storage-restricted contexts: Safari ITP, private browsing in older engines, or a
+ * sandboxed iframe (e.g. Shopify's own theme-editor live preview can run the storefront in one).
+ * Without this guard, that throw happens INSIDE the click handler and aborts it before it does
+ * anything else - from the outside this looks exactly like "the button is unresponsive", with
+ * no visible error unless you're inspecting the correct frame's console.
+ *
+ * Kept as a plain module-level function (also used by ShopfloAccounts._readSessionStorage(),
+ * which just delegates to this one) rather than a class method, so resolveShopfloAuthState()
+ * below - and the public window.isThemeFloLoggedIn() global that reads it - both work even on a
+ * page with zero shop_pass_* instances rendered.
+ */
+function readShopfloSessionStorage(key) {
+  try {
+    return window.sessionStorage.getItem(key);
+  } catch (e) {
+    console.warn('[shopflo-accounts]', 'sessionStorage.getItem(\'' + key + '\') threw - treating as absent.', e);
+    return null;
+  }
+}
+
+function resolveShopfloAuthState() {
+  const { isSessionKey, isLogoutKey } = ShopfloAccountsConfig.session;
+  const hasSession = readShopfloSessionStorage(isSessionKey) === 'true';
+  const isLoggingOut = readShopfloSessionStorage(isLogoutKey) === 'true';
+  const state = hasSession && !isLoggingOut ? 'logged-in' : 'logged-out';
+  return { hasSession, isLoggingOut, state };
+}
+
+// Public global flag for "is the shopper currently logged in via Shopflo?" - a FUNCTION, not a
+// static boolean, since login state can change after page load (e.g. right after a successful
+// Shopflo login) without a full page reload; a snapshot taken once at load time would go stale.
+// Always synchronous and cheap (two sessionStorage reads) - safe to call at any time, including
+// before any shop_pass_* instance has rendered/upgraded. Named with the same "Theme"-prefixed
+// convention as openThemeFloCheckout()/openThemeFloCart() (see ShopfloTheme.bindGlobalTriggers())
+// to avoid silently colliding with a same-named global the Shopflo bundle script might also
+// define.
+window.isThemeFloLoggedIn = function () {
+  return resolveShopfloAuthState().state === 'logged-in';
+};
+
 class ShopfloAccounts extends HTMLElement {
   connectedCallback() {
     // Guards against connectedCallback firing more than once for the
@@ -742,21 +835,11 @@ class ShopfloAccounts extends HTMLElement {
     });
   }
 
-  /**
-   * Safe sessionStorage read - sessionStorage access can throw synchronously (not just return
-   * null) in storage-restricted contexts: Safari ITP, private browsing in older engines, or a
-   * sandboxed iframe (e.g. Shopify's own theme-editor live preview can run the storefront in one).
-   * Without this guard, that throw happens INSIDE the click handler and aborts it before it does
-   * anything else - from the outside this looks exactly like "the button is unresponsive", with
-   * no visible error unless you're inspecting the correct frame's console.
-   */
+  // Delegates to the module-level readShopfloSessionStorage() (see its own doc comment, just
+  // after ShopfloAccountsConfig's declaration) - kept as an instance method purely so every
+  // existing this._readSessionStorage(...) call site below didn't need touching.
   _readSessionStorage(key) {
-    try {
-      return window.sessionStorage.getItem(key);
-    } catch (e) {
-      console.warn('[shopflo-accounts]', 'sessionStorage.getItem(\'' + key + '\') threw - treating as absent.', e);
-      return null;
-    }
+    return readShopfloSessionStorage(key);
   }
 
   _writeSessionStorage(key, value) {
@@ -776,10 +859,7 @@ class ShopfloAccounts extends HTMLElement {
    * guessing, since that's the one thing the bundle itself always knows how to resolve correctly.
    */
   _resolveSessionState() {
-    const { isSessionKey, isLogoutKey } = ShopfloAccountsConfig.session;
-    const hasSession = this._readSessionStorage(isSessionKey) === 'true';
-    const isLoggingOut = this._readSessionStorage(isLogoutKey) === 'true';
-    const state = hasSession && !isLoggingOut ? 'logged-in' : 'logged-out';
+    const { hasSession, isLoggingOut, state } = resolveShopfloAuthState();
     this._log('_resolveSessionState:', { hasSession, isLoggingOut, state });
     return state;
   }
@@ -943,7 +1023,22 @@ class ShopfloAccounts extends HTMLElement {
     if (!drawerEl || !anchorEl) return;
 
     const slot = this._resolveSlot();
-    const cacheKey = 'shopflo_account_drawer_position_' + slot;
+    // The preferred direction (Theme Editor > Shopflo Shop Pass > Login Button A/B/C > Dropdown
+    // position, read off this element's own data-drawer-vertical/-horizontal) is folded into the
+    // cache key itself, not just used inside _computeDrawerPosition() below - a cached position
+    // is otherwise read and applied WITHOUT ever re-checking whether it still matches the
+    // currently-configured preference, so changing the Theme Editor setting had no visible effect
+    // for the rest of that sessionStorage session (e.g. across a theme-editor preview reload) even
+    // though every other part of this class was reading the new value correctly. Keying by
+    // preference too makes a changed setting a cache MISS on its own, with no separate
+    // invalidation step needed.
+    const cacheKey =
+      'shopflo_account_drawer_position_' +
+      slot +
+      '_' +
+      this.dataset.drawerVertical +
+      '_' +
+      this.dataset.drawerHorizontal;
     let position = this._readCachedDrawerPosition(cacheKey);
     if (!position) {
       position = this._computeDrawerPosition(drawerEl, anchorEl);

@@ -262,6 +262,7 @@
     gap: 0.3rem;
     transition: all 50ms ease-in-out;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .shopflo-checkout__button {
@@ -726,6 +727,19 @@
     width: unset;
 }
 
+/* UI check: keeps the button label readable when space is tight - bindLabelWidthGuard() in
+   assets/shopflo-script.js adds .sf-label-squeezed to the button whenever its label's own
+   rendered width would otherwise be squeezed to <=60% of the button's width (long/translated
+   label text competing with the payment icons and the "Powered by Shopflo" badge for room).
+   Hiding both here lets .shopflo-checkout__button--label/.shopflo-buy-now__button--label's
+   existing flex-grow:1 (above) claim the freed-up space automatically. */
+.shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
+.shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield,
+.shopflo-buy-now__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
+.shopflo-buy-now__button.sf-label-squeezed .shopflo-badge-icon--shield {
+    display: none;
+}
+
 /* ==========================================================================
    Checkout / Buy Now button — promo banner
    ========================================================================== */
@@ -978,6 +992,19 @@ shopflo-accounts {
     justify-content: center;
 }
 
+/* "Full width" (Theme Editor > Shopflo Shop Pass > Login Button A/B/C) - opt-in, off by default
+   (unlike checkout/buy-now's own Full width, which defaults on): this element is normally placed
+   inline among other header icons, where 100% width would swallow the whole row, so it only makes
+   sense where a caller has deliberately given it a dedicated row to itself (e.g. a mobile menu
+   drawer utility link). The element selector alone (shopflo-accounts{}, above) never sets its own
+   width, so this could just be the plain .sf-full-width utility class - but
+   .shopflo-accounts__icon-button (below) DOES set its own width:fit-content, so ITS override
+   needs the extra element+class specificity to reliably win regardless of source order; matching
+   the wrapper's selector shape here too, for consistency. */
+shopflo-accounts.sf-full-width {
+    width: 100%;
+}
+
 /* Primary/Secondary settings are independent (see snippets/shopflo.liquid's 'assets' case), but
    the markup/rules below only ever reference the generic --shopflo-account-* names. Whichever
    modifier class snippets/shopflo.liquid put on <shopflo-accounts> (--primary from
@@ -1091,6 +1118,16 @@ shopflo-accounts {
 .shopflo-accounts__icon-button[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+/* Overrides this rule's own width:fit-content above - needs the extra class+class specificity to
+   win reliably: the plain .sf-full-width utility class (defined near the top of this file, under
+   "Utility classes") is otherwise EQUAL specificity to .shopflo-accounts__icon-button above, and
+   .shopflo-accounts__icon-button comes later in source order, so it would win the tie and the
+   toggle would silently do nothing without this. See the matching comment on
+   shopflo-accounts.sf-full-width further up. */
+.shopflo-accounts__icon-button.sf-full-width {
+    width: 100%;
 }
 
 /* Icon color settings are `color_background` (solid or gradient), same as the checkout/buy-now
@@ -1250,4 +1287,8 @@ shopflo-accounts {
 
 .shopflo-accounts__drawer[data-flo-visible="true"] {
     display: block;
+}
+
+body:has([data-flo-state="login-icon"][data-flo-visible=false]) #flo-marketing-popup-wrapper {
+    display: none;
 }

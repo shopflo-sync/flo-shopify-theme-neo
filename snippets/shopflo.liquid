@@ -155,6 +155,11 @@
     bundle itself keeps up to date - `flo_isShopfloSession` and `FLO_SSO_IS_LOGOUT` - there is no
     hidden markup, DOM observation, or click-forwarding involved for auth detection itself:
 
+    - To just ask "is the shopper logged in right now?" (rather than listen for the moment it
+      changes), call the global `window.isThemeFloLoggedIn()` - a plain function, not a cached
+      flag, so it's always fresh even if login state changed after page load with no reload in
+      between. Works standalone, with no shop_pass_* instance rendered anywhere on the page.
+
     - `shopflo-event:account-drawer-opened` / `shopflo-event:account-drawer-closed` - this theme's
       OWN Account/Log out dropdown menu, shown only when confidently logged in (a Shopflo session
       exists and no logout is in progress).
@@ -1261,50 +1266,61 @@
       assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_b
       assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_b
       assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_b
+      assign account_full_width_button_b_preliminary = settings.shopflo_account_full_width_button_b
       if settings.shopflo_account_match_with_button_b == 'button_a'
         assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_a
         assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_a
         assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_a
+        assign account_full_width_button_b_preliminary = settings.shopflo_account_full_width_button_a
       elsif settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_c
         assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_c
         assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_c
+        assign account_full_width_button_b_preliminary = settings.shopflo_account_full_width_button_c
       endif
 
       assign account_label_text_button_c = settings.shopflo_account_text_button_c
       assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_c
       assign account_bold_text_button_c = settings.shopflo_account_bold_text_button_c
+      assign account_full_width_button_c = settings.shopflo_account_full_width_button_c
       if settings.shopflo_account_match_with_button_c == 'button_a'
         assign account_label_text_button_c = settings.shopflo_account_text_button_a
         assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_a
         assign account_bold_text_button_c = settings.shopflo_account_bold_text_button_a
+        assign account_full_width_button_c = settings.shopflo_account_full_width_button_a
       elsif settings.shopflo_account_match_with_button_c == 'button_b'
         assign account_label_text_button_c = account_label_text_button_b_preliminary
         assign account_button_layout_button_c = account_button_layout_button_b_preliminary
         assign account_bold_text_button_c = account_bold_text_button_b_preliminary
+        assign account_full_width_button_c = account_full_width_button_b_preliminary
       endif
 
       assign account_label_text_button_b = account_label_text_button_b_preliminary
       assign account_button_layout_button_b = account_button_layout_button_b_preliminary
       assign account_bold_text_button_b = account_bold_text_button_b_preliminary
+      assign account_full_width_button_b = account_full_width_button_b_preliminary
       if settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_label_text_button_b = account_label_text_button_c
         assign account_button_layout_button_b = account_button_layout_button_c
         assign account_bold_text_button_b = account_bold_text_button_c
+        assign account_full_width_button_b = account_full_width_button_c
       endif
 
       if account_slot == 'primary'
         assign account_label_text = settings.shopflo_account_text_button_a
         assign account_button_layout = settings.shopflo_account_button_layout_button_a
         assign account_bold_text = settings.shopflo_account_bold_text_button_a
+        assign account_full_width = settings.shopflo_account_full_width_button_a
       elsif account_slot == 'secondary'
         assign account_label_text = account_label_text_button_b
         assign account_button_layout = account_button_layout_button_b
         assign account_bold_text = account_bold_text_button_b
+        assign account_full_width = account_full_width_button_b
       else
         assign account_label_text = account_label_text_button_c
         assign account_button_layout = account_button_layout_button_c
         assign account_bold_text = account_bold_text_button_c
+        assign account_full_width = account_full_width_button_c
       endif
 
       assign account_font_weight = 'normal'
@@ -1346,10 +1362,13 @@
       if show_account_label and account_button_layout == 'icon_right'
         assign account_icon_button_class = account_icon_button_class | append: ' sf-account-layout--icon-right'
       endif
+      if account_full_width
+        assign account_icon_button_class = account_icon_button_class | append: ' sf-full-width'
+      endif
     -%}
 
     <shopflo-accounts
-      class="shopflo-accounts {{ account_variant_class }} {{ account_visible_class }}"
+      class="shopflo-accounts {{ account_variant_class }} {{ account_visible_class }} {% if account_full_width %} sf-full-width {% endif %}"
       data-drawer-vertical="{{ account_drawer_vertical }}"
       data-drawer-horizontal="{{ account_drawer_horizontal }}"
     >
