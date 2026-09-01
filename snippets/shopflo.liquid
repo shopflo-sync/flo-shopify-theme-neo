@@ -173,6 +173,7 @@
 
     @param {string} type - Which piece to render: 'assets' (svg defs/styles/scripts + shared popup markup, default), 'checkout' (checkout button), 'buy_now' (buy-now button), 'shop_pass_primary', 'shop_pass_secondary', or 'shop_pass_tertiary' (account login icon/drawer proxy, independently styled per slot, each self-hiding per its own "Visible on" setting - see <shopflo-accounts> in assets/shopflo-script.js), or 'shop_pass_bundle_markup' (dummy hidden markup the Shopflo bundle script itself needs to initialize correctly - required, once anywhere in <body>, whenever you render any shop_pass_* instance).
     @param {boolean} [shopflo_badge] - Checkout/buy_now only. Shows the "Powered by Shopflo" badge on the button. Defaults to true.
+    @param {boolean} [shopflo_payment_icons] - Checkout/buy_now only. Master show/hide for the payment icons row, on top of (not instead of) the existing Theme Editor settings - Theme Editor > Shopflo Checkout/Buy Now > Show payment icons, icon 1/2/3 pickers, position, etc. all still apply exactly as before; this just lets a caller force the row off for one particular render (e.g. a compact cart-drawer instance) without touching those settings. Defaults to true. Pass `false` explicitly to hide - like `show_icon` below, NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
     @param {object} [form] - Required when type is 'buy_now'. The product form object, used for the dynamic Shopify payment button fallback.
     @param {object} [product_obj] - Required when type is 'buy_now'. The product object, used for checking stock.
     @param {string} [label_account] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Drawer's account menu item label. Defaults to "Account".
@@ -222,6 +223,14 @@
 {%- liquid
   assign shopflo_snippet_type = type | default: 'assets'
   assign shopflo_badge = shopflo_badge | default: true
+
+  # NOT `shopflo_payment_icons | default: true` - see the @param doc above: the default filter
+  # would silently treat an explicit `false` the same as "not passed".
+  assign shopflo_payment_icons_param = shopflo_payment_icons
+  assign shopflo_payment_icons = true
+  if shopflo_payment_icons_param == false
+    assign shopflo_payment_icons = false
+  endif
 
   assign any_selected_checkout_payment_icons = false
   if settings.shopflo_payment_icon_1_checkout != 'none' or settings.shopflo_payment_icon_2_checkout != 'none' or settings.shopflo_payment_icon_3_checkout != 'none'
@@ -771,6 +780,14 @@
       assign checkout_icon_3 = settings.shopflo_payment_icon_checkout_3
       assign checkout_icons_list = checkout_icon_1 | append: '|' | append: checkout_icon_2 | append: '|' | append: checkout_icon_3 | split: '|'
 
+      # shopflo_payment_icons (render param, see @doc above) is an extra AND-gate on top of the
+      # Theme Editor's own "Show payment icons" setting - both still have to be true for the row
+      # to render.
+      assign checkout_icons_enabled = settings.shopflo_payment_icons_checkout
+      if shopflo_payment_icons == false
+        assign checkout_icons_enabled = false
+      endif
+
       assign any_selected_checkout_payment_icons = false
       if checkout_icon_1 != 'none' or checkout_icon_2 != 'none' or checkout_icon_3 != 'none'
         assign any_selected_checkout_payment_icons = true
@@ -798,7 +815,7 @@
 
     {% capture checkout_button_class %}
     shopflo-checkout__button shopflo-popup-trigger {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if settings.shopflo_shadow_style_checkout != 'none' %} sf-button-shadow--{{ settings.shopflo_shadow_style_checkout }} {%
-    endif %} {% if settings.shopflo_hover_effect_checkout != 'none' %} sf-button-hover--{{ settings.shopflo_hover_effect_checkout }} {% endif %} {% if settings.shopflo_payment_icons_checkout == true %} sf-checkout-payment-icon--{{ settings.shopflo_payment_icon_position_checkout }} {% endif %}
+    endif %} {% if settings.shopflo_hover_effect_checkout != 'none' %} sf-button-hover--{{ settings.shopflo_hover_effect_checkout }} {% endif %} {% if checkout_icons_enabled == true %} sf-checkout-payment-icon--{{ settings.shopflo_payment_icon_position_checkout }} {% endif %}
     {% endcapture %}
 
     {%- capture checkout_promo_markup -%}
@@ -820,7 +837,7 @@
         {%- endif -%}
 
         <span class="shopflo-payment-icons__wrapper">
-          {%- if settings.shopflo_payment_icons_checkout == true and any_selected_checkout_payment_icons == true -%}
+          {%- if checkout_icons_enabled == true and any_selected_checkout_payment_icons == true -%}
             {%- for icon in checkout_icons_list -%}
               {%- unless icon == 'none' -%}
                 <span class="shopflo-icon shopflo-payment-icon--{{ icon }}">
@@ -964,6 +981,15 @@
         assign buy_now_icon_2 = settings.shopflo_payment_icon_checkout_2
         assign buy_now_icon_3 = settings.shopflo_payment_icon_checkout_3
       endif
+
+      # shopflo_payment_icons (render param, see @doc above) is an extra AND-gate on top of
+      # whichever "Show payment icons" setting buy_now_icons_enabled just resolved to (its own,
+      # or checkout's when "Match Checkout" is on) - both still have to be true for the row to
+      # render.
+      if shopflo_payment_icons == false
+        assign buy_now_icons_enabled = false
+      endif
+
       assign buy_now_icons_list = buy_now_icon_1 | append: '|' | append: buy_now_icon_2 | append: '|' | append: buy_now_icon_3 | split: '|'
 
       assign any_selected_buy_now_payment_icons = false

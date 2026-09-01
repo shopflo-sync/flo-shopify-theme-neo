@@ -673,6 +673,13 @@
 
 .shopflo-checkout__button--label {
     flex-basis: 70%;
+    /* Claims any space left unclaimed by the icons wrapper/badge - both are flex-grow:0, so this
+       is a no-op when they're rendered at their full 15%/15% share, but lets the label expand to
+       fill the button on its own when one or both are omitted from the DOM entirely (payment
+       icons disabled via settings.shopflo_payment_icons_checkout or the shopflo_payment_icons
+       render param, and/or shopflo_badge: false) rather than leaving a dead gap where they'd
+       have sat. */
+    flex-grow: 1;
     height: 100%;
     min-height: var(--sf-checkout-font-size);
     display: flex;
@@ -689,6 +696,8 @@
 
 .shopflo-buy-now__button--label {
     flex-basis: 70%;
+    /* See the matching comment on .shopflo-checkout__button--label above. */
+    flex-grow: 1;
     height: 100%;
     min-height: var(--sf-buy-now-font-size);
     display: flex;
@@ -713,6 +722,7 @@
     display: block;
     height: 100%;
     max-width: 100%;
+    width: unset;
 }
 
 /* ==========================================================================
@@ -1125,6 +1135,7 @@ shopflo-accounts {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
+    padding-block: 1px;
 }
 
 .shopflo-accounts__logged-in {
