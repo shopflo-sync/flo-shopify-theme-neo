@@ -930,15 +930,19 @@ class ShopfloAccounts extends HTMLElement {
   /** Wires the drawer's own "Account" / "Log out" menu items — no bundle click-forwarding. */
   _setupDrawerItemTriggers() {
     this.querySelectorAll('[data-flo-trigger="account-login"]').forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        // handleDrawer() (no args) is the SAME bundle function the logged-out header-icon click
-        // already defers to (see _handleHeaderIconClick's else branch) - the one thing the
-        // bundle itself always knows how to resolve correctly, deciding for itself whether to
-        // show its login UI or its own account drawer. Was previously handleShopifyLogin(event,
-        // '/account'), which forced a hard navigation to /account instead of an in-page overlay -
-        // handleDrawer() lets the bundle make that call instead of this theme hardcoding it.
-        this._log('account-login clicked, typeof window.handleDrawer =', typeof window.handleDrawer);
-        this._callGlobalWhenReady('handleDrawer', []);
+      trigger.addEventListener('click', (event) => {
+        // handleShopifyLogin(event, '/account') - NOT handleDrawer(). handleDrawer() is a
+        // TOGGLE meant for the header icon (open/close between login UI and account drawer based
+        // on the bundle's OWN session read, which isn't guaranteed to agree with this theme's
+        // sessionStorage flags at the instant this click fires) - calling it from an ALREADY-OPEN
+        // drawer's own "Account" item risks toggling the bundle into the wrong state (e.g. its
+        // login UI instead of account management) or fighting with whatever this drawer is
+        // already showing. handleShopifyLogin(event, '/account') is the bundle's dedicated,
+        // idempotent "open account management" call - the same signature its own dummy
+        // shop_pass_bundle_markup reference link uses - so it's the correct one here regardless
+        // of where it ultimately navigates/renders.
+        this._log('account-login clicked, typeof window.handleShopifyLogin =', typeof window.handleShopifyLogin);
+        this._callGlobalWhenReady('handleShopifyLogin', [event, '/account']);
         this._handleAccountIframeFlow();
       });
     });
@@ -1169,11 +1173,9 @@ class ShopfloAccounts extends HTMLElement {
   }
 
   /**
-   * Called after the "Account" drawer item's click has fired handleDrawer() - waits for the
-   * bundle to append its real (permanently hidden) login iframe, if its own conditional decision
-   * ends up using one, then mirrors it into ours. A no-op (just the timeout warning below) if
-   * handleDrawer() shows something else instead - watching for this one known iframe id is
-   * harmless either way, since it doesn't care which bundle function triggered its creation.
+   * Called after the "Account" drawer item's click has fired
+   * handleShopifyLogin() — waits for the bundle to append its real
+   * (permanently hidden) login iframe, then mirrors it into ours.
    */
   _handleAccountIframeFlow() {
     this._waitForElement(ShopfloAccountsConfig.iframe.sourceId).then((iframeEl) => {
