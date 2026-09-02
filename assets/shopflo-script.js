@@ -694,6 +694,18 @@ function readShopfloSessionStorage(key) {
   }
 }
 
+// Mirrors readShopfloSessionStorage() above - same safe-write reasoning as
+// ShopfloAccounts._writeSessionStorage(), which now just delegates to this one.
+function writeShopfloSessionStorage(key, value) {
+  try {
+    window.sessionStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    console.warn('[shopflo-accounts]', 'sessionStorage.setItem(\'' + key + '\') threw - continuing anyway.', e);
+    return false;
+  }
+}
+
 function resolveShopfloAuthState() {
   const { isSessionKey, isLogoutKey } = ShopfloAccountsConfig.session;
   const hasSession = readShopfloSessionStorage(isSessionKey) === 'true';
@@ -701,6 +713,29 @@ function resolveShopfloAuthState() {
   const state = hasSession && !isLoggingOut ? 'logged-in' : 'logged-out';
   return { hasSession, isLoggingOut, state };
 }
+
+// A shopper with NEITHER Shopflo session key present at all (a genuinely fresh session - no
+// prior visit, nothing in sessionStorage yet) leaves both keys `null`/absent. That already
+// resolves to 'logged-out' in resolveShopfloAuthState() above (same as both keys being
+// explicitly 'true' - hasSession && !isLoggingOut is false either way), so THIS theme's own
+// logged-in/logged-out branching is unaffected. But the Shopflo bundle script reads these same
+// two keys directly and independently of this file - and, per observed behavior, its own login
+// flow only initializes correctly once both keys have a defined value, not while they're
+// undefined. So on a truly fresh session (neither key set), explicitly seed both to 'true' -
+// i.e. an explicit "logged out" state - purely so the bundle has something defined to read,
+// without changing what this theme itself would otherwise decide. Runs once, immediately, at
+// script-parse time - deliberately not gated behind DOMContentLoaded or any shop_pass_* instance
+// existing, so it's in place before the bundle (or a shopper) ever gets a chance to read it.
+function seedShopfloSessionFlagsIfMissing() {
+  const { isSessionKey, isLogoutKey } = ShopfloAccountsConfig.session;
+  const hasEitherFlag =
+    readShopfloSessionStorage(isSessionKey) !== null || readShopfloSessionStorage(isLogoutKey) !== null;
+  if (hasEitherFlag) return;
+
+  writeShopfloSessionStorage(isSessionKey, 'true');
+  writeShopfloSessionStorage(isLogoutKey, 'true');
+}
+seedShopfloSessionFlagsIfMissing();
 
 // Public global flag for "is the shopper currently logged in via Shopflo?" - a FUNCTION, not a
 // static boolean, since login state can change after page load (e.g. right after a successful
@@ -842,14 +877,11 @@ class ShopfloAccounts extends HTMLElement {
     return readShopfloSessionStorage(key);
   }
 
+  // Delegates to the module-level writeShopfloSessionStorage() (see its own doc comment, just
+  // after readShopfloSessionStorage's) - kept as an instance method purely so every existing
+  // this._writeSessionStorage(...) call site below didn't need touching.
   _writeSessionStorage(key, value) {
-    try {
-      window.sessionStorage.setItem(key, value);
-      return true;
-    } catch (e) {
-      console.warn('[shopflo-accounts]', 'sessionStorage.setItem(\'' + key + '\') threw - continuing anyway.', e);
-      return false;
-    }
+    return writeShopfloSessionStorage(key, value);
   }
 
   /**
@@ -898,9 +930,15 @@ class ShopfloAccounts extends HTMLElement {
   /** Wires the drawer's own "Account" / "Log out" menu items — no bundle click-forwarding. */
   _setupDrawerItemTriggers() {
     this.querySelectorAll('[data-flo-trigger="account-login"]').forEach((trigger) => {
-      trigger.addEventListener('click', (event) => {
-        this._log('account-login clicked, typeof window.handleShopifyLogin =', typeof window.handleShopifyLogin);
-        this._callGlobalWhenReady('handleShopifyLogin', [event, '/account']);
+      trigger.addEventListener('click', () => {
+        // handleDrawer() (no args) is the SAME bundle function the logged-out header-icon click
+        // already defers to (see _handleHeaderIconClick's else branch) - the one thing the
+        // bundle itself always knows how to resolve correctly, deciding for itself whether to
+        // show its login UI or its own account drawer. Was previously handleShopifyLogin(event,
+        // '/account'), which forced a hard navigation to /account instead of an in-page overlay -
+        // handleDrawer() lets the bundle make that call instead of this theme hardcoding it.
+        this._log('account-login clicked, typeof window.handleDrawer =', typeof window.handleDrawer);
+        this._callGlobalWhenReady('handleDrawer', []);
         this._handleAccountIframeFlow();
       });
     });
@@ -1131,9 +1169,11 @@ class ShopfloAccounts extends HTMLElement {
   }
 
   /**
-   * Called after the "Account" drawer item's click has fired
-   * handleShopifyLogin() — waits for the bundle to append its real
-   * (permanently hidden) login iframe, then mirrors it into ours.
+   * Called after the "Account" drawer item's click has fired handleDrawer() - waits for the
+   * bundle to append its real (permanently hidden) login iframe, if its own conditional decision
+   * ends up using one, then mirrors it into ours. A no-op (just the timeout warning below) if
+   * handleDrawer() shows something else instead - watching for this one known iframe id is
+   * harmless either way, since it doesn't care which bundle function triggered its creation.
    */
   _handleAccountIframeFlow() {
     this._waitForElement(ShopfloAccountsConfig.iframe.sourceId).then((iframeEl) => {

@@ -153,7 +153,14 @@
     shop_pass_primary/shop_pass_secondary/shop_pass_tertiary instance the shopper actually
     interacted with. Real auth state is read straight from two sessionStorage keys the Shopflo
     bundle itself keeps up to date - `flo_isShopfloSession` and `FLO_SSO_IS_LOGOUT` - there is no
-    hidden markup, DOM observation, or click-forwarding involved for auth detection itself:
+    hidden markup, DOM observation, or click-forwarding involved for auth detection itself. On a
+    genuinely fresh session (neither key present at all - a shopper's very first pageview),
+    `seedShopfloSessionFlagsIfMissing()` in assets/shopflo-script.js seeds both to `'true'`
+    (an explicit "logged out" state - still resolves the same way this theme's own
+    logged-in/logged-out branching already treats an absent key) purely so the bundle's own login
+    flow, which reads these two keys directly and independently of this file, has a defined value
+    to work from instead of `undefined`. Runs once, unconditionally, at script-parse time - before
+    any shop_pass_* instance exists or the bundle itself has loaded:
 
     - To just ask "is the shopper logged in right now?" (rather than listen for the moment it
       changes), call the global `window.isThemeFloLoggedIn()` - a plain function, not a cached
