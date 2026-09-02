@@ -224,7 +224,7 @@ class ShopfloTheme {
   // run of this same code produced.
   bindLabelWidthGuard() {
     const SQUEEZE_CLASS = 'sf-label-squeezed';
-    const SQUEEZE_RATIO = 0.6;
+    const SQUEEZE_RATIO = 0.55;
 
     const buttons = document.querySelectorAll('.shopflo-checkout__button, .shopflo-buy-now__button');
     if (!buttons.length) return;

@@ -262,7 +262,6 @@
     gap: 0.3rem;
     transition: all 50ms ease-in-out;
     cursor: pointer;
-    overflow: hidden;
 }
 
 .shopflo-checkout__button {
