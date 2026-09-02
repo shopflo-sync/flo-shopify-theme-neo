@@ -1461,6 +1461,29 @@
               </button>
             </li>
           </ul>
+
+          {%- comment -%}
+            Closes the drawer, same as the overlay/backdrop click further below - just an
+            explicit, discoverable control instead of relying on click-outside. A real DOM child
+            of .shopflo-accounts__drawer, but positioned (see assets/shopflo-styles.css) as a
+            separate floating circle OUTSIDE the drawer's own rounded/padded card via a negative
+            bottom/top offset - not part of the dropdown's visual box, not an item in its list.
+            _applyDrawerPosition() in assets/shopflo-script.js toggles
+            shopflo-accounts__drawer--open-top on the drawer whenever it's actually rendered ABOVE
+            the account icon instead of its default below; the paired CSS flips this button from
+            just past the drawer's bottom edge to just past its top edge in lockstep, so it's
+            always on the outside edge farthest from the icon - no extra JS needed.
+          {%- endcomment -%}
+          <button
+            type="button"
+            class="shopflo-accounts__drawer-close"
+            data-flo-trigger="close-drawer"
+            aria-label="Close menu"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </button>
         </div>
 
         {%- comment -%}

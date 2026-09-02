@@ -1236,6 +1236,48 @@ shopflo-accounts.sf-full-width {
     background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb);
 }
 
+/* A separate floating circular button, NOT part of the dropdown card itself - positioned
+   relative to .shopflo-accounts__drawer (its own nearest positioned ancestor, already
+   position:absolute above) via a NEGATIVE bottom/top offset, which pushes it past the drawer's
+   own edge into the gap below/above it rather than sitting inside the card's padded, rounded
+   content area. Its own background+shadow (matching the drawer's) is what makes it read as a
+   distinct floating badge instead of a transparent cutout of whatever's behind it. Still a real
+   DOM child of the drawer, so display:none on the drawer's own [data-flo-visible="false"] (see
+   the "Visibility" section further down) hides this along with everything else in one shot - no
+   separate visibility wiring needed. */
+.shopflo-accounts__drawer-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    bottom: -30px;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    background: var(--shopflo-account-drawer-bg, #fff);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    color: var(--shopflo-account-drawer-item-color, #344054);
+    transition: background 0.2s ease;
+}
+
+/* Mirrors .shopflo-accounts__drawer--open-top (above) flipping the drawer itself from below-icon
+   to above-icon: the close button flips from just past the BOTTOM edge to just past the TOP edge
+   in lockstep, so it's always on the outside edge farthest from the icon rather than the one
+   closest to it. */
+.shopflo-accounts__drawer--open-top .shopflo-accounts__drawer-close {
+    bottom: auto;
+    top: -30px;
+}
+
+.shopflo-accounts__drawer-close:hover {
+    background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb);
+}
+
 /* Sibling of .shopflo-accounts__drawer, positioned the same way — width matches the bundle's own
    real iframe (400px, 16px radius). Height stays live via --flo-sso-iframe-height, synced from
    the real iframe's actual size (see _startIframeSizeSync in shopflo-script.js), since it changes

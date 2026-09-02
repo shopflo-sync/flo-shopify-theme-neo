@@ -230,14 +230,17 @@
                 </nav>
                 <div class="menu-drawer__utility-links">
                   {%- comment -%}
-                    Shopflo's account icon isn't rendered here anymore - the header's own
-                    shop_pass_primary/shop_pass_secondary instances (see the account-icon spot
-                    further down this section) already cover mobile via their own "Visible on"
-                    setting, so a separate mobile-drawer render would just duplicate it.
+                    shop_pass_SECONDARY (not primary) - Login Button B in the Theme Editor, which
+                    defaults to "Mobile only" visibility, is meant to live here: the header's own
+                    shop_pass_primary instance (see the account-icon spot further down this
+                    section) is Button A, defaulting to "Desktop only" - it does NOT cover mobile
+                    on its own. Rendering shop_pass_primary here instead (as this used to) would
+                    duplicate Button A - same slot, same hardcoded iframe id - rather than filling
+                    the mobile gap Button B exists for.
                   {%- endcomment -%}
                   {%- if shop.customer_accounts_enabled -%}
                     {%- if settings.shopflo_customer_account_enabled == 'shopflo' -%}
-                      {% render 'shopflo', type: 'shop_pass_primary' %}
+                      {% render 'shopflo', type: 'shop_pass_secondary' %}
                       {%- else -%}
                       <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="menu-drawer__account link focus-inset h5 medium-hide large-up-hide">
                         {% render 'icon-account' %}
