@@ -1631,8 +1631,18 @@
       },
       {
         "type": "range",
-        "id": "shopflo_button_padding_checkout",
-        "label": "Button padding",
+        "id": "shopflo_button_padding_block_checkout",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 10
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_padding_inline_checkout",
+        "label": "Horizontal padding",
         "min": 0,
         "max": 50,
         "step": 1,
@@ -2150,8 +2160,19 @@
       },
       {
         "type": "range",
-        "id": "shopflo_button_padding_buy_now",
-        "label": "Button padding",
+        "id": "shopflo_button_padding_block_buy_now",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 10,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_padding_inline_buy_now",
+        "label": "Horizontal padding",
         "min": 0,
         "max": 50,
         "step": 1,

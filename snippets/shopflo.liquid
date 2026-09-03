@@ -478,7 +478,8 @@
     {% style %}
       :root {
         --sf-checkout-height: {{ settings.shopflo_button_height_checkout | append: 'px' }};
-        --sf-checkout-padding: {{ settings.shopflo_button_padding_checkout | append: 'px' }};
+        --sf-checkout-padding-block: {{ settings.shopflo_button_padding_block_checkout | append: 'px' }};
+        --sf-checkout-padding-inline: {{ settings.shopflo_button_padding_inline_checkout | append: 'px' }};
         --sf-checkout-font-size: {{ settings.shopflo_font_size_checkout | append: 'px' }};
         --sf-checkout-letter-spacing: {{ settings.shopflo_letter_spacing_checkout | append: 'px' }};
         --sf-checkout-background: {{ settings.shopflo_background_color_checkout }};
@@ -490,12 +491,14 @@
 
         {% if settings.shopflo_match_checkout_layout_buy_now %}
           --sf-buy-now-height: {{ settings.shopflo_button_height_checkout | append: 'px' }};
-          --sf-buy-now-padding: {{ settings.shopflo_button_padding_checkout | append: 'px' }};
+          --sf-buy-now-padding-block: {{ settings.shopflo_button_padding_block_checkout | append: 'px' }};
+          --sf-buy-now-padding-inline: {{ settings.shopflo_button_padding_inline_checkout | append: 'px' }};
           --sf-buy-now-font-size: {{ settings.shopflo_font_size_checkout | append: 'px' }};
           --sf-buy-now-letter-spacing: {{ settings.shopflo_letter_spacing_checkout | append: 'px' }};
         {% else %}
           --sf-buy-now-height: {{ settings.shopflo_button_height_buy_now | append: 'px' }};
-          --sf-buy-now-padding: {{ settings.shopflo_button_padding_buy_now | append: 'px' }};
+          --sf-buy-now-padding-block: {{ settings.shopflo_button_padding_block_buy_now | append: 'px' }};
+          --sf-buy-now-padding-inline: {{ settings.shopflo_button_padding_inline_buy_now | append: 'px' }};
           --sf-buy-now-font-size: {{ settings.shopflo_font_size_buy_now | append: 'px' }};
           --sf-buy-now-letter-spacing: {{ settings.shopflo_letter_spacing_buy_now | append: 'px' }};
         {% endif %}

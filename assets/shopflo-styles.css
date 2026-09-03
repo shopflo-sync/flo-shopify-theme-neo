@@ -271,7 +271,8 @@
         var(--sf-checkout-border-color) border-box;
     height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2));
     max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2));
-    padding: var(--sf-checkout-padding);
+    padding-block: var(--sf-checkout-padding-block);
+    padding-inline: var(--sf-checkout-padding-inline);
     font-size: var(--sf-checkout-font-size);
     outline: none;
 }
@@ -319,7 +320,8 @@
         var(--sf-buy-now-border-color) border-box;
     height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2));
     max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2));
-    padding: var(--sf-buy-now-padding);
+    padding-block: var(--sf-buy-now-padding-block);
+    padding-inline: var(--sf-buy-now-padding-inline);
     font-size: var(--sf-buy-now-font-size);
     outline: none;
 }
@@ -576,18 +578,18 @@
 
 .shopflo-icon[class*="shopflo-payment-icon--"] {
     position: relative;
-    width: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding) * 1.5), var(--sf-payment-icon-size)));
-    height: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding) * 1.5), var(--sf-payment-icon-size)));
+    width: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size)));
+    height: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size)));
 }
 
 .shopflo-checkout__button .shopflo-icon[class*="shopflo-payment-icon--"] {
-    max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding)));
-    max-width: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding)));
+    max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block)));
+    max-width: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block)));
 }
 
 .shopflo-buy-now__button .shopflo-icon[class*="shopflo-payment-icon--"] {
-    max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding)));
-    max-width: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding)));
+    max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block)));
+    max-width: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block)));
 }
 
 .shopflo-checkout__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
