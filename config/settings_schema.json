@@ -2112,7 +2112,7 @@
         "type": "text",
         "id": "shopflo_button_label_buy_now",
         "label": "Buy now label",
-        "default": "BUY IT NOW"
+        "default": "Buy it now"
       },
       {
         "type": "header",

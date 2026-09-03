@@ -1,4 +1,4 @@
-# Shopflo integration - session context (2026-08-31 → 2026-09-03)
+# Shopflo integration - session context (2026-08-31 → 2026-09-03+)
 
 Working notes from an extended Claude Code session on the Shopflo checkout/buy-now/cart/shop-pass
 integration (`snippets/shopflo.liquid`, `assets/shopflo-script.js`, `assets/shopflo-styles.css`,
@@ -229,3 +229,53 @@ static code reading alone. This caught at least one real bug that reasoning-only
   re-computation inside the `'checkout'`/`'buy_now'` case blocks - harmless, worth cleaning up if
   ever touching that area.
 - `shopflo_badge` render param uses the unsafe `| default: true` pattern, unlike newer params.
+
+---
+
+## 6. Label-squeeze guard - quick-add modal gap (DIAGNOSED, NOT YET FIXED)
+
+`bindLabelWidthGuard()` (see item 1 above) only calls `evaluate()` three times: at `init()`,
+on `document.fonts.ready`, and on debounced `window resize`. It also captures its button list via
+a single `querySelectorAll()` call at bind time, not re-queried inside `evaluate()`.
+
+Cart drawer (`snippets/cart-drawer.liquid`) and cart-notification popover use `visibility:hidden`,
+not `display:none`, so their checkout buttons have real, non-zero dimensions at `init()` even
+while visually hidden - the guard works correctly for both.
+
+**The actual gap: quick-add modal.** `assets/quick-add.js`'s `QuickAddModal.show()` fetches the
+product page over AJAX and injects a fresh `.shopflo-buy-now__button` via `innerHTML` at click
+time - strictly after all three `bindLabelWidthGuard()` triggers have already fired. Nothing
+re-invokes the guard when this modal content is injected, and even a manual re-invocation
+wouldn't see this button today since the original `querySelectorAll()` result is stale. Net
+effect: a Buy Now button opened via quick-add whose label is long enough to overflow will keep
+its payment icons/badge visible instead of hiding them - user-reported as "payment icons not
+hiding when label overflows, in a few cases."
+
+**Fix outlined, not yet applied**: move the `querySelectorAll(...)` call inside `evaluate()` so
+it always reflects the current DOM, and call `evaluate()` again from `quick-add.js` right after
+`setInnerHTML(this.modalContent, ...)` injects the new product markup.
+
+---
+
+## 7. Checkout / Buy Now button padding split into vertical/horizontal
+
+`shopflo_button_padding_checkout` and `shopflo_button_padding_buy_now` were each a single `range`
+setting applied as the CSS `padding` shorthand (all four sides equal). Split into independent
+pairs, matching the pattern the Shop Pass A/B/C buttons already used
+(`shopflo_account_padding_block/inline_button_a/b/c`):
+
+- `shopflo_button_padding_checkout` → `shopflo_button_padding_block_checkout` +
+  `shopflo_button_padding_inline_checkout`
+- `shopflo_button_padding_buy_now` → `shopflo_button_padding_block_buy_now` +
+  `shopflo_button_padding_inline_buy_now` (both keep the existing
+  `visible_if: shopflo_match_checkout_layout_buy_now == false`)
+
+Same 0-50px range and default 10px on all four new settings, so existing stores render
+identically after the change. CSS vars renamed `--sf-checkout-padding`/`--sf-buy-now-padding` →
+`-padding-block`/`-padding-inline` pairs in `snippets/shopflo.liquid`'s `:root` block (including
+the buy-now "match checkout layout" branch, which now sources both block and inline from the
+checkout settings when matching). `assets/shopflo-styles.css` buttons now use
+`padding-block`/`padding-inline` instead of the `padding` shorthand. The payment-icon sizing
+`calc()`s (`.shopflo-icon[class*="shopflo-payment-icon--"]` and its per-button overrides, ~line
+577-592) measure vertical space inside the button, so they were repointed at the `-block`
+variable specifically, not `-inline`.
