@@ -1094,7 +1094,7 @@ class ShopfloAccounts extends HTMLElement {
       const raw = window.sessionStorage.getItem(cacheKey);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      if (parsed && (parsed.vertical === 'above' || parsed.vertical === 'below') && (parsed.horizontal === 'left' || parsed.horizontal === 'right')) {
+      if (parsed && (parsed.vertical === 'above' || parsed.vertical === 'below') && (parsed.horizontal === 'left' || parsed.horizontal === 'right' || parsed.horizontal === 'center')) {
         return parsed;
       }
       return null;
@@ -1140,7 +1140,12 @@ class ShopfloAccounts extends HTMLElement {
     // alignment) - only flips away from it when it genuinely doesn't fit AND the other side has
     // more room, same as the trigger being too close to that edge of the viewport.
     const preferredVertical = this.dataset.drawerVertical === 'above' ? 'above' : 'below';
-    const preferredHorizontal = this.dataset.drawerHorizontal === 'left' ? 'left' : 'right';
+    const preferredHorizontal =
+      this.dataset.drawerHorizontal === 'left'
+        ? 'left'
+        : this.dataset.drawerHorizontal === 'center'
+        ? 'center'
+        : 'right';
 
     const spaceBelow = viewportH - anchorRect.bottom;
     const spaceAbove = anchorRect.top;
@@ -1152,11 +1157,25 @@ class ShopfloAccounts extends HTMLElement {
 
     const spaceForRightAlign = anchorRect.right;
     const spaceForLeftAlign = viewportW - anchorRect.left;
-    const spaceForPreferredHorizontal = preferredHorizontal === 'left' ? spaceForLeftAlign : spaceForRightAlign;
-    const spaceForOtherHorizontal = preferredHorizontal === 'left' ? spaceForRightAlign : spaceForLeftAlign;
-    const horizontal = (spaceForPreferredHorizontal >= width || spaceForPreferredHorizontal >= spaceForOtherHorizontal)
-      ? preferredHorizontal
-      : (preferredHorizontal === 'left' ? 'right' : 'left');
+
+    let horizontal;
+    if (preferredHorizontal === 'center') {
+      // Centered on the anchor's own horizontal midpoint, extending equally both ways - "fits"
+      // only if BOTH halves have room, unlike left/right (which only ever extend one way).
+      // Falls back to whichever plain side has more room (same left-vs-right comparison the
+      // left/right branch below already uses), not to the other vertical - centering has no
+      // natural "opposite" the way left/right do.
+      const anchorCenterX = anchorRect.left + anchorRect.width / 2;
+      const centerFits =
+        anchorCenterX >= width / 2 && viewportW - anchorCenterX >= width / 2;
+      horizontal = centerFits ? 'center' : (spaceForLeftAlign >= spaceForRightAlign ? 'left' : 'right');
+    } else {
+      const spaceForPreferredHorizontal = preferredHorizontal === 'left' ? spaceForLeftAlign : spaceForRightAlign;
+      const spaceForOtherHorizontal = preferredHorizontal === 'left' ? spaceForRightAlign : spaceForLeftAlign;
+      horizontal = (spaceForPreferredHorizontal >= width || spaceForPreferredHorizontal >= spaceForOtherHorizontal)
+        ? preferredHorizontal
+        : (preferredHorizontal === 'left' ? 'right' : 'left');
+    }
 
     return { vertical, horizontal };
   }
@@ -1164,6 +1183,7 @@ class ShopfloAccounts extends HTMLElement {
   _applyDrawerPosition(drawerEl, position) {
     drawerEl.classList.toggle('shopflo-accounts__drawer--open-top', position.vertical === 'above');
     drawerEl.classList.toggle('shopflo-accounts__drawer--open-left', position.horizontal === 'left');
+    drawerEl.classList.toggle('shopflo-accounts__drawer--open-center', position.horizontal === 'center');
   }
 
   _setOverlayVisible(visible) {

@@ -1210,6 +1210,18 @@ shopflo-accounts.sf-full-width {
     left: 0;
 }
 
+/* Centered on the account icon's own horizontal midpoint (its containing block,
+   .shopflo-accounts__logged-in, is the same position:relative box --open-left/the default
+   right:0 already anchor against) rather than either of its edges. Applied by
+   _computeDrawerPosition() in shopflo-script.js only when the drawer actually fits centered
+   without overflowing either side of the viewport - falls back to plain left/right otherwise,
+   same as any other preferred direction that doesn't fit. */
+.shopflo-accounts__drawer--open-center {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .shopflo-accounts__drawer-list {
     margin: 0;
     padding: 0;

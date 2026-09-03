@@ -2704,12 +2704,20 @@
             "label": "Open above right"
           },
           {
+            "value": "above-center",
+            "label": "Open above center"
+          },
+          {
             "value": "below-left",
             "label": "Open below left"
           },
           {
             "value": "below-right",
             "label": "Open below right"
+          },
+          {
+            "value": "below-center",
+            "label": "Open below center"
           }
         ]
       },
@@ -2940,12 +2948,20 @@
             "label": "Open above right"
           },
           {
+            "value": "above-center",
+            "label": "Open above center"
+          },
+          {
             "value": "below-left",
             "label": "Open below left"
           },
           {
             "value": "below-right",
             "label": "Open below right"
+          },
+          {
+            "value": "below-center",
+            "label": "Open below center"
           }
         ]
       },
@@ -3209,12 +3225,20 @@
             "label": "Open above right"
           },
           {
+            "value": "above-center",
+            "label": "Open above center"
+          },
+          {
             "value": "below-left",
             "label": "Open below left"
           },
           {
             "value": "below-right",
             "label": "Open below right"
+          },
+          {
+            "value": "below-center",
+            "label": "Open below center"
           }
         ]
       },

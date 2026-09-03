@@ -195,6 +195,7 @@
       document.addEventListener('shopflo-event:account-drawer-opened', () => myModal.close());
 
     @param {string} type - Which piece to render: 'assets' (svg defs/styles/scripts + shared popup markup, default), 'checkout' (checkout button), 'buy_now' (buy-now button), 'shop_pass_primary', 'shop_pass_secondary', or 'shop_pass_tertiary' (account login icon/drawer proxy, independently styled per slot, each self-hiding per its own "Visible on" setting - see <shopflo-accounts> in assets/shopflo-script.js), or 'shop_pass_bundle_markup' (dummy hidden markup the Shopflo bundle script itself needs to initialize correctly - required, once anywhere in <body>, whenever you render any shop_pass_* instance).
+    @param {string} [extra_class] - checkout/buy_now/shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Extra CSS class(es) appended as-is (space-separated) to this render's own root wrapper element - `.shopflo-checkout__wrapper` for 'checkout', `.shopflo-buy-now__wrapper` for 'buy_now', or `<shopflo-accounts>` itself for the shop_pass_* types - on top of its existing default classes, not instead of them. Useful for a one-off layout hook (e.g. a caller-specific spacing utility) without needing a new Theme Editor setting or touching assets/shopflo-styles.css. No-op (silently ignored) for any other `type`.
     @param {boolean} [shopflo_badge] - Checkout/buy_now only. Shows the "Powered by Shopflo" badge on the button. Defaults to true.
     @param {boolean} [shopflo_payment_icons] - Checkout/buy_now only. Master show/hide for the payment icons row, on top of (not instead of) the existing Theme Editor settings - Theme Editor > Shopflo Checkout/Buy Now > Show payment icons, icon 1/2/3 pickers, position, etc. all still apply exactly as before; this just lets a caller force the row off for one particular render (e.g. a compact cart-drawer instance) without touching those settings. Defaults to true. Pass `false` explicitly to hide - like `show_icon` below, NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
     @param {object} [form] - Required when type is 'buy_now'. The product form object, used for the dynamic Shopify payment button fallback.
@@ -841,7 +842,7 @@
       endunless
     -%}
 
-    {% capture checkout_wrapper_class %} shopflo-checkout__wrapper {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if shopflo_promo_text_checkout_present %} sf-promo-banner__layout--{{ settings.shopflo_promo_banner_layout_checkout }} {% endif %}{% endcapture %}
+    {% capture checkout_wrapper_class %} shopflo-checkout__wrapper {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if shopflo_promo_text_checkout_present %} sf-promo-banner__layout--{{ settings.shopflo_promo_banner_layout_checkout }} {% endif %} {{ extra_class }}{% endcapture %}
 
     {% capture checkout_button_class %}
     shopflo-checkout__button shopflo-popup-trigger {% if settings.shopflo_full_width_checkout == true %} sf-full-width {% endif %} {% if settings.shopflo_shadow_style_checkout != 'none' %} sf-button-shadow--{{ settings.shopflo_shadow_style_checkout }} {%
@@ -1048,7 +1049,7 @@
       endunless
     -%}
 
-    {% capture buy_now_wrapper_class %} shopflo-buy-now__wrapper {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if shopflo_promo_text_buy_now_present %} sf-promo-banner__layout--{{ buy_now_promo_banner_layout }} {% endif %}{% endcapture %}
+    {% capture buy_now_wrapper_class %} shopflo-buy-now__wrapper {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if shopflo_promo_text_buy_now_present %} sf-promo-banner__layout--{{ buy_now_promo_banner_layout }} {% endif %} {{ extra_class }}{% endcapture %}
 
     {% capture buy_now_button_class %}
     shopflo-buy-now__button shopflo-popup-trigger {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_shadow_style != 'none' %} sf-button-shadow--{{ buy_now_shadow_style }} {%
@@ -1375,7 +1376,7 @@
     -%}
 
     <shopflo-accounts
-      class="shopflo-accounts {{ account_variant_class }} {{ account_visible_class }} {% if account_full_width %} sf-full-width {% endif %}"
+      class="shopflo-accounts {{ account_variant_class }} {{ account_visible_class }} {% if account_full_width %} sf-full-width {% endif %} {{ extra_class }}"
       data-drawer-vertical="{{ account_drawer_vertical }}"
       data-drawer-horizontal="{{ account_drawer_horizontal }}"
     >
