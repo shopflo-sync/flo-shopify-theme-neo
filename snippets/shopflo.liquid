@@ -197,12 +197,12 @@
     @param {string} type - Which piece to render: 'assets' (svg defs/styles/scripts + shared popup markup, default), 'checkout' (checkout button), 'buy_now' (buy-now button), 'shop_pass_primary', 'shop_pass_secondary', or 'shop_pass_tertiary' (account login icon/drawer proxy, independently styled per slot, each self-hiding per its own "Visible on" setting - see <shopflo-accounts> in assets/shopflo-script.js), or 'shop_pass_bundle_markup' (dummy hidden markup the Shopflo bundle script itself needs to initialize correctly - required, once anywhere in <body>, whenever you render any shop_pass_* instance).
     @param {string} [extra_class] - checkout/buy_now/shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Extra CSS class(es) appended as-is (space-separated) to this render's own root wrapper element - `.shopflo-checkout__wrapper` for 'checkout', `.shopflo-buy-now__wrapper` for 'buy_now', or `<shopflo-accounts>` itself for the shop_pass_* types - on top of its existing default classes, not instead of them. Useful for a one-off layout hook (e.g. a caller-specific spacing utility) without needing a new Theme Editor setting or touching assets/shopflo-styles.css. No-op (silently ignored) for any other `type`.
     @param {boolean} [shopflo_badge] - Checkout/buy_now only. Shows the "Powered by Shopflo" badge on the button. Defaults to true.
-    @param {boolean} [shopflo_payment_icons] - Checkout/buy_now only. Master show/hide for the payment icons row, on top of (not instead of) the existing Theme Editor settings - Theme Editor > Shopflo Checkout/Buy Now > Show payment icons, icon 1/2/3 pickers, position, etc. all still apply exactly as before; this just lets a caller force the row off for one particular render (e.g. a compact cart-drawer instance) without touching those settings. Defaults to true. Pass `false` explicitly to hide - like `show_icon` below, NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
+    @param {boolean} [shopflo_payment_icons] - Checkout/buy_now only. Master show/hide for the payment icons row, on top of (not instead of) the existing Theme Editor settings - Theme Editor > Shopflo Checkout/Buy Now > Show payment icons, icon 1/2/3 pickers, position, etc. all still apply exactly as before; this just lets a caller force the row off for one particular render (e.g. a compact cart-drawer instance) without touching those settings. Defaults to true. Pass `false` explicitly to hide - like `show_user_icon` below, NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
     @param {object} [form] - Required when type is 'buy_now'. The product form object, used for the dynamic Shopify payment button fallback.
     @param {object} [product_obj] - Required when type is 'buy_now'. The product object, used for checking stock.
     @param {string} [label_account] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Drawer's account menu item label. Defaults to "Account".
     @param {string} [label_logout] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Drawer's logout menu item label. Defaults to "Log out".
-    @param {boolean} [show_icon] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Whether to render the <svg> icon in either button state. Defaults to true. Pass `false` explicitly for a text-only instance - unlike other boolean params here, this one is NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
+    @param {boolean} [show_user_icon] - shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Whether to render the <svg> icon in either button state. Defaults to true. Pass `false` explicitly for a text-only instance - unlike other boolean params here, this one is NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
 
     @example
     Render the shared assets once in the theme layout, near the end of <body>:
@@ -1347,17 +1347,17 @@
         assign show_account_label = true
       endif
 
-      # show_icon: whether to render the <svg> at all in either button state - a render
+      # show_user_icon: whether to render the <svg> at all in either button state - a render
       # parameter (not a Theme Editor setting), so a caller can drop just the icon for a
       # particular instance (e.g. a text-only "Account" link somewhere) without affecting
       # every other shop_pass_primary/shop_pass_secondary/shop_pass_tertiary instance on the
       # page. Defaults to true - every existing call site keeps rendering the icon unchanged.
-      # NOT `show_icon | default: true` - the default filter treats an explicit `false` the same
+      # NOT `show_user_icon | default: true` - the default filter treats an explicit `false` the same
       # as "not passed" and would silently flip it back to true, defeating the parameter entirely.
-      assign show_icon_param = show_icon
-      assign show_icon = true
-      if show_icon_param == false
-        assign show_icon = false
+      assign show_user_icon_param = show_user_icon
+      assign show_user_icon = true
+      if show_user_icon_param == false
+        assign show_user_icon = false
       endif
 
       # localization-selector is Dawn's OWN opt-out marker (see button:not(.localization-selector)
@@ -1392,7 +1392,7 @@
         data-flo-visible="true"
         aria-label="Your account"
       >
-        {%- if show_icon -%}
+        {%- if show_user_icon -%}
           <svg
             width="20"
             height="20"
@@ -1423,7 +1423,7 @@
           aria-expanded="false"
           aria-haspopup="true"
         >
-          {%- if show_icon -%}
+          {%- if show_user_icon -%}
             <svg
               width="20"
               height="20"
