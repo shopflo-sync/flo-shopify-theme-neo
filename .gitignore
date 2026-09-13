@@ -1,0 +1,24 @@
+# Claude session notes
+claude-context/
+
+# Shopify CLI
+.shopify/
+*.env
+.env.*
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
