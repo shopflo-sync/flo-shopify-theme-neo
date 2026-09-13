@@ -5,6 +5,32 @@ class ShopfloTheme {
     this.nativeBuyNowWrapper = document.getElementById('shopify-buy-now__button--wrapper');
 
     this.init();
+
+    const SHOPFLO_LOGO = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWx0ZXI9InVybCgjYSkiPjxwYXRoIGQ9Im0xNi4xMTUgNi4wMTMtNi4xMjkgNi4xMjVhMy4wMTYgMy4wMTYgMCAwIDEtNC4yNjMgMCAzLjAxIDMuMDEgMCAwIDEgMC00LjI2MUw5LjcyIDMuODgyYTMuMDE2IDMuMDE2IDAgMCAxIDQuMjY0IDB6IiBmaWxsPSJ1cmwoI2IpIi8+PHBhdGggZD0ibTE2LjExNSA2LjAxMy02LjEyOSA2LjEyNWEzLjAxNiAzLjAxNiAwIDAgMS00LjI2MyAwIDMuMDEgMy4wMSAwIDAgMSAwLTQuMjYxTDkuNzIgMy44ODJhMy4wMTYgMy4wMTYgMCAwIDEgNC4yNjQgMHoiIGZpbGw9InVybCgjYykiLz48cGF0aCBkPSJtNy44ODUgMTcuOTg3IDYuMTI5LTYuMTI1YTMuMDE2IDMuMDE2IDAgMCAxIDQuMjYzIDAgMy4wMSAzLjAxIDAgMCAxIDAgNC4yNjFsLTMuOTk3IDMuOTk1YTMuMDE2IDMuMDE2IDAgMCAxLTQuMjYzIDB6IiBmaWxsPSJ1cmwoI2QpIi8+PHBhdGggZD0ibTcuODg1IDE3Ljk4NyA2LjEyOS02LjEyNWEzLjAxNiAzLjAxNiAwIDAgMSA0LjI2MyAwIDMuMDEgMy4wMSAwIDAgMSAwIDQuMjYxbC0zLjk5NyAzLjk5NWEzLjAxNiAzLjAxNiAwIDAgMS00LjI2MyAweiIgZmlsbD0idXJsKCNlKSIvPjwvZz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgxPSIxMC41ODEiIHkxPSIxLjUzNiIgeDI9IjEzLjAwMyIgeTI9IjkuNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDFjY2E3Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImMiIHgxPSIxNC40MTYiIHkxPSIxNC40NTMiIHgyPSIyMS42ODIiIHkyPSIxMC4xMTQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii40MTEiIHN0b3AtY29sb3I9IiM0NzYwZmYiIHN0b3Atb3BhY2l0eT0iLjMxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImQiIHgxPSIxMC41ODEiIHkxPSIxLjUzNiIgeDI9IjEzLjAwMyIgeTI9IjkuNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDFjY2E3Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImUiIHgxPSIxNC40MTYiIHkxPSIxNC40NTMiIHgyPSIyMS42ODIiIHkyPSIxMC4xMTQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii40MTEiIHN0b3AtY29sb3I9IiM0NzYwZmYiIHN0b3Atb3BhY2l0eT0iLjMxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJhIiB4PSI0Ljg0IiB5PSIzIiB3aWR0aD0iMTQuMzIiIGhlaWdodD0iMTguMjYxIiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMTI3IDAiIHJlc3VsdD0iaGFyZEFscGhhIi8+PGZlT2Zmc2V0IGR5PSIuMjYxIi8+PGZlQ29tcG9zaXRlIGluMj0iaGFyZEFscGhhIiBvcGVyYXRvcj0ib3V0Ii8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjU1IDAiLz48ZmVCbGVuZCBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJlZmZlY3QxX2Ryb3BTaGFkb3dfMjE3NzBfMzMwNzQwIi8+PGZlQmxlbmQgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iZWZmZWN0MV9kcm9wU2hhZG93XzIxNzcwXzMzMDc0MCIgcmVzdWx0PSJzaGFwZSIvPjxmZUNvbG9yTWF0cml4IGluPSJTb3VyY2VBbHBoYSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz48ZmVPZmZzZXQgZHk9Ii4zOTIiLz48ZmVDb21wb3NpdGUgaW4yPSJoYXJkQWxwaGEiIG9wZXJhdG9yPSJhcml0aG1ldGljIiBrMj0iLTEiIGszPSIxIi8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDEgMCAwIDAgMCAxIDAgMCAwIDAgMSAwIDAgMCAwLjUgMCIvPjxmZUJsZW5kIGluMj0ic2hhcGUiIHJlc3VsdD0iZWZmZWN0Ml9pbm5lclNoYWRvd18yMTc3MF8zMzA3NDAiLz48ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMTI3IDAiIHJlc3VsdD0iaGFyZEFscGhhIi8+PGZlT2Zmc2V0IGR5PSIuMTMxIi8+PGZlQ29tcG9zaXRlIGluMj0iaGFyZEFscGhhIiBvcGVyYXRvcj0iYXJpdGhtZXRpYyIgazI9Ii0xIiBrMz0iMSIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4yNSAwIi8+PGZlQmxlbmQgaW4yPSJlZmZlY3QyX2lubmVyU2hhZG93XzIxNzcwXzMzMDc0MCIgcmVzdWx0PSJlZmZlY3QzX2lubmVyU2hhZG93XzIxNzcwXzMzMDc0MCIvPjwvZmlsdGVyPjwvZGVmcz48L3N2Zz4="
+    // const SHOPFLO_LOGO = ""
+    // const SHOPFLO_LOGO = ""
+    const SIZE = 48;
+    const FONT = 42;
+
+    console.log(
+      "%c %c Shopflo",
+      `background:url('${SHOPFLO_LOGO}') no-repeat center;
+      background-size:${SIZE}px ${SIZE}px;
+      padding-inline-start:${SIZE / 2}px;
+      padding-block-start:${SIZE / 2}px;
+      padding-inline-end:10px;
+      padding-inline-end:10px;
+      vertical-align:middle;`,
+      `background:linear-gradient(160deg,#4760FF 0%,#01CCA7 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-size:${FONT}px;
+      font-weight:800;
+      letter-spacing:4px;
+      vertical-align:middle;
+      font-family:-apple-system,BlinkMacSystemFont,Inter,Segoe UI,sans-serif;`
+    );
   }
 
   init() {
@@ -19,6 +45,7 @@ class ShopfloTheme {
     this.bindBuyNowIntlFallback();
     this.bindDomEvents();
     this.bindCartPageRedirectIntercept();
+    this.bindThirdPartyCartMutation();
     this.bindPopupMorph();
     this.bindLabelWidthGuard();
   }
@@ -210,6 +237,67 @@ class ShopfloTheme {
     });
   }
 
+  // Resolves a window.shopfloThemeConfig.shopflo_third_party_cart_mutation selector descriptor
+  // ({type: "class"|"id", selector}) into a real CSS selector - normalizes so it works whether
+  // the configured `selector` already includes the leading "."/"#" or not.
+  _resolveThirdPartyCartSelector(descriptor) {
+    if (!descriptor || !descriptor.selector) return null;
+    const { type, selector } = descriptor;
+    if (type === 'class' && !selector.startsWith('.')) return `.${selector}`;
+    if (type === 'id' && !selector.startsWith('#')) return `#${selector}`;
+    return selector;
+  }
+
+  // Some themes we get integrated into render their own cart drawer with their own native
+  // "Checkout" button (going straight to /checkout, with zero Shopflo wiring) instead of using
+  // this theme's own .shopflo-checkout__button - and that drawer's contents get re-rendered
+  // wholesale on every cart mutation (add/update/remove), which would silently drop a
+  // once-bound click listener on the old button node. A document-level DELEGATED listener
+  // (same idiom as bindCartPageRedirectIntercept/bindPopupMorph above) sidesteps that entirely -
+  // it matches by selector at click time, so it keeps working across any number of re-renders
+  // without needing a MutationObserver to rebind anything.
+  //
+  // is_shadow_dom handles integrations whose cart drawer lives inside an open shadow root (e.g.
+  // a custom-element-based theme): a click event is retargeted at the document (event.target
+  // becomes the shadow host, not the real button), so event.target.closest() alone would never
+  // find it - event.composedPath() walks the real path the click actually took, through the
+  // shadow boundary, and is used instead in that case.
+  bindThirdPartyCartMutation() {
+    const cfg = this.config.shopflo_third_party_cart_mutation;
+    if (!cfg || cfg.enabled !== true) return;
+
+    const buttonSelector = this._resolveThirdPartyCartSelector(cfg.checkout_button);
+    if (!buttonSelector) return;
+    const wrapperSelector = this._resolveThirdPartyCartSelector(cfg.checkout_parent_wrapper);
+
+    document.addEventListener(
+      'click',
+      (event) => {
+        const path = cfg.is_shadow_dom ? event.composedPath() : null;
+        const button = path
+          ? path.find((node) => node instanceof Element && node.matches(buttonSelector))
+          : event.target.closest(buttonSelector);
+        if (!button) return;
+
+        if (wrapperSelector) {
+          const inWrapper = path
+            ? path.some((node) => node instanceof Element && node.matches(wrapperSelector))
+            : button.closest(wrapperSelector);
+          if (!inWrapper) return;
+        }
+
+        // Capture phase + stopPropagation, not just preventDefault: the third-party button may
+        // drive navigation from its own JS click handler rather than a plain <a href>, so
+        // preventDefault alone (which only cancels the default action) wouldn't stop that -
+        // running before and cancelling propagation to it does.
+        event.preventDefault();
+        event.stopPropagation();
+        this.openThemeFloCheckout();
+      },
+      true
+    );
+  }
+
   // UI check: if the button's own label ends up squeezed to <=60% of the button's width (long or
   // translated label text competing with the payment icons row and the "Powered by Shopflo" badge
   // for room), hide both so the label - already flex-grow:1 in assets/shopflo-styles.css - can
@@ -281,9 +369,13 @@ class ShopfloTheme {
       document.addEventListener('click', (event) => {
         const trigger = event.target.closest('.shopflo-popup-trigger');
         if (!trigger || trigger.disabled) return;
+        // Requires an exact match, not "anything that isn't buy-now" - a foreign theme's own
+        // markup (e.g. its native Add to Cart button) can end up carrying .shopflo-popup-trigger
+        // by accident during integration without a recognized data-flo-action, and must be a
+        // no-op here rather than silently defaulting to opening the full checkout overlay.
         if (trigger.dataset.floAction === 'buy-now') {
           this.openThemeFloBuyNow(event);
-        } else {
+        } else if (trigger.dataset.floAction === 'checkout') {
           this.openThemeFloCheckout();
         }
       });
@@ -302,6 +394,11 @@ class ShopfloTheme {
     document.addEventListener('click', (event) => {
       const trigger = event.target.closest('.shopflo-popup-trigger');
       if (!trigger || trigger.disabled || this.popupAnimating) return;
+      // Same exact-match requirement as the reduceMotion branch above - a .shopflo-popup-trigger
+      // element without a recognized data-flo-action is not one of ours (e.g. a foreign theme's
+      // own button picked up the class by accident during integration) and must fall through
+      // untouched rather than animating open into a checkout it was never meant to trigger.
+      if (trigger.dataset.floAction !== 'buy-now' && trigger.dataset.floAction !== 'checkout') return;
 
       // Matches openThemeFloCheckout()/openThemeFloBuyNow()'s own fallback branch (disabled
       // entirely, or an internationally-redirected shopper): a full page navigation is instant,
@@ -522,7 +619,7 @@ class ShopfloTheme {
 
     if (action === 'buy-now') {
       this.openThemeFloBuyNow(originEvent);
-    } else {
+    } else if (action === 'checkout') {
       this.openThemeFloCheckout();
     }
 
@@ -1144,8 +1241,8 @@ class ShopfloAccounts extends HTMLElement {
       this.dataset.drawerHorizontal === 'left'
         ? 'left'
         : this.dataset.drawerHorizontal === 'center'
-        ? 'center'
-        : 'right';
+          ? 'center'
+          : 'right';
 
     const spaceBelow = viewportH - anchorRect.bottom;
     const spaceAbove = anchorRect.top;

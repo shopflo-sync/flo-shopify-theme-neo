@@ -239,9 +239,9 @@
                     the mobile gap Button B exists for.
                   {%- endcomment -%}
                   {%- if shop.customer_accounts_enabled -%}
-                    {%- if settings.shopflo_customer_account_enabled == 'shopflo' -%}
+                    {%- if settings.shopflo_customer_account_provider == 'shopflo' -%}
                       {% render 'shopflo', type: 'shop_pass_secondary' %}
-                      {%- else -%}
+                    {%- else -%}
                       <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="menu-drawer__account link focus-inset h5 medium-hide large-up-hide">
                         {% render 'icon-account' %}
                         {%- liquid
@@ -711,7 +711,7 @@
       </details-modal>
 
       {%- if shop.customer_accounts_enabled -%}
-          {%- if settings.shopflo_customer_account_enabled == 'shopify' -%}
+          {%- if settings.shopflo_customer_account_provider == 'shopify' -%}
           <a href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" class="header__icon header__icon--account link focus-inset{% if section.settings.menu != blank %} small-hide{% endif %}">
             {% render 'icon-account' %}
             <span class="visually-hidden">

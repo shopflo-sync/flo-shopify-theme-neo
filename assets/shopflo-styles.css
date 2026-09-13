@@ -7,42 +7,42 @@
 }
 
 .sf-full-width {
-    width: 100%;
+    width: 100% !important;
 }
 
 .sf-text--bold {
-    font-weight: 700;
+    font-weight: 700 !important;
 }
 
 .sf-text--normal {
-    font-weight: 400;
+    font-weight: 400 !important;
 }
 
 .sf-label--center {
-    text-align: center;
-    justify-content: center;
+    text-align: center !important;
+    justify-content: center !important;
 }
 
 .sf-label--left {
-    text-align: left;
-    justify-content: left;
+    text-align: left !important;
+    justify-content: left !important;
 }
 
 .sf-label--right {
-    text-align: right;
-    justify-content: right;
+    text-align: right !important;
+    justify-content: right !important;
 }
 
 .sf-button-shadow--soft {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
 .sf-button-shadow--medium {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16) !important;
 }
 
 .sf-button-shadow--strong {
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
 }
 
 /* ==========================================================================
@@ -51,49 +51,49 @@
 .shopflo-checkout__button:hover:not([disabled]) {
     background:
         var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
-        var(--sf-checkout-border-color) border-box;
+        var(--sf-checkout-border-color) border-box !important;
 }
 
 .shopflo-buy-now__button:hover:not([disabled]) {
     background:
         var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
-        var(--sf-buy-now-border-color) border-box;
+        var(--sf-buy-now-border-color) border-box !important;
 }
 
 .sf-button-hover--lift:hover:not([disabled]) {
-    transform: translateY(-2px);
-    box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22);
+    transform: translateY(-2px) !important;
+    box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22) !important;
 }
 
 .sf-button-hover--scale:hover:not([disabled]) {
-    transform: scale(1.02);
+    transform: scale(1.02) !important;
 }
 
 .sf-button-hover--shine::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: inherit !important;
+    pointer-events: none !important;
     background: linear-gradient(115deg,
             transparent 38%,
             rgba(255, 255, 255, 0.45) 50%,
-            transparent 62%);
-    background-size: 250% 100%;
-    background-position: 150% 0;
-    transition: background-position 0.6s ease;
+            transparent 62%) !important;
+    background-size: 250% 100% !important;
+    background-position: 150% 0 !important;
+    transition: background-position 0.6s ease !important;
 }
 
 .sf-button-hover--shine:hover:not([disabled])::after {
-    background-position: -120% 0;
+    background-position: -120% 0 !important;
 }
 
 .sf-button-hover--darken:hover:not([disabled]) {
-    filter: brightness(0.9);
+    filter: brightness(0.9) !important;
 }
 
 .sf-button-hover--lighten:hover:not([disabled]) {
-    filter: brightness(1.12);
+    filter: brightness(1.12) !important;
 }
 
 /* ==========================================================================
@@ -111,18 +111,18 @@
 }
 
 .sf-button-animation--swipe::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: inherit !important;
+    pointer-events: none !important;
     background: linear-gradient(100deg,
             transparent 30%,
             #6c5ce7 48%,
             #6c5ce7 52%,
-            transparent 70%);
-    background-size: 220% 100%;
-    animation: sf-swipe 2.6s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+            transparent 70%) !important;
+    background-size: 220% 100% !important;
+    animation: sf-swipe 2.6s cubic-bezier(0.6, 0, 0.3, 1) infinite !important;
 }
 
 @keyframes sf-stripes {
@@ -136,16 +136,16 @@
 }
 
 .sf-button-animation--stripes::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: inherit !important;
+    pointer-events: none !important;
     background: repeating-linear-gradient(115deg,
             transparent 0 11px,
-            #6c5ce7 11px 22px);
-    background-size: 200% 100%;
-    animation: sf-stripes 1.5s linear infinite;
+            #6c5ce7 11px 22px) !important;
+    background-size: 200% 100% !important;
+    animation: sf-stripes 1.5s linear infinite !important;
 }
 
 @keyframes sf-pulse {
@@ -161,7 +161,7 @@
 }
 
 .sf-button-animation--pulse {
-    animation: sf-pulse 1.8s ease-in-out infinite;
+    animation: sf-pulse 1.8s ease-in-out infinite !important;
 }
 
 @keyframes sf-bounce {
@@ -184,7 +184,7 @@
 }
 
 .sf-button-animation--bounce {
-    animation: sf-bounce 2.2s ease infinite;
+    animation: sf-bounce 2.2s ease infinite !important;
 }
 
 @keyframes sf-float {
@@ -200,7 +200,7 @@
 }
 
 .sf-button-animation--float {
-    animation: sf-float 3s ease-in-out infinite;
+    animation: sf-float 3s ease-in-out infinite !important;
 }
 
 @keyframes sf-breathe {
@@ -216,7 +216,7 @@
 }
 
 .sf-button-animation--breathe {
-    animation: sf-breathe 2.4s ease-in-out infinite;
+    animation: sf-breathe 2.4s ease-in-out infinite !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -246,39 +246,39 @@
    Checkout / Buy Now button — core layout & wrapper
    ========================================================================== */
 .shopflo-checkout__wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 
 /* To-Do: Need separate transtion speed according to hover's styling */
 .shopflo-buy-now__button,
 .shopflo-checkout__button {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.3rem;
-    transition: all 50ms ease-in-out;
-    cursor: pointer;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.3rem !important;
+    transition: all 50ms ease-in-out !important;
+    cursor: pointer !important;
 }
 
 .shopflo-checkout__button {
-    border: var(--sf-checkout-border-width) solid transparent;
+    border: var(--sf-checkout-border-width) solid transparent !important;
     background:
         var(--sf-checkout-background) padding-box,
-        var(--sf-checkout-border-color) border-box;
-    height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2));
-    max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2));
-    padding-block: var(--sf-checkout-padding-block);
-    padding-inline: var(--sf-checkout-padding-inline);
-    font-size: var(--sf-checkout-font-size);
-    outline: none;
+        var(--sf-checkout-border-color) border-box !important;
+    height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2)) !important;
+    max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2)) !important;
+    padding-block: var(--sf-checkout-padding-block) !important;
+    padding-inline: var(--sf-checkout-padding-inline) !important;
+    font-size: var(--sf-checkout-font-size) !important;
+    outline: none !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--separate {
-    gap: var(--shopflo-checkout-promo-gap);
+    gap: var(--shopflo-checkout-promo-gap) !important;
 }
 
 /* Attached banner + button meet with zero gap, forming one pill (see the paired border-radius
@@ -289,62 +289,62 @@
    through, reads as a white line) between them for the duration of the hover. Forcing this
    wrapper to render as a single flattened layer keeps that edge rounded consistently instead. */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached {
-    backface-visibility: hidden;
+    backface-visibility: hidden !important;
 }
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached {
-    backface-visibility: hidden;
+    backface-visibility: hidden !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button {
-    border-radius: 0 0 var(--sf-checkout-border-radius) var(--sf-checkout-border-radius);
+    border-radius: 0 0 var(--sf-checkout-border-radius) var(--sf-checkout-border-radius) !important;
 }
 
 .shopflo-checkout__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-checkout__button,
 .shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout__button {
-    border-radius: var(--sf-checkout-border-radius);
+    border-radius: var(--sf-checkout-border-radius) !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout--promo {
-    border-radius: var(--sf-checkout-border-radius) var(--sf-checkout-border-radius) 0 0;
+    border-radius: var(--sf-checkout-border-radius) var(--sf-checkout-border-radius) 0 0 !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout--promo {
-    border-radius: var(--shopflo-checkout-promo-border-radius);
+    border-radius: var(--shopflo-checkout-promo-border-radius) !important;
 }
 
 .shopflo-buy-now__button {
-    border: var(--sf-buy-now-border-width) solid transparent;
+    border: var(--sf-buy-now-border-width) solid transparent !important;
     background:
         var(--sf-buy-now-background) padding-box,
-        var(--sf-buy-now-border-color) border-box;
-    height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2));
-    max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2));
-    padding-block: var(--sf-buy-now-padding-block);
-    padding-inline: var(--sf-buy-now-padding-inline);
-    font-size: var(--sf-buy-now-font-size);
-    outline: none;
+        var(--sf-buy-now-border-color) border-box !important;
+    height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2)) !important;
+    max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2)) !important;
+    padding-block: var(--sf-buy-now-padding-block) !important;
+    padding-inline: var(--sf-buy-now-padding-inline) !important;
+    font-size: var(--sf-buy-now-font-size) !important;
+    outline: none !important;
 }
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button {
-    border-radius: 0 0 var(--sf-buy-now-border-radius) var(--sf-buy-now-border-radius);
+    border-radius: 0 0 var(--sf-buy-now-border-radius) var(--sf-buy-now-border-radius) !important;
 }
 
 .shopflo-buy-now__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-buy-now__button,
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--separate .shopflo-buy-now__button {
-    border-radius: var(--sf-buy-now-border-radius);
+    border-radius: var(--sf-buy-now-border-radius) !important;
 }
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now--promo {
-    border-radius: var(--sf-buy-now-border-radius) var(--sf-buy-now-border-radius) 0 0;
+    border-radius: var(--sf-buy-now-border-radius) var(--sf-buy-now-border-radius) 0 0 !important;
 }
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--separate .shopflo-buy-now--promo {
-    border-radius: var(--shopflo-buy-now-promo-border-radius);
+    border-radius: var(--shopflo-buy-now-promo-border-radius) !important;
 }
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--separate {
-    gap: var(--shopflo-buy-now-promo-gap);
+    gap: var(--shopflo-buy-now-promo-gap) !important;
 }
 
 /* ==========================================================================
@@ -366,48 +366,48 @@
    further below.
    ========================================================================== */
 .shopflo-checkout__button .shopflo-checkout--promo {
-    position: absolute;
-    z-index: 1;
-    width: auto;
-    max-width: calc(100% - 0.8rem);
-    border-radius: var(--shopflo-checkout-promo-border-radius);
+    position: absolute !important;
+    z-index: 1 !important;
+    width: auto !important;
+    max-width: calc(100% - 0.8rem) !important;
+    border-radius: var(--shopflo-checkout-promo-border-radius) !important;
 }
 
 .shopflo-buy-now__button .shopflo-buy-now--promo {
-    position: absolute;
-    z-index: 1;
-    width: auto;
-    max-width: calc(100% - 0.8rem);
-    border-radius: var(--shopflo-buy-now-promo-border-radius);
+    position: absolute !important;
+    z-index: 1 !important;
+    width: auto !important;
+    max-width: calc(100% - 0.8rem) !important;
+    border-radius: var(--shopflo-buy-now-promo-border-radius) !important;
 }
 
 /* Truncate rather than wrap/overflow - these badges sit in a fixed corner with limited room. */
 .shopflo-checkout__button .shopflo-checkout--promo__text,
 .shopflo-buy-now__button .shopflo-buy-now--promo__text {
-    min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .sf-promo-position--top_left {
-    top: -0.6rem;
-    left: 0.6rem;
+    top: -0.6rem !important;
+    left: 0.6rem !important;
 }
 
 .sf-promo-position--top_right {
-    top: -0.6rem;
-    right: 0.6rem;
+    top: -0.6rem !important;
+    right: 0.6rem !important;
 }
 
 .sf-promo-position--bottom_left {
-    bottom: -0.6rem;
-    left: 0.6rem;
+    bottom: -0.6rem !important;
+    left: 0.6rem !important;
 }
 
 .sf-promo-position--bottom_right {
-    bottom: -0.6rem;
-    right: 0.6rem;
+    bottom: -0.6rem !important;
+    right: 0.6rem !important;
 }
 
 /* ==========================================================================
@@ -434,50 +434,50 @@
    rules below are the only source of the effect for this layout. --- */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled]),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled]) {
-    transform: none;
-    box-shadow: none;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled]),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled]) {
-    transform: none;
+    transform: none !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]) {
-    filter: none;
+    filter: none !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]) {
-    filter: none;
+    filter: none !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--shine::after,
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--shine::after {
-    display: none;
+    display: none !important;
 }
 
 /* --- Attached: apply the effect once, to the wrapper - button + banner move as one unit. --- */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled])),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled])) {
-    transform: translateY(-2px);
-    box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22);
+    transform: translateY(-2px) !important;
+    box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22) !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled])),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled])) {
-    transform: scale(1.02);
+    transform: scale(1.02) !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])) {
-    filter: brightness(0.9);
+    filter: brightness(0.9) !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])) {
-    filter: brightness(1.12);
+    filter: brightness(1.12) !important;
 }
 
 /* shine needs position:relative on the wrapper for its ::after (inset:0) to size against the
@@ -486,54 +486,66 @@
    persistent (non-hover) button box-shadow from settings.shopflo_shadow_style_checkout/_buy_now. */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine) {
-    position: relative;
+    position: relative !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: var(--sf-checkout-border-radius);
-    pointer-events: none;
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: var(--sf-checkout-border-radius) !important;
+    pointer-events: none !important;
     background: linear-gradient(115deg,
             transparent 38%,
             rgba(255, 255, 255, 0.45) 50%,
-            transparent 62%);
-    background-size: 250% 100%;
-    background-position: 150% 0;
-    transition: background-position 0.6s ease;
+            transparent 62%) !important;
+    background-size: 250% 100% !important;
+    background-position: 150% 0 !important;
+    transition: background-position 0.6s ease !important;
 }
 
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: var(--sf-buy-now-border-radius);
-    pointer-events: none;
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: var(--sf-buy-now-border-radius) !important;
+    pointer-events: none !important;
     background: linear-gradient(115deg,
             transparent 38%,
             rgba(255, 255, 255, 0.45) 50%,
-            transparent 62%);
-    background-size: 250% 100%;
-    background-position: 150% 0;
-    transition: background-position 0.6s ease;
+            transparent 62%) !important;
+    background-size: 250% 100% !important;
+    background-position: 150% 0 !important;
+    transition: background-position 0.6s ease !important;
 }
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine:hover:not([disabled]))::after,
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine:hover:not([disabled]))::after {
-    background-position: -120% 0;
+    background-position: -120% 0 !important;
 }
 
 .shopflo-buy-now__wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* snippets/shopflo.liquid wraps .shopflo-buy-now__button in a .shopify-payment-button div purely
+   so the Shopflo bundle's own quantity/variant detection (keyed off Shopify's native dynamic
+   checkout button convention) resolves correctly - display:contents keeps that wrapper out of
+   layout entirely, so .shopflo-buy-now__button is still effectively a direct flex item of this
+   wrapper (full-width, alignment, etc. all still apply exactly as if the div weren't there).
+   Scoped to THIS wrapper only - the real native .shopify-payment-button rendered by
+   {{ form | payment_button }} in the international-redirect fallback further down in
+   shopflo.liquid must keep Shopify's own default layout untouched. */
+.shopflo-buy-now__wrapper > .shopify-payment-button {
+    display: contents !important;
 }
 
 .shopflo-buy-now__button:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
 }
 
 #shopify-buy-now__button--wrapper {
@@ -554,178 +566,178 @@
 
 /* --- box & sizing basics -------------------------------------------------- */
 .shopflo-payment-icons__wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1px;
-    flex-basis: 15%;
-    max-width: calc((var(--sf-checkout-height) * 2) - (var(--sf-payment-icon-overlap_checkout) * 2));
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 1px !important;
+    flex-basis: 15% !important;
+    max-width: calc((var(--sf-checkout-height) * 2) - (var(--sf-payment-icon-overlap_checkout) * 2)) !important;
 }
 
 .shopflo-icon {
-    display: flex;
-    align-items: center;
-    justify-content: end;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: end !important;
 }
 
 .shopflo-svg {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    width: 100% !important;
 }
 
 .shopflo-icon[class*="shopflo-payment-icon--"] {
-    position: relative;
-    width: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size)));
-    height: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size)));
+    position: relative !important;
+    width: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size))) !important;
+    height: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size))) !important;
 }
 
 .shopflo-checkout__button .shopflo-icon[class*="shopflo-payment-icon--"] {
-    max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block)));
-    max-width: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block)));
+    max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block))) !important;
+    max-width: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block))) !important;
 }
 
 .shopflo-buy-now__button .shopflo-icon[class*="shopflo-payment-icon--"] {
-    max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block)));
-    max-width: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block)));
+    max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block))) !important;
+    max-width: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block))) !important;
 }
 
 .shopflo-checkout__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
-    border-radius: 50%;
-    border: 1px solid var(--sf-checkout-background);
+    border-radius: 50% !important;
+    border: 1px solid var(--sf-checkout-background) !important;
 }
 
 .shopflo-buy-now__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
-    border-radius: 50%;
-    border: 1px solid var(--sf-buy-now-background);
+    border-radius: 50% !important;
+    border: 1px solid var(--sf-buy-now-background) !important;
 }
 
 .shopflo-payment-icon--phonepe {
-    box-shadow: inset 0px 0px 0px 1px #5f259f;
+    box-shadow: inset 0px 0px 0px 1px #5f259f !important;
 }
 
 /* --- icon position: left vs right of the label ---------------------------- */
 .sf-checkout-payment-icon--left {
-    flex-direction: row;
+    flex-direction: row !important;
 }
 
 .sf-checkout-payment-icon--left .shopflo-payment-icons__wrapper {
-    margin-left: calc(var(--sf-payment-icon-overlap_checkout));
+    margin-left: calc(var(--sf-payment-icon-overlap_checkout)) !important;
 }
 
 .sf-checkout-payment-icon--left .shopflo-checkout__button--label {
-    margin-left: calc(var(--sf-payment-icon-overlap_checkout) * -3);
+    margin-left: calc(var(--sf-payment-icon-overlap_checkout) * -3) !important;
 }
 
 .sf-checkout-payment-icon--right {
-    flex-direction: row-reverse;
+    flex-direction: row-reverse !important;
 }
 
 .sf-buy-now-payment-icon--left {
-    flex-direction: row;
+    flex-direction: row !important;
 }
 
 .sf-buy-now-payment-icon--right {
-    flex-direction: row-reverse;
+    flex-direction: row-reverse !important;
 }
 
 /* --- overlap stacking: icons 2 & 3 slide left to sit on top of icon 1 ----- */
 .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
-    background: var(--sf-payment-icon-background_checkout_1);
+    background: var(--sf-payment-icon-background_checkout_1) !important;
 }
 
 .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2) {
-    background: var(--sf-payment-icon-background_checkout_2);
-    left: calc(var(--sf-payment-icon-overlap_checkout) * -1);
+    background: var(--sf-payment-icon-background_checkout_2) !important;
+    left: calc(var(--sf-payment-icon-overlap_checkout) * -1) !important;
 }
 
 .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3) {
-    background: var(--sf-payment-icon-background_checkout_3);
-    left: calc(var(--sf-payment-icon-overlap_checkout) * -2);
+    background: var(--sf-payment-icon-background_checkout_3) !important;
+    left: calc(var(--sf-payment-icon-overlap_checkout) * -2) !important;
 }
 
 .shopflo-buy-now__button .shopflo-payment-icons__wrapper {
-    max-width: calc((var(--sf-buy-now-height) * 2) - (var(--sf-buy-now-payment-icon-overlap) * 2));
+    max-width: calc((var(--sf-buy-now-height) * 2) - (var(--sf-buy-now-payment-icon-overlap) * 2)) !important;
 }
 
 .shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
-    background: var(--sf-buy-now-payment-icon-background-1);
+    background: var(--sf-buy-now-payment-icon-background-1) !important;
 }
 
 .shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2) {
-    background: var(--sf-buy-now-payment-icon-background-2);
-    left: calc(var(--sf-buy-now-payment-icon-overlap) * -1);
+    background: var(--sf-buy-now-payment-icon-background-2) !important;
+    left: calc(var(--sf-buy-now-payment-icon-overlap) * -1) !important;
 }
 
 .shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3) {
-    background: var(--sf-buy-now-payment-icon-background-3);
-    left: calc(var(--sf-buy-now-payment-icon-overlap) * -2);
+    background: var(--sf-buy-now-payment-icon-background-3) !important;
+    left: calc(var(--sf-buy-now-payment-icon-overlap) * -2) !important;
 }
 
 /* ==========================================================================
    Checkout / Buy Now button — content, label & "Powered by Shopflo" badge
    ========================================================================== */
 .shopflo-checkout__button--content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .shopflo-checkout__button--label {
-    flex-basis: 70%;
+    flex-basis: 70% !important;
     /* Claims any space left unclaimed by the icons wrapper/badge - both are flex-grow:0, so this
        is a no-op when they're rendered at their full 15%/15% share, but lets the label expand to
        fill the button on its own when one or both are omitted from the DOM entirely (payment
        icons disabled via settings.shopflo_payment_icons_checkout or the shopflo_payment_icons
        render param, and/or shopflo_badge: false) rather than leaving a dead gap where they'd
        have sat. */
-    flex-grow: 1;
-    height: 100%;
-    min-height: var(--sf-checkout-font-size);
-    display: flex;
-    align-items: center;
-    font-size: var(--sf-checkout-font-size);
-    line-height: calc(var(--sf-checkout-height) * 2.1);
-    letter-spacing: var(--sf-checkout-letter-spacing);
-    background: var(--sf-checkout-color);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    flex-grow: 1 !important;
+    height: 100% !important;
+    min-height: var(--sf-checkout-font-size) !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: var(--sf-checkout-font-size) !important;
+    line-height: calc(var(--sf-checkout-height) * 2.1) !important;
+    letter-spacing: var(--sf-checkout-letter-spacing) !important;
+    background: var(--sf-checkout-color) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
 }
 
 .shopflo-buy-now__button--label {
-    flex-basis: 70%;
+    flex-basis: 70% !important;
     /* See the matching comment on .shopflo-checkout__button--label above. */
-    flex-grow: 1;
-    height: 100%;
-    min-height: var(--sf-buy-now-font-size);
-    display: flex;
-    align-items: center;
-    font-size: var(--sf-buy-now-font-size);
-    line-height: calc(var(--sf-buy-now-height) * 2.1);
-    letter-spacing: var(--sf-buy-now-letter-spacing);
-    background: var(--sf-buy-now-color);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    min-width: fit-content;
+    flex-grow: 1 !important;
+    height: 100% !important;
+    min-height: var(--sf-buy-now-font-size) !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: var(--sf-buy-now-font-size) !important;
+    line-height: calc(var(--sf-buy-now-height) * 2.1) !important;
+    letter-spacing: var(--sf-buy-now-letter-spacing) !important;
+    background: var(--sf-buy-now-color) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    min-width: fit-content !important;
 }
 
 .shopflo-badge-icon--shield {
-    flex-basis: 15%;
-    height: 100%;
-    min-height: 2rem;
+    flex-basis: 15% !important;
+    height: 100% !important;
+    min-height: 2rem !important;
 }
 
 .shopflo-svg--badge {
-    display: block;
-    height: 100%;
-    max-width: 100%;
-    width: unset;
+    display: block !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    width: unset !important;
 }
 
 /* UI check: keeps the button label readable when space is tight - bindLabelWidthGuard() in
@@ -738,7 +750,7 @@
 .shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield,
 .shopflo-buy-now__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
 .shopflo-buy-now__button.sf-label-squeezed .shopflo-badge-icon--shield {
-    display: none;
+    display: none !important;
 }
 
 /* ==========================================================================
@@ -752,60 +764,60 @@
    hit-target (e.g. text selection) in any layout. */
 .shopflo-checkout--promo,
 .shopflo-buy-now--promo {
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
 .shopflo-checkout--promo {
-    background: var(--shopflo-checkout-promo-background);
-    display: flex;
-    align-items: center;
-    padding: 0.4rem;
-    overflow: hidden;
+    background: var(--shopflo-checkout-promo-background) !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.4rem !important;
+    overflow: hidden !important;
 }
 
 .shopflo-checkout--promo__text {
-    font-size: var(--shopflo-checkout-promo-font-size);
-    line-height: calc(var(--shopflo-checkout-promo-font-size) * 2.1);
-    letter-spacing: var(--shopflo-checkout-promo-letter-spacing);
-    background: var(--shopflo-checkout-promo-color);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    padding-inline: 0.4rem;
+    font-size: var(--shopflo-checkout-promo-font-size) !important;
+    line-height: calc(var(--shopflo-checkout-promo-font-size) * 2.1) !important;
+    letter-spacing: var(--shopflo-checkout-promo-letter-spacing) !important;
+    background: var(--shopflo-checkout-promo-color) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    padding-inline: 0.4rem !important;
 }
 
 .shopflo-checkout--promo__text p {
-    margin: 0;
-    height: var(--shopflo-checkout-promo-font-size);
-    font-size: var(--shopflo-checkout-promo-font-size);
-    line-height: var(--shopflo-checkout-promo-font-size);
+    margin: 0 !important;
+    height: var(--shopflo-checkout-promo-font-size) !important;
+    font-size: var(--shopflo-checkout-promo-font-size) !important;
+    line-height: var(--shopflo-checkout-promo-font-size) !important;
 }
 
 .shopflo-buy-now--promo {
-    background: var(--shopflo-buy-now-promo-background);
-    display: flex;
-    align-items: center;
-    overflow: hidden;
+    background: var(--shopflo-buy-now-promo-background) !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: hidden !important;
 }
 
 .shopflo-buy-now--promo__text {
-    font-size: var(--shopflo-buy-now-promo-font-size);
-    line-height: calc(var(--shopflo-buy-now-promo-font-size) * 2.1);
-    letter-spacing: var(--shopflo-buy-now-promo-letter-spacing);
-    background: var(--shopflo-buy-now-promo-color);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    padding: 0.2rem 0.4rem;
+    font-size: var(--shopflo-buy-now-promo-font-size) !important;
+    line-height: calc(var(--shopflo-buy-now-promo-font-size) * 2.1) !important;
+    letter-spacing: var(--shopflo-buy-now-promo-letter-spacing) !important;
+    background: var(--shopflo-buy-now-promo-color) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    padding: 0.2rem 0.4rem !important;
 }
 
 .shopflo-buy-now--promo__text p {
-    margin: 0;
-    height: var(--shopflo-buy-now-promo-font-size);
-    font-size: var(--shopflo-buy-now-promo-font-size);
-    line-height: var(--shopflo-buy-now-promo-font-size);
+    margin: 0 !important;
+    height: var(--shopflo-buy-now-promo-font-size) !important;
+    font-size: var(--shopflo-buy-now-promo-font-size) !important;
+    line-height: var(--shopflo-buy-now-promo-font-size) !important;
 }
 
 /* ==========================================================================
@@ -907,7 +919,7 @@
    opacity is handled separately, in JS, so it can be timed/eased in sync with the popup's
    own fade (see fadeTrigger() in assets/shopflo-script.js). */
 .sf-popup-trigger--hidden {
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
 /* ==========================================================================
@@ -936,7 +948,7 @@
        viewport coordinates. Has no effect on position:absolute
        descendants (those are already relative to this wrapper by
        default) — kept as a harmless safety net regardless. */
-    transform: translateZ(0);
+    transform: translateZ(0) !important;
 }
 
 /* ==========================================================================
@@ -987,10 +999,10 @@
    attributes; nothing below is load-bearing for functionality.
    ========================================================================== */
 shopflo-accounts {
-    display: inline-flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex !important;
+    position: relative !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 /* "Full width" (Theme Editor > Shopflo Shop Pass > Login Button A/B/C) - opt-in, off by default
@@ -1003,7 +1015,7 @@ shopflo-accounts {
    needs the extra element+class specificity to reliably win regardless of source order; matching
    the wrapper's selector shape here too, for consistency. */
 shopflo-accounts.sf-full-width {
-    width: 100%;
+    width: 100% !important;
 }
 
 /* Primary/Secondary settings are independent (see snippets/shopflo.liquid's 'assets' case), but
@@ -1013,16 +1025,16 @@ shopflo-accounts.sf-full-width {
    names onto the right slot's values for everything nested inside it - no rule duplication
    needed below. */
 .shopflo-accounts--primary {
-    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-primary);
-    --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-primary);
-    --shopflo-account-icon-size: var(--shopflo-account-icon-size-primary);
-    --shopflo-account-icon-color: var(--shopflo-account-icon-color-primary);
-    --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-primary);
-    --shopflo-account-button-padding-block: var(--shopflo-account-button-padding-block-primary);
-    --shopflo-account-button-bg: var(--shopflo-account-button-bg-primary);
-    --shopflo-account-button-radius: var(--shopflo-account-button-radius-primary);
-    --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-primary);
-    --shopflo-account-label-color: var(--shopflo-account-label-color-primary);
+    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-primary) !important;
+    --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-primary) !important;
+    --shopflo-account-icon-size: var(--shopflo-account-icon-size-primary) !important;
+    --shopflo-account-icon-color: var(--shopflo-account-icon-color-primary) !important;
+    --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-primary) !important;
+    --shopflo-account-button-padding-block: var(--shopflo-account-button-padding-block-primary) !important;
+    --shopflo-account-button-bg: var(--shopflo-account-button-bg-primary) !important;
+    --shopflo-account-button-radius: var(--shopflo-account-button-radius-primary) !important;
+    --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-primary) !important;
+    --shopflo-account-label-color: var(--shopflo-account-label-color-primary) !important;
     /* Drawer (see .shopflo-accounts__drawer below) - independent of the icon/button vars above,
        so the dropdown menu can be styled/positioned differently per slot. No -primary-suffixed
        source vars exist yet (no Theme Editor settings for these), so every one of these
@@ -1032,49 +1044,49 @@ shopflo-accounts.sf-full-width {
        setting (Theme Editor > Shopflo Shop Pass > Primary Login Button > Show button shadow +
        Button shadow direction/horizontal offset/vertical offset/blur/spread/color) - see the
        account_button_shadow_primary capture in snippets/shopflo.liquid's 'assets' case. */
-    --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-primary, #fff);
-    --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-primary, 8px);
-    --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-primary, 4rem);
-    --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-primary, #344054);
-    --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-primary, #f9fafb);
+    --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-primary, #fff) !important;
+    --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-primary, 8px) !important;
+    --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-primary, 4rem) !important;
+    --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-primary, #344054) !important;
+    --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-primary, #f9fafb) !important;
 }
 
 .shopflo-accounts--secondary {
-    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-secondary);
-    --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-secondary);
-    --shopflo-account-icon-size: var(--shopflo-account-icon-size-secondary);
-    --shopflo-account-icon-color: var(--shopflo-account-icon-color-secondary);
-    --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-secondary);
-    --shopflo-account-button-padding-block: var(--shopflo-account-button-padding-block-secondary);
-    --shopflo-account-button-bg: var(--shopflo-account-button-bg-secondary);
-    --shopflo-account-button-radius: var(--shopflo-account-button-radius-secondary);
-    --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-secondary);
-    --shopflo-account-label-color: var(--shopflo-account-label-color-secondary);
+    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-secondary) !important;
+    --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-secondary) !important;
+    --shopflo-account-icon-size: var(--shopflo-account-icon-size-secondary) !important;
+    --shopflo-account-icon-color: var(--shopflo-account-icon-color-secondary) !important;
+    --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-secondary) !important;
+    --shopflo-account-button-padding-block: var(--shopflo-account-button-padding-block-secondary) !important;
+    --shopflo-account-button-bg: var(--shopflo-account-button-bg-secondary) !important;
+    --shopflo-account-button-radius: var(--shopflo-account-button-radius-secondary) !important;
+    --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-secondary) !important;
+    --shopflo-account-label-color: var(--shopflo-account-label-color-secondary) !important;
     /* Drawer - see the matching comment in .shopflo-accounts--primary above. */
-    --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-secondary, #fff);
-    --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-secondary, 8px);
-    --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-secondary, 4rem);
-    --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-secondary, #344054);
-    --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-secondary, #f9fafb);
+    --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-secondary, #fff) !important;
+    --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-secondary, 8px) !important;
+    --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-secondary, 4rem) !important;
+    --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-secondary, #344054) !important;
+    --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-secondary, #f9fafb) !important;
 }
 
 .shopflo-accounts--tertiary {
-    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-tertiary);
-    --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-tertiary);
-    --shopflo-account-icon-size: var(--shopflo-account-icon-size-tertiary);
-    --shopflo-account-icon-color: var(--shopflo-account-icon-color-tertiary);
-    --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-tertiary);
-    --shopflo-account-button-padding-block: var(--shopflo-account-button-padding-block-tertiary);
-    --shopflo-account-button-bg: var(--shopflo-account-button-bg-tertiary);
-    --shopflo-account-button-radius: var(--shopflo-account-button-radius-tertiary);
-    --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-tertiary);
-    --shopflo-account-label-color: var(--shopflo-account-label-color-tertiary);
+    --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-tertiary) !important;
+    --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-tertiary) !important;
+    --shopflo-account-icon-size: var(--shopflo-account-icon-size-tertiary) !important;
+    --shopflo-account-icon-color: var(--shopflo-account-icon-color-tertiary) !important;
+    --shopflo-account-button-padding-inline: var(--shopflo-account-button-padding-inline-tertiary) !important;
+    --shopflo-account-button-padding-block: var(--shopflo-account-button-padding-block-tertiary) !important;
+    --shopflo-account-button-bg: var(--shopflo-account-button-bg-tertiary) !important;
+    --shopflo-account-button-radius: var(--shopflo-account-button-radius-tertiary) !important;
+    --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-tertiary) !important;
+    --shopflo-account-label-color: var(--shopflo-account-label-color-tertiary) !important;
     /* Drawer - see the matching comment in .shopflo-accounts--primary above. */
-    --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-tertiary, #fff);
-    --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-tertiary, 8px);
-    --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-tertiary, 4rem);
-    --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-tertiary, #344054);
-    --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-tertiary, #f9fafb);
+    --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-tertiary, #fff) !important;
+    --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-tertiary, 8px) !important;
+    --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-tertiary, 4rem) !important;
+    --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-tertiary, #344054) !important;
+    --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-tertiary, #f9fafb) !important;
 }
 
 /* "Visible on" (Theme Editor > Shopflo Shop Pass > Primary/Secondary Login Button > Visible on)
@@ -1082,43 +1094,43 @@ shopflo-accounts.sf-full-width {
    --mobile-only on <shopflo-accounts> itself (no class at all = "Both", always visible).
    Breakpoint matches the rest of the theme's own desktop/mobile split (see sections/header.liquid). */
 .sf-account-visible--desktop-only {
-    display: none;
+    display: none !important;
 }
 
 .sf-account-visible--mobile-only {
-    display: inline-flex;
+    display: inline-flex !important;
 }
 
 @media screen and (min-width: 750px) {
     .sf-account-visible--desktop-only {
-        display: inline-flex;
+        display: inline-flex !important;
     }
 
     .sf-account-visible--mobile-only {
-        display: none;
+        display: none !important;
     }
 }
 
 .shopflo-accounts__icon-button {
-    height: fit-content;
-    width: fit-content;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--shopflo-account-icon-gap, 6px);
-    background: var(--shopflo-account-button-bg, #fff);
-    border: none;
-    border-radius: var(--shopflo-account-button-radius, 8px);
-    padding-inline: var(--shopflo-account-button-padding-inline, 4px);
-    padding-block: var(--shopflo-account-button-padding-block, 4px);
-    cursor: pointer;
-    transition: background 0.2s ease;
-    box-shadow: var(--shopflo-account-button-shadow, none);
+    height: fit-content !important;
+    width: fit-content !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--shopflo-account-icon-gap, 6px) !important;
+    background: var(--shopflo-account-button-bg, #fff) !important;
+    border: none !important;
+    border-radius: var(--shopflo-account-button-radius, 8px) !important;
+    padding-inline: var(--shopflo-account-button-padding-inline, 4px) !important;
+    padding-block: var(--shopflo-account-button-padding-block, 4px) !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease !important;
+    box-shadow: var(--shopflo-account-button-shadow, none) !important;
 }
 
 .shopflo-accounts__icon-button[disabled] {
-    cursor: not-allowed;
-    opacity: 0.5;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
 }
 
 /* Overrides this rule's own width:fit-content above - needs the extra class+class specificity to
@@ -1128,7 +1140,7 @@ shopflo-accounts.sf-full-width {
    toggle would silently do nothing without this. See the matching comment on
    shopflo-accounts.sf-full-width further up. */
 .shopflo-accounts__icon-button.sf-full-width {
-    width: 100%;
+    width: 100% !important;
 }
 
 /* Icon color settings are `color_background` (solid or gradient), same as the checkout/buy-now
@@ -1142,74 +1154,74 @@ shopflo-accounts.sf-full-width {
    since it's now invisible underneath anyway. Stroke width is no longer settings-driven, so the
    mask's hardcoded stroke-width="1.611" always matches the visible SVG's own inline value. */
 .shopflo-accounts__icon-button svg {
-    width: var(--shopflo-account-icon-size, 20px);
-    height: var(--shopflo-account-icon-size, 20px);
-    flex-shrink: 0;
-    color: transparent;
-    transition: background 0.2s ease;
-    background: var(--shopflo-account-icon-color, linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%));
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 29' fill='none'%3E%3Cpath d='M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z' fill='%23000' stroke='%23000' stroke-width='0.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 29' fill='none'%3E%3Cpath d='M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z' fill='%23000' stroke='%23000' stroke-width='0.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
+    width: var(--shopflo-account-icon-size, 20px) !important;
+    height: var(--shopflo-account-icon-size, 20px) !important;
+    flex-shrink: 0 !important;
+    color: transparent !important;
+    transition: background 0.2s ease !important;
+    background: var(--shopflo-account-icon-color, linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)) !important;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 29' fill='none'%3E%3Cpath d='M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z' fill='%23000' stroke='%23000' stroke-width='0.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 29 29' fill='none'%3E%3Cpath d='M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z' stroke='%23000' stroke-width='1.611' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z' fill='%23000' stroke='%23000' stroke-width='0.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+    -webkit-mask-size: contain !important;
+    mask-size: contain !important;
+    -webkit-mask-repeat: no-repeat !important;
+    mask-repeat: no-repeat !important;
+    -webkit-mask-position: center !important;
+    mask-position: center !important;
 }
 
 /* Label is rendered after the icon in markup (default flex row = "Icon left" layout); this
    flips the visual order for "Icon right" without touching the DOM/markup order. */
 .sf-account-layout--icon-right {
-    flex-direction: row-reverse;
+    flex-direction: row-reverse !important;
 }
 
 .shopflo-accounts__label {
-    font-size: var(--shopflo-account-label-font-size, 14px);
-    line-height: 1;
-    white-space: nowrap;
-    transition: background 0.2s ease;
-    background: var(--shopflo-account-label-color, linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    padding-block: 1px;
+    font-size: var(--shopflo-account-label-font-size, 14px) !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    transition: background 0.2s ease !important;
+    background: var(--shopflo-account-label-color, linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
+    padding-block: 1px !important;
 }
 
 .shopflo-accounts__logged-in {
-    position: relative;
-    display: inline-flex;
-    justify-self: center;
-    align-items: center;
+    position: relative !important;
+    display: inline-flex !important;
+    justify-self: center !important;
+    align-items: center !important;
 }
 
 .shopflo-accounts__drawer {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    min-width: var(--shopflo-account-drawer-min-width, 4rem);
-    padding: 4px;
-    margin-top: 4px;
-    background: var(--shopflo-account-drawer-bg, #fff);
-    border-radius: var(--shopflo-account-drawer-radius, 8px);
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
-    z-index: 999;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    min-width: var(--shopflo-account-drawer-min-width, 4rem) !important;
+    padding: 4px !important;
+    margin-top: 4px !important;
+    background: var(--shopflo-account-drawer-bg, #fff) !important;
+    border-radius: var(--shopflo-account-drawer-radius, 8px) !important;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25) !important;
+    z-index: 999 !important;
 }
 
 /* Applied by _positionDrawer() in shopflo-script.js when the trigger
    sits too close to that edge of the viewport for the drawer's fixed
    size to fit in its default open-below/open-right position. */
 .shopflo-accounts__drawer--open-top {
-    top: auto;
-    bottom: 100%;
-    margin-top: 0;
-    margin-bottom: 4px;
+    top: auto !important;
+    bottom: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
 }
 
 .shopflo-accounts__drawer--open-left {
-    right: auto;
-    left: 0;
+    right: auto !important;
+    left: 0 !important;
 }
 
 /* Centered on the account icon's own horizontal midpoint (its containing block,
@@ -1219,35 +1231,35 @@ shopflo-accounts.sf-full-width {
    without overflowing either side of the viewport - falls back to plain left/right otherwise,
    same as any other preferred direction that doesn't fit. */
 .shopflo-accounts__drawer--open-center {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
 }
 
 .shopflo-accounts__drawer-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
 }
 
 .shopflo-accounts__drawer-item {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    font: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 10px 14px;
-    cursor: pointer;
-    color: var(--shopflo-account-drawer-item-color, #344054);
-    border-radius: var(--shopflo-account-drawer-radius, 8px);
-    transition: background 0.2s ease;
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    background: none !important;
+    border: none !important;
+    font: inherit !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+    color: var(--shopflo-account-drawer-item-color, #344054) !important;
+    border-radius: var(--shopflo-account-drawer-radius, 8px) !important;
+    transition: background 0.2s ease !important;
 }
 
 .shopflo-accounts__drawer-item:hover {
-    background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb);
+    background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb) !important;
 }
 
 /* A separate floating circular button, NOT part of the dropdown card itself - positioned
@@ -1260,23 +1272,23 @@ shopflo-accounts.sf-full-width {
    the "Visibility" section further down) hides this along with everything else in one shot - no
    separate visibility wiring needed. */
 .shopflo-accounts__drawer-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    left: 50%;
-    bottom: -30px;
-    transform: translateX(-50%);
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    background: var(--shopflo-account-drawer-bg, #fff);
-    border: none;
-    border-radius: 50%;
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    color: var(--shopflo-account-drawer-item-color, #344054);
-    transition: background 0.2s ease;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute !important;
+    left: 50% !important;
+    bottom: -30px !important;
+    transform: translateX(-50%) !important;
+    width: 22px !important;
+    height: 22px !important;
+    padding: 0 !important;
+    background: var(--shopflo-account-drawer-bg, #fff) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25) !important;
+    cursor: pointer !important;
+    color: var(--shopflo-account-drawer-item-color, #344054) !important;
+    transition: background 0.2s ease !important;
 }
 
 /* Mirrors .shopflo-accounts__drawer--open-top (above) flipping the drawer itself from below-icon
@@ -1284,12 +1296,12 @@ shopflo-accounts.sf-full-width {
    in lockstep, so it's always on the outside edge farthest from the icon rather than the one
    closest to it. */
 .shopflo-accounts__drawer--open-top .shopflo-accounts__drawer-close {
-    bottom: auto;
-    top: -30px;
+    bottom: auto !important;
+    top: -30px !important;
 }
 
 .shopflo-accounts__drawer-close:hover {
-    background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb);
+    background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb) !important;
 }
 
 /* Sibling of .shopflo-accounts__drawer, positioned the same way — width matches the bundle's own
@@ -1298,17 +1310,17 @@ shopflo-accounts.sf-full-width {
    as the customer interacts with the iframe's content. 225px is only the fallback before the
    first sync happens. */
 .shopflo-accounts__drawer-iframe {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    margin-top: 4px;
-    width: 400px;
-    max-width: calc(100vw - 16px);
-    height: var(--flo-sso-iframe-height, 225px);
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
-    z-index: 999;
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    margin-top: 4px !important;
+    width: 400px !important;
+    max-width: calc(100vw - 16px) !important;
+    height: var(--flo-sso-iframe-height, 225px) !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25) !important;
+    z-index: 999 !important;
 }
 
 /* NOTE: no mobile-specific sizing for .shopflo-accounts__drawer-iframe here — our own copy is
@@ -1318,10 +1330,10 @@ shopflo-accounts.sf-full-width {
 
 .shopflo-accounts__overlay {
     display: block !important;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 998;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    z-index: 998 !important;
 }
 
 /* ==========================================================================
@@ -1337,11 +1349,11 @@ shopflo-accounts.sf-full-width {
 }
 
 .shopflo-accounts__logged-in[data-flo-visible="true"] {
-    display: inline-flex;
+    display: inline-flex !important;
 }
 
 .shopflo-accounts__drawer[data-flo-visible="true"] {
-    display: block;
+    display: block !important;
 }
 
 body:has([data-flo-state="login-icon"][data-flo-visible=false]) #flo-marketing-popup-wrapper {

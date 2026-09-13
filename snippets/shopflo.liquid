@@ -49,7 +49,7 @@
        own "Inherit styles from" dropdown - Button B can inherit Button A or Button C; Button C can
        inherit Button A or Button B (Button A is the root, it has no such setting). EVERY instance
        you render must be wrapped in
-       `settings.shopflo_customer_account_enabled == 'shopflo'` (Theme Editor > Shopflo Shop Pass >
+       `settings.shopflo_customer_account_provider == 'shopflo'` (Theme Editor > Shopflo Shop Pass >
        User Login), falling back to Shopify's native account link (`routes.account_url` /
        `routes.account_login_url` + `{% render 'icon-account' %}`) otherwise - copy the pattern in
        sections/header.liquid.
@@ -223,7 +223,7 @@
     needed. Tertiary (Button C) is optional - only render it if you actually need a third
     independently-placed/styled instance (e.g. a footer or sidebar account link in addition to
     header/mobile-menu); most themes only need Primary + Secondary (Button A + Button B). Guard
-    every instance you render with settings.shopflo_customer_account_enabled == 'shopflo',
+    every instance you render with settings.shopflo_customer_account_provider == 'shopflo',
     falling back to a native account link:
   {% render 'shopflo', type: 'shop_pass_primary' %}
   {% render 'shopflo', type: 'shop_pass_secondary' %}
@@ -657,7 +657,7 @@
 
     {%- liquid
       assign shopflo_customer_account_swap = false
-      if settings.shopflo_customer_account_enabled == 'shopflo'
+      if settings.shopflo_customer_account_provider == 'shopflo'
         assign shopflo_customer_account_swap = true
       endif
     -%}
@@ -1055,7 +1055,7 @@
     {% capture buy_now_wrapper_class %} shopflo-buy-now__wrapper {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if shopflo_promo_text_buy_now_present %} sf-promo-banner__layout--{{ buy_now_promo_banner_layout }} {% endif %} {{ extra_class }}{% endcapture %}
 
     {% capture buy_now_button_class %}
-    shopflo-buy-now__button shopflo-popup-trigger {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_shadow_style != 'none' %} sf-button-shadow--{{ buy_now_shadow_style }} {%
+    shopflo-buy-now__button shopflo-popup-trigger shopify-payment-button__button shopify-payment-button__button--unbranded {% if buy_now_full_width == true %} sf-full-width {% endif %} {% if buy_now_shadow_style != 'none' %} sf-button-shadow--{{ buy_now_shadow_style }} {%
     endif %} {% if buy_now_hover_effect != 'none' %} sf-button-hover--{{ buy_now_hover_effect }} {% endif %} {% if buy_now_icons_enabled == true %} sf-buy-now-payment-icon--{{ buy_now_icon_position }} {% endif %}
     {% endcapture %}
 
@@ -1073,6 +1073,22 @@
           {{ buy_now_promo_markup }}
         {%- endif -%}
 
+        {%- comment -%}
+          The .shopify-payment-button wrapper + shopify-payment-button__button(--unbranded)
+          classes below are Shopify's OWN native dynamic-checkout-button markup convention (what
+          {{ form | payment_button }} itself renders - see the international-redirect fallback
+          further down). Borrowed here purely so the Shopflo bundle's own quantity/variant
+          detection - which keys off this exact convention, same as it would for a plain native
+          dynamic checkout button - resolves the shopper's currently selected quantity correctly;
+          without it, handleFloBuyNowBtn() always opens checkout with quantity 1 regardless of
+          what's selected in the product form's quantity input. Confirmed by testing: quantity
+          syncs correctly once this markup/class convention is present, and doesn't otherwise.
+          assets/shopflo-styles.css sets `display: contents` on this wrapper div (scoped to
+          .shopflo-buy-now__wrapper only) so it stays functionally invisible to layout - the real
+          .shopflo-buy-now__button (with all its own classes/attributes below, untouched) still
+          drives 100% of the actual click handling, styling and popup-morph behavior.
+        {%- endcomment -%}
+        <div class="shopify-payment-button">
         <button
           type="button"
           id="flo-buy-now-button"
@@ -1178,6 +1194,7 @@
             </span>
           {%- endif -%}
         </button>
+        </div>
       </div>
     {%- endif -%}
 
@@ -1414,7 +1431,7 @@
       </button>
 
       {%- comment -%} Logged-in state: same header-icon trigger, opens the proxy drawer once resolved state says logged-in {%- endcomment -%}
-      <div class="shopflo-accounts__logged-in" data-flo-state="account-icon" data-flo-visible="false">
+      <div class="shopflo-accounts__logged-in {% if account_full_width %} sf-full-width {% endif %}" data-flo-state="account-icon" data-flo-visible="false">
         <button
           type="button"
           class="{{ account_icon_button_class }}"
@@ -1491,7 +1508,7 @@
             data-flo-trigger="close-drawer"
             aria-label="Close menu"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="shopflo-svg--close">
               <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
             </svg>
           </button>

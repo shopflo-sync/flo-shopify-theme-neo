@@ -1559,7 +1559,7 @@
     ]
   },
   {
-    "name": "Shopflo",
+    "name": "Shopflo-NEO",
     "settings": [
       {
         "type": "paragraph",
@@ -2665,7 +2665,7 @@
     "settings": [
       {
         "type": "select",
-        "id": "shopflo_customer_account_enabled",
+        "id": "shopflo_customer_account_provider",
         "label": "Login provider",
         "info": "Choose the primary service used for customer accounts.",
         "default": "shopify",
