@@ -110,6 +110,13 @@
       calling `openThemeFloCheckout()`/`handleFloBuyNowBtn()` directly (which still works, just
       without the popup animation).
 
+      A Quick View modal injecting a fresh `#flo-buy-now-button` per product used to break this
+      for buy-now specifically (the delegated listener couldn't tell which instance was actually
+      clicked) - that's now handled by `bindQuickViewVariantIsolation()` in
+      assets/shopflo-script.js instead, which wraps `window.handleFloBuyNowBtn` itself (works
+      regardless of how it's invoked), so `type: 'buy_now'` uses the same `.shopflo-popup-trigger`
+      convention as checkout again.
+
     ---------------------------------------------------------------------------------------------
     CART COUNT SYNC - keeping a cart count badge live while Shopflo's cart/checkout is open:
     ---------------------------------------------------------------------------------------------
@@ -196,7 +203,7 @@
 
     @param {string} type - Which piece to render: 'assets' (svg defs/styles/scripts + shared popup markup, default), 'checkout' (checkout button), 'buy_now' (buy-now button), 'shop_pass_primary', 'shop_pass_secondary', or 'shop_pass_tertiary' (account login icon/drawer proxy, independently styled per slot, each self-hiding per its own "Visible on" setting - see <shopflo-accounts> in assets/shopflo-script.js), or 'shop_pass_bundle_markup' (dummy hidden markup the Shopflo bundle script itself needs to initialize correctly - required, once anywhere in <body>, whenever you render any shop_pass_* instance).
     @param {string} [extra_class] - checkout/buy_now/shop_pass_primary/shop_pass_secondary/shop_pass_tertiary only. Extra CSS class(es) appended as-is (space-separated) to this render's own root wrapper element - `.shopflo-checkout__wrapper` for 'checkout', `.shopflo-buy-now__wrapper` for 'buy_now', or `<shopflo-accounts>` itself for the shop_pass_* types - on top of its existing default classes, not instead of them. Useful for a one-off layout hook (e.g. a caller-specific spacing utility) without needing a new Theme Editor setting or touching assets/shopflo-styles.css. No-op (silently ignored) for any other `type`.
-    @param {boolean} [shopflo_badge] - Checkout/buy_now only. Shows the "Powered by Shopflo" badge on the button. Defaults to true.
+    @param {boolean} [shopflo_badge] - Checkout/buy_now only. Shows the "Powered by Shopflo" badge on the button. Defaults to true. Pass `false` explicitly to hide - NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
     @param {boolean} [shopflo_payment_icons] - Checkout/buy_now only. Master show/hide for the payment icons row, on top of (not instead of) the existing Theme Editor settings - Theme Editor > Shopflo Checkout/Buy Now > Show payment icons, icon 1/2/3 pickers, position, etc. all still apply exactly as before; this just lets a caller force the row off for one particular render (e.g. a compact cart-drawer instance) without touching those settings. Defaults to true. Pass `false` explicitly to hide - like `show_user_icon` below, NOT read via the `| default:` filter, since that would silently treat an explicit `false` the same as "not passed".
     @param {object} [form] - Required when type is 'buy_now'. The product form object, used for the dynamic Shopify payment button fallback.
     @param {object} [product_obj] - Required when type is 'buy_now'. The product object, used for checking stock.
@@ -246,7 +253,14 @@
 
 {%- liquid
   assign shopflo_snippet_type = type | default: 'assets'
-  assign shopflo_badge = shopflo_badge | default: true
+
+  # NOT `shopflo_badge | default: true` - the default filter would silently treat an explicit
+  # `false` the same as "not passed", same reasoning as shopflo_payment_icons right below.
+  assign shopflo_badge_param = shopflo_badge
+  assign shopflo_badge = true
+  if shopflo_badge_param == false
+    assign shopflo_badge = false
+  endif
 
   # NOT `shopflo_payment_icons | default: true` - see the @param doc above: the default filter
   # would silently treat an explicit `false` the same as "not passed".
@@ -254,16 +268,6 @@
   assign shopflo_payment_icons = true
   if shopflo_payment_icons_param == false
     assign shopflo_payment_icons = false
-  endif
-
-  assign any_selected_checkout_payment_icons = false
-  if settings.shopflo_payment_icon_1_checkout != 'none' or settings.shopflo_payment_icon_2_checkout != 'none' or settings.shopflo_payment_icon_3_checkout != 'none'
-    assign any_selected_checkout_payment_icons = true
-  endif
-
-  assign any_selected_buy_now_payment_icons = false
-  if settings.shopflo_payment_icon_1_buy_now != 'none' or settings.shopflo_payment_icon_2_buy_now != 'none' or settings.shopflo_payment_icon_3_buy_now != 'none'
-    assign any_selected_buy_now_payment_icons = true
   endif
 -%}
 
@@ -488,6 +492,7 @@
         --sf-checkout-border-width: {{ settings.shopflo_border_width_checkout | append: 'px' }};
         --sf-checkout-border-radius: {{ settings.shopflo_corner_radius_checkout | append: 'px' }};
         --sf-checkout-hover-background: {{ settings.shopflo_hover_background_checkout | default: settings.shopflo_background_color_checkout }};
+        --sf-checkout-hover-color: {{ settings.shopflo_hover_text_color_checkout | default: settings.shopflo_text_color_checkout }};
 
         {% if settings.shopflo_match_checkout_layout_buy_now %}
           --sf-buy-now-height: {{ settings.shopflo_button_height_checkout | append: 'px' }};
@@ -519,8 +524,10 @@
 
         {% if settings.shopflo_match_checkout_animation_buy_now %}
           --sf-buy-now-hover-background: {{ settings.shopflo_hover_background_checkout | default: settings.shopflo_background_color_checkout }};
+          --sf-buy-now-hover-color: {{ settings.shopflo_hover_text_color_checkout | default: settings.shopflo_text_color_checkout }};
         {% else %}
           --sf-buy-now-hover-background: {{ settings.shopflo_hover_background_buy_now | default: settings.shopflo_background_color_buy_now }};
+          --sf-buy-now-hover-color: {{ settings.shopflo_hover_text_color_buy_now | default: settings.shopflo_text_color_buy_now }};
         {% endif %}
 
         --shopflo-checkout-promo-background: {{ settings.shopflo_promo_background_checkout }};
@@ -693,7 +700,13 @@
             type: "class",
             selector: ".cart-drawer__checkout"
           }
-        }
+        },
+        {% comment %} Theme Editor > Shopflo Shop Pass > Force overflow visible on - a
+        comma-separated list of CSS selectors (classes/ids) for ancestor elements that clip the
+        account dropdown/login panel via overflow:hidden. ShopfloAccounts._setOverlayVisible() in
+        assets/shopflo-script.js forces overflow:visible on each match while the dropdown/login
+        panel is open, and restores it on close. Blank/unset is a no-op. {% endcomment %}
+        shopflo_account_overflow_fix_selectors: {{ settings.shopflo_account_overflow_fix_selectors | json }}
       };
     </script>
 
@@ -870,8 +883,8 @@
           {{ checkout_promo_markup }}
         {%- endif -%}
 
-        <span class="shopflo-payment-icons__wrapper">
-          {%- if checkout_icons_enabled == true and any_selected_checkout_payment_icons == true -%}
+        {%- if checkout_icons_enabled == true and any_selected_checkout_payment_icons == true -%}
+          <span class="shopflo-payment-icons__wrapper">
             {%- for icon in checkout_icons_list -%}
               {%- unless icon == 'none' -%}
                 <span class="shopflo-icon shopflo-payment-icon--{{ icon }}">
@@ -946,8 +959,8 @@
                 </span>
               {%- endunless -%}
             {%- endfor -%}
-          {%- endif -%}
-        </span>
+          </span>
+        {%- endif -%}
 
         <span class="shopflo-checkout__button--label sf-label--{{ settings.shopflo_label_alignment_checkout }} sf-text--{{ settings.shopflo_font_weight_checkout }}">
           {{- settings.shopflo_button_label_checkout -}}
@@ -982,10 +995,7 @@
 
       assign buy_now_full_width = settings.shopflo_full_width_buy_now
       assign buy_now_label_alignment = settings.shopflo_label_alignment_buy_now
-      assign buy_now_font_weight = 'normal'
-      if settings.shopflo_bold_text_buy_now
-        assign buy_now_font_weight = 'bold'
-      endif
+      assign buy_now_font_weight = settings.shopflo_font_weight_buy_now
 
       if settings.shopflo_match_checkout_layout_buy_now
         assign buy_now_full_width = settings.shopflo_full_width_checkout
@@ -1061,14 +1071,13 @@
 
     {%- capture buy_now_promo_markup -%}
       {%- if shopflo_promo_text_buy_now_present -%}
-        <div class="shopflo-buy-now--promo sf-full-width sf-label--{{ buy_now_promo_alignment }} sf-promo-position--{{ buy_now_promo_position }}">
+        <div class="shopflo-buy-now--promo sf-full-width sf-label--{{ buy_now_promo_alignment }} sf-promo-position--{{ buy_now_promo_position }} {{ buy_now_wrapper_class }}">
           <span class="shopflo-buy-now--promo__text">{{ buy_now_promo_text }}</span>
         </div>
       {%- endif -%}
     {%- endcapture -%}
 
     {%- if render_shopflo_buy_now_button -%}
-      <div class="{{ buy_now_wrapper_class }}">
         {%- if shopflo_promo_text_buy_now_present and buy_now_promo_banner_layout != 'top_of_button' -%}
           {{ buy_now_promo_markup }}
         {%- endif -%}
@@ -1086,7 +1095,21 @@
           assets/shopflo-styles.css sets `display: contents` on this wrapper div (scoped to
           .shopflo-buy-now__wrapper only) so it stays functionally invisible to layout - the real
           .shopflo-buy-now__button (with all its own classes/attributes below, untouched) still
-          drives 100% of the actual click handling, styling and popup-morph behavior.
+          drives 100% of the actual styling.
+
+          Uses .shopflo-popup-trigger + data-flo-action="buy-now" (same convention as the
+          checkout button below) - NOT a raw onclick. An earlier revision of this button called
+          handleFloBuyNowBtn(event) directly via onclick specifically to route around a Quick
+          View "checks out the wrong product/variant" bug, since the delegated
+          .shopflo-popup-trigger listener in assets/shopflo-script.js couldn't tell which of
+          several #flo-buy-now-button instances (a Quick View modal injects a fresh one via
+          innerHTML per product) was actually clicked. The real fix for that turned out to be
+          bindQuickViewVariantIsolation() in assets/shopflo-script.js, which wraps
+          window.handleFloBuyNowBtn itself (the bundle's own global) regardless of HOW it gets
+          called - so it works the same whether this button uses onclick or the delegated
+          listener, and there's no longer a reason to give up the popup-morph FLIP animation,
+          the international-redirect fallback, or the defensive typeof guard that only
+          openThemeFloBuyNow() (which this convention routes through) provides.
         {%- endcomment -%}
         <div class="shopify-payment-button">
         <button
@@ -1103,8 +1126,8 @@
             {{ buy_now_promo_markup }}
           {%- endif -%}
 
-          <span class="shopflo-payment-icons__wrapper">
-            {%- if buy_now_icons_enabled == true and any_selected_buy_now_payment_icons == true -%}
+          {%- if buy_now_icons_enabled == true and any_selected_buy_now_payment_icons == true -%}
+            <span class="shopflo-payment-icons__wrapper">
               {%- for icon in buy_now_icons_list -%}
                 {%- unless icon == 'none' -%}
                   <span class="shopflo-icon shopflo-payment-icon--{{ icon }}">
@@ -1179,8 +1202,8 @@
                   </span>
                 {%- endunless -%}
               {%- endfor -%}
-            {%- endif -%}
-          </span>
+            </span>
+          {%- endif -%}
 
           <span class="shopflo-buy-now__button--label sf-label--{{ buy_now_label_alignment }} sf-text--{{ buy_now_font_weight }}">
             {{- settings.shopflo_button_label_buy_now -}}
@@ -1195,7 +1218,6 @@
           {%- endif -%}
         </button>
         </div>
-      </div>
     {%- endif -%}
 
     {% if settings.shopflo_international_redirect_enabled == true %}
@@ -1295,43 +1317,67 @@
       assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_b
       assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_b
       assign account_full_width_button_b_preliminary = settings.shopflo_account_full_width_button_b
+      assign account_icon_sync_header_button_b_preliminary = settings.shopflo_account_icon_sync_header_button_b
+      assign account_icon_source_button_b_preliminary = settings.shopflo_account_icon_source_button_b
+      assign account_theme_icon_button_b_preliminary = settings.shopflo_account_theme_icon_button_b
       if settings.shopflo_account_match_with_button_b == 'button_a'
         assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_a
         assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_a
         assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_a
         assign account_full_width_button_b_preliminary = settings.shopflo_account_full_width_button_a
+        assign account_icon_sync_header_button_b_preliminary = settings.shopflo_account_icon_sync_header_button_a
+        assign account_icon_source_button_b_preliminary = settings.shopflo_account_icon_source_button_a
+        assign account_theme_icon_button_b_preliminary = settings.shopflo_account_theme_icon_button_a
       elsif settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_label_text_button_b_preliminary = settings.shopflo_account_text_button_c
         assign account_button_layout_button_b_preliminary = settings.shopflo_account_button_layout_button_c
         assign account_bold_text_button_b_preliminary = settings.shopflo_account_bold_text_button_c
         assign account_full_width_button_b_preliminary = settings.shopflo_account_full_width_button_c
+        assign account_icon_sync_header_button_b_preliminary = settings.shopflo_account_icon_sync_header_button_c
+        assign account_icon_source_button_b_preliminary = settings.shopflo_account_icon_source_button_c
+        assign account_theme_icon_button_b_preliminary = settings.shopflo_account_theme_icon_button_c
       endif
 
       assign account_label_text_button_c = settings.shopflo_account_text_button_c
       assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_c
       assign account_bold_text_button_c = settings.shopflo_account_bold_text_button_c
       assign account_full_width_button_c = settings.shopflo_account_full_width_button_c
+      assign account_icon_sync_header_button_c = settings.shopflo_account_icon_sync_header_button_c
+      assign account_icon_source_button_c = settings.shopflo_account_icon_source_button_c
+      assign account_theme_icon_button_c = settings.shopflo_account_theme_icon_button_c
       if settings.shopflo_account_match_with_button_c == 'button_a'
         assign account_label_text_button_c = settings.shopflo_account_text_button_a
         assign account_button_layout_button_c = settings.shopflo_account_button_layout_button_a
         assign account_bold_text_button_c = settings.shopflo_account_bold_text_button_a
         assign account_full_width_button_c = settings.shopflo_account_full_width_button_a
+        assign account_icon_sync_header_button_c = settings.shopflo_account_icon_sync_header_button_a
+        assign account_icon_source_button_c = settings.shopflo_account_icon_source_button_a
+        assign account_theme_icon_button_c = settings.shopflo_account_theme_icon_button_a
       elsif settings.shopflo_account_match_with_button_c == 'button_b'
         assign account_label_text_button_c = account_label_text_button_b_preliminary
         assign account_button_layout_button_c = account_button_layout_button_b_preliminary
         assign account_bold_text_button_c = account_bold_text_button_b_preliminary
         assign account_full_width_button_c = account_full_width_button_b_preliminary
+        assign account_icon_sync_header_button_c = account_icon_sync_header_button_b_preliminary
+        assign account_icon_source_button_c = account_icon_source_button_b_preliminary
+        assign account_theme_icon_button_c = account_theme_icon_button_b_preliminary
       endif
 
       assign account_label_text_button_b = account_label_text_button_b_preliminary
       assign account_button_layout_button_b = account_button_layout_button_b_preliminary
       assign account_bold_text_button_b = account_bold_text_button_b_preliminary
       assign account_full_width_button_b = account_full_width_button_b_preliminary
+      assign account_icon_sync_header_button_b = account_icon_sync_header_button_b_preliminary
+      assign account_icon_source_button_b = account_icon_source_button_b_preliminary
+      assign account_theme_icon_button_b = account_theme_icon_button_b_preliminary
       if settings.shopflo_account_match_with_button_b == 'button_c'
         assign account_label_text_button_b = account_label_text_button_c
         assign account_button_layout_button_b = account_button_layout_button_c
         assign account_bold_text_button_b = account_bold_text_button_c
         assign account_full_width_button_b = account_full_width_button_c
+        assign account_icon_sync_header_button_b = account_icon_sync_header_button_c
+        assign account_icon_source_button_b = account_icon_source_button_c
+        assign account_theme_icon_button_b = account_theme_icon_button_c
       endif
 
       if account_slot == 'primary'
@@ -1339,16 +1385,25 @@
         assign account_button_layout = settings.shopflo_account_button_layout_button_a
         assign account_bold_text = settings.shopflo_account_bold_text_button_a
         assign account_full_width = settings.shopflo_account_full_width_button_a
+        assign account_icon_sync_header = settings.shopflo_account_icon_sync_header_button_a
+        assign account_icon_source = settings.shopflo_account_icon_source_button_a
+        assign account_theme_icon = settings.shopflo_account_theme_icon_button_a
       elsif account_slot == 'secondary'
         assign account_label_text = account_label_text_button_b
         assign account_button_layout = account_button_layout_button_b
         assign account_bold_text = account_bold_text_button_b
         assign account_full_width = account_full_width_button_b
+        assign account_icon_sync_header = account_icon_sync_header_button_b
+        assign account_icon_source = account_icon_source_button_b
+        assign account_theme_icon = account_theme_icon_button_b
       else
         assign account_label_text = account_label_text_button_c
         assign account_button_layout = account_button_layout_button_c
         assign account_bold_text = account_bold_text_button_c
         assign account_full_width = account_full_width_button_c
+        assign account_icon_sync_header = account_icon_sync_header_button_c
+        assign account_icon_source = account_icon_source_button_c
+        assign account_theme_icon = account_theme_icon_button_c
       endif
 
       assign account_font_weight = 'normal'
@@ -1393,6 +1448,9 @@
       if account_full_width
         assign account_icon_button_class = account_icon_button_class | append: ' sf-full-width'
       endif
+      if account_icon_sync_header
+        assign account_icon_button_class = account_icon_button_class | append: ' sf-icon-sync-header'
+      endif
     -%}
 
     <shopflo-accounts
@@ -1410,20 +1468,25 @@
         aria-label="Your account"
       >
         {%- if show_user_icon -%}
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 29 29"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-          >
-            <g stroke="currentColor">
-              <path d="M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
-            </g>
-            <path d="M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z" fill="#01CCA7" stroke="#01CCA7" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          {%- if account_icon_source == 'theme' and account_theme_icon != blank -%}
+            {{ account_theme_icon }}
+          {%- else -%}
+            <svg
+              class="sf-account-icon--default"
+              width="20"
+              height="20"
+              viewBox="0 0 29 29"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <g stroke="currentColor">
+                <path d="M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <path d="M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z" fill="#01CCA7" stroke="#01CCA7" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          {%- endif -%}
         {%- endif -%}
         {%- if show_account_label -%}
           <span class="shopflo-accounts__label sf-text--{{ account_font_weight }}">{{ account_label_text }}</span>
@@ -1441,20 +1504,25 @@
           aria-haspopup="true"
         >
           {%- if show_user_icon -%}
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 29 29"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <g stroke="currentColor">
-                <path d="M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
-              </g>
-              <path d="M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z" fill="#01CCA7" stroke="#01CCA7" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            {%- if account_icon_source == 'theme' and account_theme_icon != blank -%}
+              {{ account_theme_icon }}
+            {%- else -%}
+              <svg
+                class="sf-account-icon--default"
+                width="20"
+                height="20"
+                viewBox="0 0 29 29"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <g stroke="currentColor">
+                  <path d="M4.833 25.375V22.958C4.833 21.677 5.343 20.447 6.249 19.541C7.155 18.634 8.385 18.125 9.667 18.125H12.688" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M14.5 13.292C17.169 13.292 19.333 11.128 19.333 8.458C19.333 5.789 17.169 3.625 14.5 3.625C11.831 3.625 9.667 5.789 9.667 8.458C9.667 11.128 11.831 13.292 14.5 13.292Z" stroke-width="1.611" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <path d="M21.387 12.3L14.171 20.617L20.514 20.743L19.697 26.367L26.912 18.05L20.57 17.924L21.387 12.3Z" fill="#01CCA7" stroke="#01CCA7" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            {%- endif -%}
           {%- endif -%}
           {%- if show_account_label -%}
             <span class="shopflo-accounts__label sf-text--{{ account_font_weight }}">{{ account_label_text }}</span>

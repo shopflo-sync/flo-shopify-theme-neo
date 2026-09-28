@@ -1,3 +1,4 @@
+/* shopflo-neo:v1.0.0 */
 class ShopfloTheme {
   constructor(config) {
     this.config = config || window.shopfloThemeConfig || {};
@@ -7,8 +8,7 @@ class ShopfloTheme {
     this.init();
 
     const SHOPFLO_LOGO = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWx0ZXI9InVybCgjYSkiPjxwYXRoIGQ9Im0xNi4xMTUgNi4wMTMtNi4xMjkgNi4xMjVhMy4wMTYgMy4wMTYgMCAwIDEtNC4yNjMgMCAzLjAxIDMuMDEgMCAwIDEgMC00LjI2MUw5LjcyIDMuODgyYTMuMDE2IDMuMDE2IDAgMCAxIDQuMjY0IDB6IiBmaWxsPSJ1cmwoI2IpIi8+PHBhdGggZD0ibTE2LjExNSA2LjAxMy02LjEyOSA2LjEyNWEzLjAxNiAzLjAxNiAwIDAgMS00LjI2MyAwIDMuMDEgMy4wMSAwIDAgMSAwLTQuMjYxTDkuNzIgMy44ODJhMy4wMTYgMy4wMTYgMCAwIDEgNC4yNjQgMHoiIGZpbGw9InVybCgjYykiLz48cGF0aCBkPSJtNy44ODUgMTcuOTg3IDYuMTI5LTYuMTI1YTMuMDE2IDMuMDE2IDAgMCAxIDQuMjYzIDAgMy4wMSAzLjAxIDAgMCAxIDAgNC4yNjFsLTMuOTk3IDMuOTk1YTMuMDE2IDMuMDE2IDAgMCAxLTQuMjYzIDB6IiBmaWxsPSJ1cmwoI2QpIi8+PHBhdGggZD0ibTcuODg1IDE3Ljk4NyA2LjEyOS02LjEyNWEzLjAxNiAzLjAxNiAwIDAgMSA0LjI2MyAwIDMuMDEgMy4wMSAwIDAgMSAwIDQuMjYxbC0zLjk5NyAzLjk5NWEzLjAxNiAzLjAxNiAwIDAgMS00LjI2MyAweiIgZmlsbD0idXJsKCNlKSIvPjwvZz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgxPSIxMC41ODEiIHkxPSIxLjUzNiIgeDI9IjEzLjAwMyIgeTI9IjkuNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDFjY2E3Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImMiIHgxPSIxNC40MTYiIHkxPSIxNC40NTMiIHgyPSIyMS42ODIiIHkyPSIxMC4xMTQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii40MTEiIHN0b3AtY29sb3I9IiM0NzYwZmYiIHN0b3Atb3BhY2l0eT0iLjMxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImQiIHgxPSIxMC41ODEiIHkxPSIxLjUzNiIgeDI9IjEzLjAwMyIgeTI9IjkuNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDFjY2E3Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImUiIHgxPSIxNC40MTYiIHkxPSIxNC40NTMiIHgyPSIyMS42ODIiIHkyPSIxMC4xMTQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDc2MGZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9Ii40MTEiIHN0b3AtY29sb3I9IiM0NzYwZmYiIHN0b3Atb3BhY2l0eT0iLjMxIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNDc2MGZmIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJhIiB4PSI0Ljg0IiB5PSIzIiB3aWR0aD0iMTQuMzIiIGhlaWdodD0iMTguMjYxIiBmaWx0ZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIGNvbG9yLWludGVycG9sYXRpb24tZmlsdGVycz0ic1JHQiI+PGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz48ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMTI3IDAiIHJlc3VsdD0iaGFyZEFscGhhIi8+PGZlT2Zmc2V0IGR5PSIuMjYxIi8+PGZlQ29tcG9zaXRlIGluMj0iaGFyZEFscGhhIiBvcGVyYXRvcj0ib3V0Ii8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjU1IDAiLz48ZmVCbGVuZCBpbjI9IkJhY2tncm91bmRJbWFnZUZpeCIgcmVzdWx0PSJlZmZlY3QxX2Ryb3BTaGFkb3dfMjE3NzBfMzMwNzQwIi8+PGZlQmxlbmQgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iZWZmZWN0MV9kcm9wU2hhZG93XzIxNzcwXzMzMDc0MCIgcmVzdWx0PSJzaGFwZSIvPjxmZUNvbG9yTWF0cml4IGluPSJTb3VyY2VBbHBoYSIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz48ZmVPZmZzZXQgZHk9Ii4zOTIiLz48ZmVDb21wb3NpdGUgaW4yPSJoYXJkQWxwaGEiIG9wZXJhdG9yPSJhcml0aG1ldGljIiBrMj0iLTEiIGszPSIxIi8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDEgMCAwIDAgMCAxIDAgMCAwIDAgMSAwIDAgMCAwLjUgMCIvPjxmZUJsZW5kIGluMj0ic2hhcGUiIHJlc3VsdD0iZWZmZWN0Ml9pbm5lclNoYWRvd18yMTc3MF8zMzA3NDAiLz48ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMTI3IDAiIHJlc3VsdD0iaGFyZEFscGhhIi8+PGZlT2Zmc2V0IGR5PSIuMTMxIi8+PGZlQ29tcG9zaXRlIGluMj0iaGFyZEFscGhhIiBvcGVyYXRvcj0iYXJpdGhtZXRpYyIgazI9Ii0xIiBrMz0iMSIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4yNSAwIi8+PGZlQmxlbmQgaW4yPSJlZmZlY3QyX2lubmVyU2hhZG93XzIxNzcwXzMzMDc0MCIgcmVzdWx0PSJlZmZlY3QzX2lubmVyU2hhZG93XzIxNzcwXzMzMDc0MCIvPjwvZmlsdGVyPjwvZGVmcz48L3N2Zz4="
-    // const SHOPFLO_LOGO = ""
-    // const SHOPFLO_LOGO = ""
+
     const SIZE = 48;
     const FONT = 42;
 
@@ -34,11 +34,6 @@ class ShopfloTheme {
   }
 
   init() {
-    // Master on/off (window.shopfloThemeConfig.shopflo_enable, hardcoded in
-    // snippets/shopflo.liquid - NOT a Theme Editor setting) is deliberately NOT checked here.
-    // The checkout/buy-now/cart markup always renders the same way regardless, so every binding
-    // below must stay active either way - shouldTriggerFloDirectly() is what actually decides,
-    // at click time, whether to open Shopflo's real flow or fall back to a plain navigation.
     this.syncCartAutoOpenGlobal();
     this.bindGlobalTriggers();
     this.bindBuyNowAtcSync();
@@ -48,6 +43,7 @@ class ShopfloTheme {
     this.bindThirdPartyCartMutation();
     this.bindPopupMorph();
     this.bindLabelWidthGuard();
+    this.bindQuickViewVariantIsolation();
   }
 
   isDomesticTimezone() {
@@ -55,40 +51,23 @@ class ShopfloTheme {
     return timeZone === 'Asia/Calcutta' || timeZone === 'Asia/Kolkata';
   }
 
-  // The single click-time decision point: should this interaction go through Shopflo's real
-  // bundle, or fall back to a plain native action? False when Shopflo is disabled entirely
-  // (this.config.shopflo_enable), OR when the shopper should be internationally redirected
-  // instead (shopflo_international_redirect_enabled and not on a domestic timezone).
   shouldTriggerFloDirectly() {
     if (this.config.shopflo_enable === false) return false;
     return !this.config.shopflo_international_redirect_enabled || this.isDomesticTimezone();
   }
 
-  // cart-drawer.js / cart-notification.js read this global directly - always true, since
-  // auto-opening the cart right after add-to-cart is the only flow this theme wires up.
   syncCartAutoOpenGlobal() {
     window.shopfloCartAutoOpen = true;
   }
 
-  // Dispatched right before Shopflo's real checkout overlay actually opens - whether triggered
-  // by the checkout button or a buy-now button, both open the same underlying checkout - so any
-  // other modal/popup on the page can listen and close itself instead of sitting behind it.
-  // Not fired on the native-navigation fallback (shouldTriggerFloDirectly() false): the page is
-  // leaving entirely there, so there's nothing in-page left to close.
   dispatchCheckoutOpened() {
     document.dispatchEvent(new CustomEvent('shopflo-event:checkout-opened'));
   }
 
-  // Dispatched right before Shopflo's real cart overlay actually opens - cart-icon click or
-  // auto-open after add-to-cart - same reasoning as dispatchCheckoutOpened() above.
   dispatchCartOpened() {
     document.dispatchEvent(new CustomEvent('shopflo-event:cart-opened'));
   }
 
-  // Named openThemeFloCheckout (not openFloCheckout) deliberately - same reasoning as
-  // openThemeFloCart below: the Shopflo bundle script defines its own globals
-  // (handleFloCheckoutBtn, etc.); prefixing ours with "Theme" avoids silently colliding with
-  // or overriding a same-named function the bundle might also expose.
   openThemeFloCheckout() {
     if (this.shouldTriggerFloDirectly()) {
       if (typeof window.handleFloCheckoutBtn === 'function') {
@@ -100,15 +79,8 @@ class ShopfloTheme {
     }
   }
 
-  // Named openThemeFloCart (not openFloCart) deliberately - the Shopflo bundle script defines
-  // its own globals (handleFloCartBtn, etc.); prefixing ours with "Theme" avoids silently
-  // colliding with or overriding a same-named function the bundle might also expose.
   openThemeFloCart() {
     if (this.shouldTriggerFloDirectly()) {
-      // Always a plain, foreground open - `loadCartInBackground: true` tells the bundle to load
-      // WITHOUT showing anything, so passing it here would silently do nothing on click. Any
-      // background warming for "Cart Click" mode happens earlier, at add-to-cart time - see
-      // bindDomEvents().
       if (typeof window.handleFloCartBtn === 'function') {
         this.dispatchCartOpened();
         window.handleFloCartBtn();
@@ -118,15 +90,6 @@ class ShopfloTheme {
     }
   }
 
-  // Named openThemeFloBuyNow (not openFloBuyNow) deliberately - same reasoning as
-  // openThemeFloCheckout/openThemeFloCart above. Centralizes the same shouldTriggerFloDirectly()
-  // gate those two already have - buy-now itself opens the same underlying checkout as the
-  // checkout button, so its native fallback is the same plain '/checkout' navigation, not '/cart'.
-  // Every call site that could otherwise reach window.handleFloBuyNowBtn directly (see
-  // bindPopupMorph()'s reduceMotion branch and click gate, and runPendingFloAction() below) must
-  // go through this instead - calling the bundle function unconditionally would open Shopflo's
-  // real buy-now flow even for a shopper who should be internationally redirected to native
-  // checkout instead.
   openThemeFloBuyNow(originEvent) {
     if (this.shouldTriggerFloDirectly()) {
       if (typeof window.handleFloBuyNowBtn === 'function') {
@@ -138,14 +101,11 @@ class ShopfloTheme {
     }
   }
 
-  // snippets/shopflo.liquid renders onclick="openThemeFloCheckout()" as a plain global call
   bindGlobalTriggers() {
     window.openThemeFloCheckout = this.openThemeFloCheckout.bind(this);
     window.openThemeFloCart = this.openThemeFloCart.bind(this);
   }
 
-  // keeps the Buy Now button's disabled state in sync with the product form's Add to Cart
-  // button as the shopper switches variants, on top of the initial server-rendered state
   bindBuyNowAtcSync() {
     if (!this.buyNowButton) return;
 
@@ -160,18 +120,19 @@ class ShopfloTheme {
       );
     if (!atcButton) return;
 
+    if (this._buyNowAtcObserver) this._buyNowAtcObserver.disconnect();
+
     const sync = () => {
       this.buyNowButton.disabled = atcButton.disabled || atcButton.getAttribute('aria-disabled') === 'true';
     };
     sync();
-    new MutationObserver(sync).observe(atcButton, {
+    this._buyNowAtcObserver = new MutationObserver(sync);
+    this._buyNowAtcObserver.observe(atcButton, {
       attributes: true,
       attributeFilter: ['disabled', 'aria-disabled', 'class'],
     });
   }
 
-  // internationally redirected shoppers fall back to Shopify's native dynamic checkout button
-  // instead of the Flo buy-now button
   bindBuyNowIntlFallback() {
     if (!this.buyNowButton || !this.nativeBuyNowWrapper) return;
     if (!window.location.pathname.includes('products')) return;
@@ -185,13 +146,96 @@ class ShopfloTheme {
     }
   }
 
-  // shopflo-event:add-to-cart fires right after every successful add-to-cart (see
-  // assets/cart-drawer.js / assets/cart-notification.js) - opens Shopflo's cart immediately when
-  // it should trigger directly (see shouldTriggerFloDirectly()), otherwise falls back to a plain
-  // '/cart' navigation - same fallback as clicking the cart icon (openThemeFloCart()) - rather
-  // than leaving the shopper on the product page with no feedback (cart-drawer.js's own native
-  // open() call is deliberately commented out, and cart-notification.js's native open() ignores
-  // shopflo_enable entirely, so without this the shopper could see nothing happen at all).
+  // Theme-agnostic fix for "Buy Now checks out the wrong product/variant" whenever more than one
+  // product's add-to-cart form is present in the document at once (a collection grid with
+  // quick-add/quick-view, a sticky ATC bar alongside the main form, multiple sections on one
+  // page, etc.) - a pattern common to virtually every Shopify theme, not just this one.
+  //
+  // Root cause: every such form renders Shopify's own standard hidden
+  // <input name="id" value="{variant_id}">, and window.handleFloBuyNowBtn (defined by the
+  // externally-hosted Shopflo bundle, https://bridge.shopflo.com/js/shopflo.bundle.js) does not
+  // resolve product/variant context purely from the clicked element - confirmed by testing that
+  // it can resolve to whichever input[name="id"] appears first in DOM order instead of the one
+  // inside the form the shopper actually clicked Buy Now on.
+  //
+  // Fix: wrap window.handleFloBuyNowBtn itself (Shopflo's own API surface - stable across every
+  // theme that integrates it) so that for the duration of each call, every input[name="id"]
+  // EXCEPT the one belonging to the clicked button's own form is temporarily hidden from
+  // name-based lookups. This makes no assumption about modal libraries, quick-view
+  // implementations, or DOM structure - it only assumes the standard onclick="handleFloBuyNowBtn(event)"
+  // convention (this snippet's own markup, see shopflo.liquid) and Shopify's own
+  // input[name="id"] variant convention, both of which are portable to any theme.
+  bindQuickViewVariantIsolation() {
+    const isolate = (event) => {
+      const trigger = event && event.target && typeof event.target.closest === 'function'
+        ? event.target.closest('form, product-form, [data-product-id]')
+        : null;
+      const ownForm = trigger ? trigger.closest('form') || trigger.querySelector('form') : null;
+      const keepInput = ownForm ? ownForm.querySelector('input[name="id"]') : null;
+
+      const suspended = keepInput
+        ? Array.from(document.querySelectorAll('input[name="id"]')).filter((input) => input !== keepInput)
+        : [];
+      suspended.forEach((input) => {
+        input.setAttribute('data-shopflo-suspended-name', 'id');
+        input.removeAttribute('name');
+      });
+
+      // Deliberately no outer "already restored" guard shared between the two scheduled calls
+      // below (setTimeout(restore, 0) and setTimeout(restore, 2000)) - a shared guard would make
+      // the 0ms call always win and the 2000ms safety net permanently unreachable dead code.
+      // Idempotency instead lives per-input (the hasAttribute check), so either call - or both -
+      // can safely run and only ever touches inputs that are still actually suspended.
+      return () => {
+        suspended.forEach((input) => {
+          if (input.hasAttribute('data-shopflo-suspended-name')) {
+            input.setAttribute('name', 'id');
+            input.removeAttribute('data-shopflo-suspended-name');
+          }
+        });
+      };
+    };
+
+    const wrap = () => {
+      const original = window.handleFloBuyNowBtn;
+      if (typeof original !== 'function' || original.__shopfloIsolationWrapped) return;
+
+      const wrapped = function (event) {
+        const restore = isolate(event);
+        try {
+          return original.apply(this, arguments);
+        } finally {
+          // The bundle may open its checkout UI asynchronously - give it a moment to finish
+          // reading the DOM before restoring, then restore regardless as a safety net so native
+          // add-to-cart elsewhere on the page is never left broken.
+          setTimeout(restore, 0);
+          setTimeout(restore, 2000);
+        }
+      };
+      wrapped.__shopfloIsolationWrapped = true;
+      window.handleFloBuyNowBtn = wrapped;
+    };
+
+    if (typeof window.handleFloBuyNowBtn === 'function') {
+      wrap();
+      return;
+    }
+
+    // The Shopflo bundle (bridge.shopflo.com) defines this global asynchronously after it loads,
+    // and script-load order relative to this file varies by theme - poll briefly rather than
+    // assuming any particular load order.
+    let attempts = 0;
+    const timer = setInterval(() => {
+      attempts += 1;
+      if (typeof window.handleFloBuyNowBtn === 'function') {
+        clearInterval(timer);
+        wrap();
+      } else if (attempts >= 40) {
+        clearInterval(timer);
+      }
+    }, 150);
+  }
+
   bindDomEvents() {
     document.addEventListener('shopflo-event:add-to-cart', () => {
       if (!this.shouldTriggerFloDirectly()) {
@@ -206,19 +250,6 @@ class ShopfloTheme {
     });
   }
 
-  // Intercepts clicks on any link pointing at the cart PAGE (window.shopfloThemeConfig's
-  // shopflo_cart_url, i.e. routes.cart_url - e.g. the header cart icon in sections/header.liquid,
-  // which is otherwise a plain <a href="{{ routes.cart_url }}"> with no Shopflo wiring at all) and
-  // opens Shopflo's cart instead of letting the native /cart page load - only when
-  // this.config.shopflo_intercept_cart_page_redirect is explicitly true (hardcoded in
-  // snippets/shopflo.liquid, same as shopflo_enable - see bindDomEvents() above). Left OFF
-  // (false/unset) is a no-op: every such link just does its plain native navigation, same as
-  // before this method existed.
-  //
-  // Routed through openThemeFloCart() itself rather than duplicating its logic, so the disabled
-  // (shouldTriggerFloDirectly() false) case still ends up at the same '/cart' page the browser's
-  // own default action would have reached anyway - intercepting never changes the outcome there,
-  // only the mechanism.
   bindCartPageRedirectIntercept() {
     if (this.config.shopflo_intercept_cart_page_redirect !== true) return;
     const cartPath = this.config.shopflo_cart_url;
@@ -237,9 +268,6 @@ class ShopfloTheme {
     });
   }
 
-  // Resolves a window.shopfloThemeConfig.shopflo_third_party_cart_mutation selector descriptor
-  // ({type: "class"|"id", selector}) into a real CSS selector - normalizes so it works whether
-  // the configured `selector` already includes the leading "."/"#" or not.
   _resolveThirdPartyCartSelector(descriptor) {
     if (!descriptor || !descriptor.selector) return null;
     const { type, selector } = descriptor;
@@ -248,20 +276,6 @@ class ShopfloTheme {
     return selector;
   }
 
-  // Some themes we get integrated into render their own cart drawer with their own native
-  // "Checkout" button (going straight to /checkout, with zero Shopflo wiring) instead of using
-  // this theme's own .shopflo-checkout__button - and that drawer's contents get re-rendered
-  // wholesale on every cart mutation (add/update/remove), which would silently drop a
-  // once-bound click listener on the old button node. A document-level DELEGATED listener
-  // (same idiom as bindCartPageRedirectIntercept/bindPopupMorph above) sidesteps that entirely -
-  // it matches by selector at click time, so it keeps working across any number of re-renders
-  // without needing a MutationObserver to rebind anything.
-  //
-  // is_shadow_dom handles integrations whose cart drawer lives inside an open shadow root (e.g.
-  // a custom-element-based theme): a click event is retargeted at the document (event.target
-  // becomes the shadow host, not the real button), so event.target.closest() alone would never
-  // find it - event.composedPath() walks the real path the click actually took, through the
-  // shadow boundary, and is used instead in that case.
   bindThirdPartyCartMutation() {
     const cfg = this.config.shopflo_third_party_cart_mutation;
     if (!cfg || cfg.enabled !== true) return;
@@ -286,10 +300,6 @@ class ShopfloTheme {
           if (!inWrapper) return;
         }
 
-        // Capture phase + stopPropagation, not just preventDefault: the third-party button may
-        // drive navigation from its own JS click handler rather than a plain <a href>, so
-        // preventDefault alone (which only cancels the default action) wouldn't stop that -
-        // running before and cancelling propagation to it does.
         event.preventDefault();
         event.stopPropagation();
         this.openThemeFloCheckout();
@@ -298,26 +308,17 @@ class ShopfloTheme {
     );
   }
 
-  // UI check: if the button's own label ends up squeezed to <=60% of the button's width (long or
-  // translated label text competing with the payment icons row and the "Powered by Shopflo" badge
-  // for room), hide both so the label - already flex-grow:1 in assets/shopflo-styles.css - can
-  // claim that freed-up space instead of truncating/wrapping awkwardly.
-  //
-  // Re-evaluated on window resize (debounced) and web-font load, NOT via a ResizeObserver on the
-  // button itself: a non-"Full width" button's own outer size shrinks to fit its content, so
-  // hiding its icons/badge would itself shrink the button, which a self-observing ResizeObserver
-  // would then react to again - an infinite show/hide oscillation. Reacting only to external
-  // signals sidesteps that: every evaluation removes the squeeze class FIRST (restoring icons/
-  // badge to their natural state) before measuring, so a run never reacts to a state a previous
-  // run of this same code produced.
   bindLabelWidthGuard() {
     const SQUEEZE_CLASS = 'sf-label-squeezed';
     const SQUEEZE_RATIO = 0.55;
+    const BUTTON_SELECTOR = '.shopflo-checkout__button, .shopflo-buy-now__button';
 
-    const buttons = document.querySelectorAll('.shopflo-checkout__button, .shopflo-buy-now__button');
-    if (!buttons.length) return;
-
+    // Re-queries buttons on every call (not captured once at bind time) so a button injected
+    // later - e.g. a Quick View/quick-add modal replacing its content via innerHTML well after
+    // this ran - is picked up the next time evaluate() runs, not just whatever existed at
+    // init()/resize()/fonts.ready() time.
     const evaluate = () => {
+      const buttons = document.querySelectorAll(BUTTON_SELECTOR);
       buttons.forEach((button) => {
         button.classList.remove(SQUEEZE_CLASS);
 
@@ -346,21 +347,35 @@ class ShopfloTheme {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(evaluate, 150);
     });
+
+    // Theme-agnostic re-evaluation for a button that appears LATER (e.g. a Quick View/quick-add
+    // modal injecting a fresh .shopflo-buy-now__button via innerHTML, strictly after every
+    // trigger above has already fired) - a MutationObserver on document.body watching for new
+    // matching nodes, rather than hooking into any specific host theme's own modal/JS framework
+    // (that file varies per theme; this file must stay portable to any of them - see the
+    // Quick View variant-isolation fix for the same principle). Only reacts to nodes actually
+    // being ADDED to the tree (childList), never to evaluate()'s own class toggling (which
+    // mutates no node's structure), so this cannot re-trigger itself the way observing the
+    // buttons' own size/attributes would.
+    let mutationTimer;
+    const observer = new MutationObserver((mutations) => {
+      const sawRelevantNode = mutations.some((mutation) =>
+        Array.from(mutation.addedNodes).some((node) => {
+          if (node.nodeType !== 1) return false;
+          return (
+            (typeof node.matches === 'function' && node.matches(BUTTON_SELECTOR)) ||
+            (typeof node.querySelector === 'function' && node.querySelector(BUTTON_SELECTOR))
+          );
+        })
+      );
+      if (!sawRelevantNode) return;
+      clearTimeout(mutationTimer);
+      mutationTimer = setTimeout(evaluate, 50);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  // Drives the shared dummy popup (#popupOverlay/#popupWrapper, rendered once in shopflo.liquid)
-  // through a button<->full-screen FLIP animation that we fully own, instead of trying to morph
-  // Shopflo's own injected checkout markup (fragile: we don't control its structure or timing).
-  // Buttons carry .shopflo-popup-trigger + data-flo-action="checkout|buy-now" instead of onclick,
-  // so any number of Buy Now / Checkout buttons on the page can share this one popup. Only once
-  // the OPEN transition finishes do we hand off to the real Shopflo checkout; closing is driven by
-  // Shopflo's "FLO_EXIT_CHECKOUT" postMessage, which shrinks the popup back to its trigger button.
   bindPopupMorph() {
-    // reduceMotion covers both the OS-level accessibility preference and the Theme Editor's
-    // "Enable checkout popup animation" toggle. With no animation to play, the dummy popup adds
-    // nothing (it would just flash open then immediately hand off) - so skip it and its whole
-    // DOM/JS machinery entirely, and call Shopflo's real functions directly on click, same as
-    // before the popup-morph system existed.
     this.reduceMotion =
       window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
       this.config.shopflo_enable_popup_animation === false;
@@ -369,10 +384,6 @@ class ShopfloTheme {
       document.addEventListener('click', (event) => {
         const trigger = event.target.closest('.shopflo-popup-trigger');
         if (!trigger || trigger.disabled) return;
-        // Requires an exact match, not "anything that isn't buy-now" - a foreign theme's own
-        // markup (e.g. its native Add to Cart button) can end up carrying .shopflo-popup-trigger
-        // by accident during integration without a recognized data-flo-action, and must be a
-        // no-op here rather than silently defaulting to opening the full checkout overlay.
         if (trigger.dataset.floAction === 'buy-now') {
           this.openThemeFloBuyNow(event);
         } else if (trigger.dataset.floAction === 'checkout') {
@@ -394,17 +405,8 @@ class ShopfloTheme {
     document.addEventListener('click', (event) => {
       const trigger = event.target.closest('.shopflo-popup-trigger');
       if (!trigger || trigger.disabled || this.popupAnimating) return;
-      // Same exact-match requirement as the reduceMotion branch above - a .shopflo-popup-trigger
-      // element without a recognized data-flo-action is not one of ours (e.g. a foreign theme's
-      // own button picked up the class by accident during integration) and must fall through
-      // untouched rather than animating open into a checkout it was never meant to trigger.
       if (trigger.dataset.floAction !== 'buy-now' && trigger.dataset.floAction !== 'checkout') return;
 
-      // Matches openThemeFloCheckout()/openThemeFloBuyNow()'s own fallback branch (disabled
-      // entirely, or an internationally-redirected shopper): a full page navigation is instant,
-      // so there's nothing for the popup to usefully animate into - navigate directly instead.
-      // Both actions fall back to the same '/checkout' - buy-now opens the same underlying
-      // checkout as the checkout button, just with a single product instead of the full cart.
       if (!this.shouldTriggerFloDirectly()) {
         window.location.href = '/checkout';
         return;
@@ -429,10 +431,6 @@ class ShopfloTheme {
     if (type === 'FLO_EXIT_CHECKOUT') this.closePopup();
   }
 
-  // ratio of the trigger button's on-screen box to the popup's fixed natural width, expressed as
-  // a translate+scale so `transform-origin: 0 0` makes the popup sit exactly over the button.
-  // Height is NOT scaled here - it's a real property transition (see triggerHeightFor/--h) so it
-  // doesn't distort border-radius/content the way non-uniform scale(sx, sy) would.
   popupRectFor(trigger) {
     const triggerRect = trigger.getBoundingClientRect();
     const popupW = this.popupWrapper.offsetWidth;
@@ -449,13 +447,10 @@ class ShopfloTheme {
     this.popupWrapper.style.setProperty('--sx', String(rect.sx));
   }
 
-  // real (px) height of whichever button triggered the popup
   triggerHeightFor(trigger) {
     return `${trigger.getBoundingClientRect().height}px`;
   }
 
-  // the popup's own resting height (--popup-h, responsive per breakpoint), read as a concrete
-  // value so it can be transitioned to/from
   targetPopupHeight() {
     return getComputedStyle(this.popupWrapper).getPropertyValue('--popup-h').trim() || '100%';
   }
@@ -464,14 +459,10 @@ class ShopfloTheme {
     this.popupWrapper.style.setProperty('--h', height);
   }
 
-  // the popup's FLIP start/end radius - matches the trigger button's own live computed
-  // border-radius exactly, so the popup starts (open) / ends (close) looking like the button
   triggerRadiusFor(trigger) {
     return getComputedStyle(trigger).borderRadius || '0px';
   }
 
-  // the popup's own resting radius (--popup-radius, responsive per breakpoint - see
-  // shopflo-css-variables.liquid), read as a concrete value so it can be transitioned to/from
   targetPopupRadius() {
     return getComputedStyle(this.popupWrapper).getPropertyValue('--popup-radius').trim() || '0px';
   }
@@ -480,18 +471,12 @@ class ShopfloTheme {
     this.popupWrapper.style.setProperty('--radius', radius);
   }
 
-  // total morph duration in ms, read from --duration so the opacity edge below always tracks it
   getDurationMs() {
     const raw = getComputedStyle(this.popupWrapper).getPropertyValue('--duration').trim();
     const ms = raw.endsWith('ms') ? parseFloat(raw) : parseFloat(raw) * 1000;
     return Number.isFinite(ms) && ms > 0 ? ms : 500;
   }
 
-  // timing for the popup wrapper's OWN opacity edge-fade: a short ~8% slice of the overall
-  // morph, positioned at the very start (edge:'start') or very end (edge:'end') of --duration.
-  // 8% (~40ms on the current 550ms --duration) reads fine here because it's layered on top of
-  // a transform/radius change that's already visibly moving - the eye reads the opacity shift
-  // as part of that motion rather than judging it as its own fade.
   edgeFadeTiming(edge) {
     const total = this.getDurationMs();
     const edgeDuration = Math.round(total * 0.08);
@@ -499,19 +484,12 @@ class ShopfloTheme {
     return { edgeDuration, delay };
   }
 
-  // Shared close-only crossfade window: the popup wrapper (opaque, sitting on top of the
-  // button z-index-wise) and the trigger button MUST fade on the exact same duration/delay, or
-  // the still-opaque wrapper simply masks however far the button has already faded in - which
-  // is what made it look like the button "pops in" only after the shrink visually finishes.
   closeFadeTiming() {
     const duration = 1950;
     const delay = Math.max(0, this.getDurationMs() - duration);
     return { duration, delay };
   }
 
-  // the opacity fade should only cover a short slice of the overall transform/radius morph on
-  // open, not the whole duration - so it reads as a quick flourish rather than a slow cross-fade.
-  // On close, it's synced with fadeTrigger's window instead (see closeFadeTiming).
   setPopupOpacityTiming(edge) {
     if (edge === 'end') {
       const { duration, delay } = this.closeFadeTiming();
@@ -524,9 +502,6 @@ class ShopfloTheme {
     this.popupWrapper.style.setProperty('--opacity-delay', `${delay}ms`);
   }
 
-  // hides the real trigger button within a 50ms window at the very start of the expand
-  // (edge:'start', open). On close (edge:'end'), it fades in over the same window the popup
-  // wrapper itself is fading out over (closeFadeTiming), so both happen as one crossfade.
   fadeTrigger(trigger, edge, targetOpacity) {
     if (edge === 'end') {
       const { duration, delay } = this.closeFadeTiming();
@@ -553,22 +528,14 @@ class ShopfloTheme {
     this.setPopupRadius(this.triggerRadiusFor(trigger));
     this.setPopupHeight(this.triggerHeightFor(trigger));
     this.popupWrapper.style.opacity = '0';
-    void this.popupWrapper.offsetWidth; // force layout so the "start" position paints before we animate away from it
+    void this.popupWrapper.offsetWidth;
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        // Measure the natural resting height/width while transitions are STILL disabled (from
-        // the instant-jump phase above), so offsetHeight reports the real target height rather
-        // than a transition's in-progress (starting) value.
         this.setPopupHeight(this.targetPopupHeight());
         const popupW = this.popupWrapper.offsetWidth;
         const popupH = this.popupWrapper.offsetHeight;
 
-        // Restore --h to the trigger's height and FORCE A FLUSH here (still under
-        // transition:none) - without this, the browser's next transition comparison would use
-        // the measurement snapshot above (already at the target) as its baseline, see no net
-        // change once --h is set to the target again below, and silently skip animating height
-        // entirely (it would just snap to full size on frame one).
         this.setPopupHeight(this.triggerHeightFor(trigger));
         void this.popupWrapper.offsetHeight;
 
@@ -586,8 +553,6 @@ class ShopfloTheme {
         this.popupWrapper.style.opacity = '1';
         this.fadeTrigger(trigger, 'start', 0);
 
-        // local flag (not instance state) so the transitionend/timeout race can only ever
-        // run the hand-off once per cycle, regardless of what a later cycle does to `this`
         let settled = false;
         const finish = () => {
           if (settled) return;
@@ -603,9 +568,6 @@ class ShopfloTheme {
           },
           { once: true }
         );
-        // safety net in case the transition is interrupted and transitionend never fires -
-        // scaled to --duration (plus a buffer) so it never fires before the real transition
-        // could possibly have finished, however long --duration is set to
         setTimeout(finish, this.getDurationMs() + 150);
       });
     });
@@ -623,11 +585,6 @@ class ShopfloTheme {
       this.openThemeFloCheckout();
     }
 
-    // Shopflo's own checkout/cart overlay mounts at an extreme z-index (see its injected
-    // stylesheet) so it already paints over our popup - this hide is just cleanup, giving the
-    // handoff call a tick to fire before we get out of the way. Kept as `visibility` (not
-    // display/is-open) so closePopup() can reveal it again for the shrink-back animation
-    // without disturbing its transform/transition state.
     setTimeout(() => {
       this.popupOverlay.style.visibility = 'hidden';
     }, 10);
@@ -653,8 +610,6 @@ class ShopfloTheme {
       settled = true;
       this.popupOverlay.classList.remove('is-open');
       trigger.classList.remove('sf-popup-trigger--hidden');
-      // release inline control back to the button's own CSS-driven transition now that the
-      // crossfade is done (or was skipped) - it's already visually at full opacity by now
       trigger.style.opacity = '';
       trigger.style.transition = '';
       this.activePopupTrigger = null;
@@ -681,9 +636,6 @@ class ShopfloTheme {
       },
       { once: true }
     );
-    // safety net: a transition can be silently aborted (no transitionend fired) - scaled to
-    // --duration (plus a buffer) so it never fires before the real transition could possibly
-    // have finished, however long --duration is set to
     setTimeout(finish, this.getDurationMs() + 150);
   }
 }
@@ -694,94 +646,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.ShopfloTheme = ShopfloTheme;
 
-/**
- * Shopflo Accounts (shop_pass)
- * ----------------------------------------------------------------
- * Defines <shopflo-accounts>, a custom element that renders its OWN
- * account icon/dropdown markup (rendered via
- * {% render 'shopflo', type: 'shop_pass_primary' | 'shop_pass_secondary' | 'shop_pass_tertiary' %},
- * see snippets/shopflo.liquid), driven entirely by two sessionStorage
- * keys the Shopflo bundle itself owns and keeps up to date:
- *
- *   flo_isShopfloSession — "true" when a Shopflo session exists, absent otherwise.
- *   FLO_SSO_IS_LOGOUT    — "true" right after a logout, absent otherwise.
- *
- * Design summary:
- *  - No hidden "actual" markup, no click-forwarding, no DOM
- *    observation of bundle-controlled elements. Auth state is a
- *    synchronous sessionStorage read, not something inferred from
- *    which element happens to be visible.
- *  - Confidently logged-in (session present, not mid-logout) is the
- *    ONLY state where this renders its own dropdown. Every other
- *    state (fresh session, or just logged out) defers entirely to
- *    the bundle's own window.handleDrawer() to decide what to show.
- *  - Logging out sets FLO_SSO_IS_LOGOUT and reloads the page, so
- *    every <shopflo-accounts> instance re-reads the same keys fresh
- *    on load — instances never need to be synced with each other at
- *    runtime.
- *  - Any number of <shopflo-accounts> proxy instances can exist on
- *    a page (desktop header, mobile menu, footer, ...); each is
- *    fully independent.
- *  - Proxy markup declares its role via data-flo-trigger /
- *    data-flo-state attributes. This file never hardcodes ids, so
- *    theme authors can freely add/remove/restructure proxy markup
- *    without touching this file.
- */
-
-/**
- * Global config. Edit this object to change behavior across every
- * <shopflo-accounts> instance on the page — instance-level
- * differences (labels, initial state, markup) belong in the
- * .liquid snippet / theme settings, not here.
- */
 const ShopfloAccountsConfig = {
-  // Bounded readiness poll for the bundle-defined globals this file
-  // calls on demand (handleDrawer / handleShopifyLogin) — the bundle
-  // script may still be evaluating when the shopper clicks.
   ready: {
     intervalMs: 150,
-    maxAttempts: 20, // ~3s ceiling
-    onTimeout: 'warn', // 'warn' | 'silent'
+    maxAttempts: 20,
+    onTimeout: 'warn',
   },
 
-  // sessionStorage keys the Shopflo bundle itself owns. Both are
-  // either the string "true" or absent — never a literal "false".
   session: {
     isSessionKey: 'flo_isShopfloSession',
     isLogoutKey: 'FLO_SSO_IS_LOGOUT',
   },
 
-  // The bundle appends its OWN real login iframe on handleShopifyLogin() click.
-  // DESKTOP (screen width 800px+): kept permanently off-screen (see #flo-shopify-login-iframe in
-  // shopflo-styles.css) — we copy its src into our own iframe (in normal, always-visible proxy
-  // markup) instead, so it can be styled/positioned freely as part of our own drawer.
-  // MOBILE (up to 799px): the bundle's own self-contained sheet+overlay component is left fully
-  // visible and untouched — no copying, this theme's own drawer/overlay just steps out of the
-  // way entirely.
   iframe: {
     sourceId: 'flo-shopify-login-iframe',
     mobileBreakpoint: 799,
   },
 
-  // TEMPORARILY true to trace shop-pass click handling in the console while diagnosing
-  // unresponsive buttons - set back to false once confirmed working. Critical failures (e.g.
-  // sessionStorage access throwing) are always logged via console.warn/error regardless of this.
   debug: true,
 };
 
-/**
- * Safe sessionStorage read - sessionStorage access can throw synchronously (not just return
- * null) in storage-restricted contexts: Safari ITP, private browsing in older engines, or a
- * sandboxed iframe (e.g. Shopify's own theme-editor live preview can run the storefront in one).
- * Without this guard, that throw happens INSIDE the click handler and aborts it before it does
- * anything else - from the outside this looks exactly like "the button is unresponsive", with
- * no visible error unless you're inspecting the correct frame's console.
- *
- * Kept as a plain module-level function (also used by ShopfloAccounts._readSessionStorage(),
- * which just delegates to this one) rather than a class method, so resolveShopfloAuthState()
- * below - and the public window.isThemeFloLoggedIn() global that reads it - both work even on a
- * page with zero shop_pass_* instances rendered.
- */
 function readShopfloSessionStorage(key) {
   try {
     return window.sessionStorage.getItem(key);
@@ -791,8 +675,6 @@ function readShopfloSessionStorage(key) {
   }
 }
 
-// Mirrors readShopfloSessionStorage() above - same safe-write reasoning as
-// ShopfloAccounts._writeSessionStorage(), which now just delegates to this one.
 function writeShopfloSessionStorage(key, value) {
   try {
     window.sessionStorage.setItem(key, value);
@@ -811,18 +693,6 @@ function resolveShopfloAuthState() {
   return { hasSession, isLoggingOut, state };
 }
 
-// A shopper with NEITHER Shopflo session key present at all (a genuinely fresh session - no
-// prior visit, nothing in sessionStorage yet) leaves both keys `null`/absent. That already
-// resolves to 'logged-out' in resolveShopfloAuthState() above (same as both keys being
-// explicitly 'true' - hasSession && !isLoggingOut is false either way), so THIS theme's own
-// logged-in/logged-out branching is unaffected. But the Shopflo bundle script reads these same
-// two keys directly and independently of this file - and, per observed behavior, its own login
-// flow only initializes correctly once both keys have a defined value, not while they're
-// undefined. So on a truly fresh session (neither key set), explicitly seed both to 'true' -
-// i.e. an explicit "logged out" state - purely so the bundle has something defined to read,
-// without changing what this theme itself would otherwise decide. Runs once, immediately, at
-// script-parse time - deliberately not gated behind DOMContentLoaded or any shop_pass_* instance
-// existing, so it's in place before the bundle (or a shopper) ever gets a chance to read it.
 function seedShopfloSessionFlagsIfMissing() {
   const { isSessionKey, isLogoutKey } = ShopfloAccountsConfig.session;
   const hasEitherFlag =
@@ -834,28 +704,12 @@ function seedShopfloSessionFlagsIfMissing() {
 }
 seedShopfloSessionFlagsIfMissing();
 
-// Public global flag for "is the shopper currently logged in via Shopflo?" - a FUNCTION, not a
-// static boolean, since login state can change after page load (e.g. right after a successful
-// Shopflo login) without a full page reload; a snapshot taken once at load time would go stale.
-// Always synchronous and cheap (two sessionStorage reads) - safe to call at any time, including
-// before any shop_pass_* instance has rendered/upgraded. Named with the same "Theme"-prefixed
-// convention as openThemeFloCheckout()/openThemeFloCart() (see ShopfloTheme.bindGlobalTriggers())
-// to avoid silently colliding with a same-named global the Shopflo bundle script might also
-// define.
 window.isThemeFloLoggedIn = function () {
   return resolveShopfloAuthState().state === 'logged-in';
 };
 
 class ShopfloAccounts extends HTMLElement {
   connectedCallback() {
-    // Guards against connectedCallback firing more than once for the
-    // same element (e.g. if it's ever disconnected/reconnected by
-    // the theme — a sticky-header clone, a section re-render, etc.).
-    // Without this, a second connectedCallback would attach a SECOND
-    // click listener to the same button, so one physical click could
-    // fire _handleHeaderIconClick twice in the same tick — and if
-    // real auth state changes between those two firings, each one
-    // can resolve a different branch, producing mixed behavior.
     if (this._shopfloInitialized) return;
     this._shopfloInitialized = true;
 
@@ -864,7 +718,6 @@ class ShopfloAccounts extends HTMLElement {
     this._onPageShow = this._onPageShow.bind(this);
     window.addEventListener('pageshow', this._onPageShow);
 
-    // Synchronous sessionStorage read — nothing to wait on.
     this._applyAuthState(this._resolveSessionState());
 
     this._setupHeaderIconTrigger();
@@ -883,22 +736,10 @@ class ShopfloAccounts extends HTMLElement {
     window.removeEventListener('pageshow', this._onPageShow);
   }
 
-  /** console.log gated behind ShopfloAccountsConfig.debug - flip that to false once confirmed working. */
   _log(...args) {
     if (ShopfloAccountsConfig.debug) console.log('[shopflo-accounts]', ...args);
   }
 
-  /**
-   * Fires on every page show, including when the page is restored
-   * from the browser's back-forward cache (bfcache) after the user
-   * navigates away and presses back. A bfcache restore does NOT
-   * re-run connectedCallback's normal setup, since the page isn't
-   * reloaded, just resumed exactly as it was — so a drawer left open
-   * when they left is still open when they return. This explicitly
-   * resets that. event.persisted is what distinguishes a genuine
-   * bfcache restore from an ordinary load, where this should do
-   * nothing (normal setup already handles the closed default).
-   */
   _onPageShow(event) {
     if (!event.persisted) return;
     const wasOpen = this.querySelector(
@@ -912,11 +753,6 @@ class ShopfloAccounts extends HTMLElement {
     return fnNames.every((name) => typeof window[name] === 'function');
   }
 
-  /**
-   * Resolves once required global functions exist, or once
-   * maxAttempts is exhausted (resolves false in that case).
-   * Resolves immediately (true) if no globals are required.
-   */
   _waitForGlobals(fnNames) {
     const readyConfig = ShopfloAccountsConfig.ready;
     return new Promise((resolve) => {
@@ -938,12 +774,6 @@ class ShopfloAccounts extends HTMLElement {
     });
   }
 
-  /**
-   * Resolves with the element once it exists in the DOM, or null once
-   * maxAttempts is exhausted. Used to detect the bundle's own
-   * dynamically-appended iframe without a MutationObserver — this is
-   * a short, bounded poll only, not a continuous watch.
-   */
   _waitForElement(id) {
     const readyConfig = ShopfloAccountsConfig.ready;
     return new Promise((resolve) => {
@@ -967,33 +797,20 @@ class ShopfloAccounts extends HTMLElement {
     });
   }
 
-  // Delegates to the module-level readShopfloSessionStorage() (see its own doc comment, just
-  // after ShopfloAccountsConfig's declaration) - kept as an instance method purely so every
-  // existing this._readSessionStorage(...) call site below didn't need touching.
   _readSessionStorage(key) {
     return readShopfloSessionStorage(key);
   }
 
-  // Delegates to the module-level writeShopfloSessionStorage() (see its own doc comment, just
-  // after readShopfloSessionStorage's) - kept as an instance method purely so every existing
-  // this._writeSessionStorage(...) call site below didn't need touching.
   _writeSessionStorage(key, value) {
     return writeShopfloSessionStorage(key, value);
   }
 
-  /**
-   * Confidently 'logged-in' ONLY when a Shopflo session exists AND we're not in the brief
-   * post-logout window — every other combination (both keys missing, both present/true, or only
-   * FLO_SSO_IS_LOGOUT present) defers to the bundle's own window.handleDrawer() rather than
-   * guessing, since that's the one thing the bundle itself always knows how to resolve correctly.
-   */
   _resolveSessionState() {
     const { hasSession, isLoggingOut, state } = resolveShopfloAuthState();
     this._log('_resolveSessionState:', { hasSession, isLoggingOut, state });
     return state;
   }
 
-  /** Reflects a resolved auth state onto this instance's own proxy elements. */
   _applyAuthState(state) {
     const isLoggedIn = state === 'logged-in';
     this.querySelectorAll('[data-flo-state="login-icon"]').forEach((el) => {
@@ -1024,20 +841,9 @@ class ShopfloAccounts extends HTMLElement {
     });
   }
 
-  /** Wires the drawer's own "Account" / "Log out" menu items — no bundle click-forwarding. */
   _setupDrawerItemTriggers() {
     this.querySelectorAll('[data-flo-trigger="account-login"]').forEach((trigger) => {
       trigger.addEventListener('click', (event) => {
-        // handleShopifyLogin(event, '/account') - NOT handleDrawer(). handleDrawer() is a
-        // TOGGLE meant for the header icon (open/close between login UI and account drawer based
-        // on the bundle's OWN session read, which isn't guaranteed to agree with this theme's
-        // sessionStorage flags at the instant this click fires) - calling it from an ALREADY-OPEN
-        // drawer's own "Account" item risks toggling the bundle into the wrong state (e.g. its
-        // login UI instead of account management) or fighting with whatever this drawer is
-        // already showing. handleShopifyLogin(event, '/account') is the bundle's dedicated,
-        // idempotent "open account management" call - the same signature its own dummy
-        // shop_pass_bundle_markup reference link uses - so it's the correct one here regardless
-        // of where it ultimately navigates/renders.
         this._log('account-login clicked, typeof window.handleShopifyLogin =', typeof window.handleShopifyLogin);
         this._callGlobalWhenReady('handleShopifyLogin', [event, '/account']);
         this._handleAccountIframeFlow();
@@ -1047,29 +853,16 @@ class ShopfloAccounts extends HTMLElement {
     this.querySelectorAll('[data-flo-trigger="account-logout"]').forEach((trigger) => {
       trigger.addEventListener('click', () => {
         this._log('account-logout clicked');
-        // Setting FLO_SSO_IS_LOGOUT and reloading is the whole logout flow — on the next load
-        // _resolveSessionState() reads it back as 'logged-out' and every instance starts fresh,
-        // so there is nothing else to reset here. Uses the safe writer (see
-        // _writeSessionStorage above) and reloads UNCONDITIONALLY, even if the write failed - a
-        // failed write just means the next load resolves 'logged-in' again instead of
-        // 'logged-out', which is no worse than not reloading at all, whereas an unguarded
-        // sessionStorage.setItem() throwing here would silently skip reload() entirely.
         this._writeSessionStorage(ShopfloAccountsConfig.session.isLogoutKey, 'true');
         window.location.reload();
       });
     });
   }
 
-  // Dispatched on `document` for shop-pass interactions, so any other modal/popup on the page
-  // can listen and close itself (same reasoning as dispatchCheckoutOpened()/dispatchCartOpened()
-  // in ShopfloTheme above). Not a class method there because these live on the instance for the
-  // custom element instead - kept as a tiny shared helper here rather than repeating
-  // `document.dispatchEvent(new CustomEvent(...))` at every call site.
   _dispatchAccountEvent(name) {
     document.dispatchEvent(new CustomEvent('shopflo-event:' + name));
   }
 
-  /** Calls window[fnName] immediately if it already exists, else waits up to the ready ceiling. */
   _callGlobalWhenReady(fnName, args) {
     if (typeof window[fnName] === 'function') {
       this._log('_callGlobalWhenReady: window.' + fnName + '() already available, calling now.');
@@ -1088,15 +881,13 @@ class ShopfloAccounts extends HTMLElement {
   }
 
   _handleHeaderIconClick(event) {
-    // Re-check right before acting, rather than trusting whatever this instance last rendered —
-    // state may have changed since load.
     const state = this._resolveSessionState();
     this._applyAuthState(state);
     this._log('_handleHeaderIconClick: resolved state =', state);
 
     if (state === 'logged-in') {
       this._closeIframeFlow();
-      const opening = this._isDrawerClosed(); // check BEFORE toggling
+      const opening = this._isDrawerClosed();
       this._log('_handleHeaderIconClick: logged-in branch, opening =', opening);
       if (opening) {
         this._positionDrawer();
@@ -1105,18 +896,12 @@ class ShopfloAccounts extends HTMLElement {
       this._setOverlayVisible(opening);
       this._dispatchAccountEvent(opening ? 'account-drawer-opened' : 'account-drawer-closed');
     } else {
-      // Not confidently logged-in — defer entirely to the bundle's own handleDrawer(), which
-      // decides for itself whether to show its login UI or its own account drawer.
       this._log('_handleHeaderIconClick: logged-out branch, deferring to window.handleDrawer()');
       this._dispatchAccountEvent('account-login-opened');
       this._callGlobalWhenReady('handleDrawer', []);
     }
   }
 
-  // Bidirectional toggle for this instance's own local state
-  // (e.g. opening/closing its own drawer). Not broadcast — each
-  // instance's drawer open/closed state is local UI, not a
-  // page-wide truth like login state.
   _toggleState(state, triggerEl) {
     const targets = this.querySelectorAll('[data-flo-state="' + state + '"]');
     targets.forEach((el) => {
@@ -1134,22 +919,6 @@ class ShopfloAccounts extends HTMLElement {
     return !drawerEl || drawerEl.getAttribute('data-flo-visible') !== 'true';
   }
 
-  /**
-   * Flips the drawer away from its preferred open direction (Theme Editor > Shopflo Shop Pass >
-   * Primary/Secondary Login Button > Drawer position/Drawer alignment, read from this element's
-   * own data-drawer-vertical/data-drawer-horizontal attributes) whenever the trigger is too
-   * close to that edge of the viewport for the drawer's own (effectively fixed) size to fit.
-   * Runs right before the drawer is revealed, so the flip is already applied on the very first
-   * paint - no flash of the wrong position.
-   *
-   * The decision is resolved once per slot (primary/secondary) per browser session and cached
-   * in sessionStorage, rather than re-measuring on every open - the trigger's position relative
-   * to the viewport it lives in doesn't change between clicks within the same session, so
-   * re-measuring every time is pure waste.
-   */
-  /** Which of the three independently-styled slots this instance is - see the
-   * shopflo-accounts--primary/--secondary/--tertiary modifier classes in
-   * snippets/shopflo.liquid's shop_pass case. */
   _resolveSlot() {
     if (this.classList.contains('shopflo-accounts--secondary')) return 'secondary';
     if (this.classList.contains('shopflo-accounts--tertiary')) return 'tertiary';
@@ -1162,15 +931,6 @@ class ShopfloAccounts extends HTMLElement {
     if (!drawerEl || !anchorEl) return;
 
     const slot = this._resolveSlot();
-    // The preferred direction (Theme Editor > Shopflo Shop Pass > Login Button A/B/C > Dropdown
-    // position, read off this element's own data-drawer-vertical/-horizontal) is folded into the
-    // cache key itself, not just used inside _computeDrawerPosition() below - a cached position
-    // is otherwise read and applied WITHOUT ever re-checking whether it still matches the
-    // currently-configured preference, so changing the Theme Editor setting had no visible effect
-    // for the rest of that sessionStorage session (e.g. across a theme-editor preview reload) even
-    // though every other part of this class was reading the new value correctly. Keying by
-    // preference too makes a changed setting a cache MISS on its own, with no separate
-    // invalidation step needed.
     const cacheKey =
       'shopflo_account_drawer_position_' +
       slot +
@@ -1196,7 +956,7 @@ class ShopfloAccounts extends HTMLElement {
       }
       return null;
     } catch (e) {
-      return null; // storage unavailable (e.g. private browsing) - fall through to computing fresh every time
+      return null;
     }
   }
 
@@ -1204,19 +964,9 @@ class ShopfloAccounts extends HTMLElement {
     try {
       window.sessionStorage.setItem(cacheKey, JSON.stringify(position));
     } catch (e) {
-      // storage unavailable - nothing to do, next click just recomputes
     }
   }
 
-  /**
-   * Measures the drawer's real rendered size while it's still closed,
-   * by temporarily forcing it visible-but-invisible (inline
-   * `!important` beats the stylesheet's `[data-flo-visible="false"]
-   * { display: none !important }` rule - see setPopupHeight/etc. in
-   * ShopfloTheme for the same trick). No flash: visibility:hidden
-   * never paints anything, and both overrides are removed again
-   * before this function returns.
-   */
   _measureDrawerSize(drawerEl) {
     drawerEl.style.setProperty('display', 'block', 'important');
     drawerEl.style.setProperty('visibility', 'hidden', 'important');
@@ -1232,10 +982,6 @@ class ShopfloAccounts extends HTMLElement {
     const viewportW = document.documentElement.clientWidth;
     const viewportH = document.documentElement.clientHeight;
 
-    // Preferred side comes from this instance's own data-drawer-vertical/-horizontal (Theme
-    // Editor > Shopflo Shop Pass > Primary/Secondary Login Button > Drawer position/Drawer
-    // alignment) - only flips away from it when it genuinely doesn't fit AND the other side has
-    // more room, same as the trigger being too close to that edge of the viewport.
     const preferredVertical = this.dataset.drawerVertical === 'above' ? 'above' : 'below';
     const preferredHorizontal =
       this.dataset.drawerHorizontal === 'left'
@@ -1257,11 +1003,6 @@ class ShopfloAccounts extends HTMLElement {
 
     let horizontal;
     if (preferredHorizontal === 'center') {
-      // Centered on the anchor's own horizontal midpoint, extending equally both ways - "fits"
-      // only if BOTH halves have room, unlike left/right (which only ever extend one way).
-      // Falls back to whichever plain side has more room (same left-vs-right comparison the
-      // left/right branch below already uses), not to the other vertical - centering has no
-      // natural "opposite" the way left/right do.
       const anchorCenterX = anchorRect.left + anchorRect.width / 2;
       const centerFits =
         anchorCenterX >= width / 2 && viewportW - anchorCenterX >= width / 2;
@@ -1287,13 +1028,29 @@ class ShopfloAccounts extends HTMLElement {
     this.querySelectorAll('[data-flo-state="account-drawer-overlay"]').forEach((el) => {
       el.setAttribute('data-flo-visible', visible ? 'true' : 'false');
     });
+    this._setHeaderOverflowVisible(visible);
   }
 
-  /**
-   * Called after the "Account" drawer item's click has fired
-   * handleShopifyLogin() — waits for the bundle to append its real
-   * (permanently hidden) login iframe, then mirrors it into ours.
-   */
+  // Theme Editor > Shopflo Shop Pass > "Force overflow visible on" - some host headers clip
+  // this dropdown/login panel with their own overflow:hidden (often for a sticky-header
+  // effect), since it's an absolutely-positioned descendant nested inside that header. Forces
+  // overflow:visible on each configured ancestor selector while open, restores it on close -
+  // a no-op (returns immediately) when the setting is left blank, which is the default.
+  _setHeaderOverflowVisible(visible) {
+    const raw = window.shopfloThemeConfig && window.shopfloThemeConfig.shopflo_account_overflow_fix_selectors;
+    if (!raw) return;
+
+    raw
+      .split(',')
+      .map((selector) => selector.trim())
+      .filter(Boolean)
+      .forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          el.classList.toggle('sf-header-overflow-visible', visible);
+        });
+      });
+  }
+
   _handleAccountIframeFlow() {
     this._waitForElement(ShopfloAccountsConfig.iframe.sourceId).then((iframeEl) => {
       if (!iframeEl) {
@@ -1307,16 +1064,6 @@ class ShopfloAccounts extends HTMLElement {
     });
   }
 
-  /**
-   * Desktop: copies the bundle's real iframe src into OUR OWN iframe (a sibling of the drawer)
-   * and swaps from the plain menu drawer to the iframe view. Does NOT touch the real iframe
-   * itself beyond reading its src — that one stays permanently off-screen (see
-   * #flo-shopify-login-iframe in shopflo-styles.css) on desktop only.
-   *
-   * Mobile: does NOT copy anything — the bundle's own real sheet+overlay component is left
-   * fully visible and untouched, so we only hide our own simple menu drawer and overlay, then
-   * step out of the way entirely.
-   */
   _openIframeFlow(realIframeEl) {
     this._dispatchAccountEvent('account-iframe-opened');
 
@@ -1326,8 +1073,6 @@ class ShopfloAccounts extends HTMLElement {
 
     const isMobile = window.matchMedia('(max-width: ' + ShopfloAccountsConfig.iframe.mobileBreakpoint + 'px)').matches;
     if (isMobile) {
-      // The bundle's real sheet+overlay renders itself — nothing more for us to do. Hide our own
-      // overlay too, since the real one already covers that role; showing both would double-dim.
       this._setOverlayVisible(false);
       return;
     }
@@ -1352,32 +1097,13 @@ class ShopfloAccounts extends HTMLElement {
     this._startIframeSizeSync(realIframeEl);
   }
 
-  /**
-   * Keeps our copy's size matched to the real content's, which
-   * changes at times we don't control (the user interacting inside
-   * it). Scoped narrowly — one element, one attribute, only for as
-   * long as the iframe view is actually open — and disconnected in
-   * _closeIframeFlow, so cost is effectively zero outside that window.
-   */
   _startIframeSizeSync(realIframeEl) {
     const applySize = () => {
-      // Prefer the literal inline height value (the TARGET the bundle
-      // set) over getComputedStyle. If the real iframe animates its
-      // height via a CSS transition, getComputedStyle can report a
-      // mid-transition frame instead of the destination value. The
-      // inline string is immune to that, since it's the target, not
-      // the current render. Only fall back to computed style if
-      // there's no inline value to read (e.g. height set via a class).
       let height = realIframeEl.style.height;
       if (!height) {
         height = getComputedStyle(realIframeEl).height;
       }
 
-      // Known bad transient value — corrected every time it occurs,
-      // not just on a first read, since it can recur on later
-      // mutations too. Rounded comparison catches near-232 fractional
-      // reads (e.g. 231.992px). Keep the 'px' unit — a unitless
-      // number here would make the CSS custom property invalid.
       if (Math.round(parseFloat(height)) === 232) {
         height = '225px';
       }
@@ -1391,8 +1117,6 @@ class ShopfloAccounts extends HTMLElement {
     this._iframeSizeObserver = new MutationObserver(applySize);
     this._iframeSizeObserver.observe(realIframeEl, { attributes: true, attributeFilter: ['style'] });
 
-    // Safety net: if height changes via a transition rather than a
-    // plain inline jump, re-sync once more once it's actually settled.
     this._iframeSizeRealEl = realIframeEl;
     this._iframeTransitionEndHandler = (event) => {
       if (event.propertyName === 'height') applySize();
@@ -1412,15 +1136,7 @@ class ShopfloAccounts extends HTMLElement {
     this._iframeTransitionEndHandler = null;
   }
 
-  /**
-   * Reverses _openIframeFlow: hides our iframe/overlay, resets our iframe back to about:blank
-   * (stops it rather than leaving it loaded in the background). Fully collapses rather than
-   * restoring the plain menu — matches standard dropdown-toggle behavior.
-   */
   _closeIframeFlow() {
-    // Called unconditionally whenever the drawer is closed/toggled (not just when the iframe is
-    // actually open), so this check keeps account-iframe-closed from firing needlessly - only
-    // dispatched when there was really something to close.
     const wasOpen = this.querySelector('[data-flo-state="drawer-iframe"][data-flo-visible="true"]');
 
     this._stopIframeSizeSync();
@@ -1438,11 +1154,6 @@ class ShopfloAccounts extends HTMLElement {
     if (wasOpen) this._dispatchAccountEvent('account-iframe-closed');
   }
 
-  /**
-   * The overlay is only ever shown while the drawer or iframe is
-   * open, so a click on it always means "close everything" — this is
-   * a force-close, not a toggle.
-   */
   _closeDrawer() {
     const wasDrawerOpen = !this._isDrawerClosed();
     this._closeIframeFlow();

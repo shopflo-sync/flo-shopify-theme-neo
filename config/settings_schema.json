@@ -1663,7 +1663,7 @@
         "type": "select",
         "id": "shopflo_font_weight_checkout",
         "label": "Font weight",
-        "default": "bold",
+        "default": "normal",
         "options": [
           {
             "value": "bold",
@@ -1683,7 +1683,7 @@
         "max": 15,
         "step": 1,
         "unit": "px",
-        "default": 0
+        "default": 1
       },
       {
         "type": "text_alignment",
@@ -1978,6 +1978,11 @@
         "type": "color_background",
         "id": "shopflo_hover_background_checkout",
         "label": "Hover background"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_hover_text_color_checkout",
+        "label": "Hover text color"
       },
       {
         "type": "header",
@@ -2532,6 +2537,12 @@
         "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
       },
       {
+        "type": "color_background",
+        "id": "shopflo_hover_text_color_buy_now",
+        "label": "Hover text color",
+        "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
+      },
+      {
         "type": "header",
         "content": "Buy Now Promo Banner"
       },
@@ -2681,6 +2692,12 @@
         ]
       },
       {
+        "type": "text",
+        "id": "shopflo_account_overflow_fix_selectors",
+        "label": "Force overflow visible on",
+        "info": "Comma-separated list of CSS classes or IDs (e.g. .header-wrapper, #shopify-section-header) for ancestor elements that clip the account dropdown/login panel with overflow:hidden - their overflow is forced visible while the dropdown or login panel is open. Leave blank if your header doesn't clip it."
+      },
+      {
         "type": "header",
         "content": "Login Button A"
       },
@@ -2808,10 +2825,41 @@
         "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)"
       },
       {
+        "type": "select",
+        "id": "shopflo_account_icon_source_button_a",
+        "label": "Icon",
+        "default": "shopflo",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo icon"
+          },
+          {
+            "value": "theme",
+            "label": "Theme icon"
+          }
+        ]
+      },
+      {
+        "type": "html",
+        "id": "shopflo_account_theme_icon_button_a",
+        "label": "Theme icon SVG",
+        "info": "Paste your theme's own account/login icon SVG markup here.",
+        "visible_if": "{{ settings.shopflo_account_icon_source_button_a == 'theme' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_icon_sync_header_button_a",
+        "label": "Match header text color",
+        "info": "Icon inherits whatever text color the header itself is using at that spot, instead of a fixed color/gradient. Only a plain color - a gradient can't be matched.",
+        "default": false
+      },
+      {
         "type": "color_background",
         "id": "shopflo_account_icon_color_button_a",
         "label": "Icon color",
-        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)"
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_account_icon_source_button_a == 'shopflo' and settings.shopflo_account_icon_sync_header_button_a == false }}"
       },
       {
         "type": "color_background",
@@ -3079,11 +3127,43 @@
         "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
       },
       {
+        "type": "select",
+        "id": "shopflo_account_icon_source_button_b",
+        "label": "Icon",
+        "default": "shopflo",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo icon"
+          },
+          {
+            "value": "theme",
+            "label": "Theme icon"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "html",
+        "id": "shopflo_account_theme_icon_button_b",
+        "label": "Theme icon SVG",
+        "info": "Paste your theme's own account/login icon SVG markup here.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.shopflo_account_icon_source_button_b == 'theme' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_icon_sync_header_button_b",
+        "label": "Match header text color",
+        "info": "Icon inherits whatever text color the header itself is using at that spot, instead of a fixed color/gradient. Only a plain color - a gradient can't be matched.",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
         "type": "color_background",
         "id": "shopflo_account_icon_color_button_b",
         "label": "Icon color",
         "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
-        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.shopflo_account_icon_source_button_b == 'shopflo' and settings.shopflo_account_icon_sync_header_button_b == false }}"
       },
       {
         "type": "color_background",
@@ -3356,11 +3436,43 @@
         "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
       },
       {
+        "type": "select",
+        "id": "shopflo_account_icon_source_button_c",
+        "label": "Icon",
+        "default": "shopflo",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo icon"
+          },
+          {
+            "value": "theme",
+            "label": "Theme icon"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "html",
+        "id": "shopflo_account_theme_icon_button_c",
+        "label": "Theme icon SVG",
+        "info": "Paste your theme's own account/login icon SVG markup here.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.shopflo_account_icon_source_button_c == 'theme' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_icon_sync_header_button_c",
+        "label": "Match header text color",
+        "info": "Icon inherits whatever text color the header itself is using at that spot, instead of a fixed color/gradient. Only a plain color - a gradient can't be matched.",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
         "type": "color_background",
         "id": "shopflo_account_icon_color_button_c",
         "label": "Icon color",
         "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
-        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.shopflo_account_icon_source_button_c == 'shopflo' and settings.shopflo_account_icon_sync_header_button_c == false }}"
       },
       {
         "type": "color_background",

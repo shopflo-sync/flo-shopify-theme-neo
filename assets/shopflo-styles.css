@@ -1,9 +1,15 @@
-/* ==========================================================================
-   Utility classes
-   ========================================================================== */
+/* shopflo-neo:v1.0.0 */
 .sf-hidden {
     display: none !important;
     visibility: hidden !important;
+}
+
+/* Toggled by _setHeaderOverflowVisible() in assets/shopflo-script.js on whichever ancestor
+   elements Theme Editor > Shopflo Shop Pass > "Force overflow visible on" names - forces
+   overflow:visible on a host header that would otherwise clip the account dropdown/login panel
+   while it's open, removed again on close. */
+.sf-header-overflow-visible {
+    overflow: visible !important;
 }
 
 .sf-full-width {
@@ -45,9 +51,6 @@
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — hover effects
-   ========================================================================== */
 .shopflo-checkout__button:hover:not([disabled]) {
     background:
         var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
@@ -58,6 +61,22 @@
     background:
         var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
         var(--sf-buy-now-border-color) border-box !important;
+}
+
+/* The label's text color is painted via `background` + `background-clip: text` (see
+   .shopflo-checkout__button--label/.shopflo-buy-now__button--label further below - needed since
+   this setting supports gradients, which plain `color`/currentColor can't hold), so the button's
+   own :hover rule above - which only repaints the BUTTON's background - never touched it: without
+   this, a hover background dark enough to clash with the (unchanged) text color could make the
+   label unreadable during hover. --sf-checkout-hover-color/--sf-buy-now-hover-color fall back to
+   the base (non-hover) text color when unset, so this is a no-op until a merchant opts in via
+   Theme Editor > Shopflo Checkout/Buy Now > Hover text color. */
+.shopflo-checkout__button:hover:not([disabled]) .shopflo-checkout__button--label {
+    background: var(--sf-checkout-hover-color, var(--sf-checkout-color)) !important;
+}
+
+.shopflo-buy-now__button:hover:not([disabled]) .shopflo-buy-now__button--label {
+    background: var(--sf-buy-now-hover-color, var(--sf-buy-now-color)) !important;
 }
 
 .sf-button-hover--lift:hover:not([disabled]) {
@@ -88,17 +107,58 @@
     background-position: -120% 0 !important;
 }
 
-.sf-button-hover--darken:hover:not([disabled]) {
+/* Darken/Lighten paint onto a ::before layer BEHIND the button's real content (z-index: -1,
+   see below) instead of using `filter` directly on the button itself - a plain `filter` on the
+   button would darken/lighten literally everything inside it, including the label (painted via
+   `background` + `background-clip: text`) and payment icons, coupling this effect to Hover text
+   color/icon colors even though those are independent settings. Still uses `filter`, not
+   color-mix()/a computed darker color, because the background can be a GRADIENT
+   (color_background setting) - color-mix() only accepts real <color> values, not gradients, so
+   filter is the only technique that darkens/lightens correctly regardless of solid vs gradient.
+   Each button type needs its own pair since the underlying background custom properties differ
+   (--sf-checkout-* vs --sf-buy-now-*). Deliberately NOT extended to also cover the button's own
+   border ring (inset: 0 sits at the padding edge, inside the border) - a minor, accepted
+   trade-off to keep this simple; the border color itself doesn't darken/lighten on hover. */
+.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before,
+.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before,
+.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before,
+.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: inherit !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before {
+    background:
+        var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
+        var(--sf-checkout-border-color) border-box !important;
     filter: brightness(0.9) !important;
 }
 
-.sf-button-hover--lighten:hover:not([disabled]) {
+.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before {
+    background:
+        var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
+        var(--sf-checkout-border-color) border-box !important;
     filter: brightness(1.12) !important;
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — continuous animations
-   ========================================================================== */
+.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before {
+    background:
+        var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
+        var(--sf-buy-now-border-color) border-box !important;
+    filter: brightness(0.9) !important;
+}
+
+.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
+    background:
+        var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
+        var(--sf-buy-now-border-color) border-box !important;
+    filter: brightness(1.12) !important;
+}
+
 @keyframes sf-swipe {
     0% {
         background-position: 170% 0;
@@ -242,9 +302,6 @@
     }
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — core layout & wrapper
-   ========================================================================== */
 .shopflo-checkout__wrapper {
     display: flex !important;
     flex-direction: column !important;
@@ -252,7 +309,6 @@
     align-items: center !important;
 }
 
-/* To-Do: Need separate transtion speed according to hover's styling */
 .shopflo-buy-now__button,
 .shopflo-checkout__button {
     position: relative !important;
@@ -281,13 +337,6 @@
     gap: var(--shopflo-checkout-promo-gap) !important;
 }
 
-/* Attached banner + button meet with zero gap, forming one pill (see the paired border-radius
-   rules below). Without this, the hover-driven transform on this wrapper (see "Attached: apply
-   the effect..." further down) can promote the button (already position:relative) and the promo
-   banner (plain static box) to separate compositing layers, which round their shared edge to the
-   nearest device pixel independently - exposing a stray hairline (page background showing
-   through, reads as a white line) between them for the duration of the hover. Forcing this
-   wrapper to render as a single flattened layer keeps that edge rounded consistently instead. */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached {
     backface-visibility: hidden !important;
 }
@@ -311,6 +360,15 @@
 
 .shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout--promo {
     border-radius: var(--shopflo-checkout-promo-border-radius) !important;
+}
+
+/* A click anywhere inside this button (icon span, promo banner, badge SVG, label text) must
+   still report event.target as the button itself - handleFloBuyNowBtn(event) (loaded from
+   bridge.shopflo.com) reads product/variant context off the clicked element, and a click that
+   lands on a nested child instead of the <button id="flo-buy-now-button"> element resolves the
+   wrong context. No visual change - only disables pointer targeting on inner elements. */
+.shopflo-buy-now__button * {
+    pointer-events: none !important;
 }
 
 .shopflo-buy-now__button {
@@ -347,24 +405,6 @@
     gap: var(--shopflo-buy-now-promo-gap) !important;
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — promo banner, "Top of button" layout
-   (settings.shopflo_promo_banner_layout_checkout/_buy_now == 'top_of_button')
-   ==========================================================================
-   Unlike "attached"/"separate" (which sit in normal flex flow, in-line with
-   the button), "top_of_button" renders the promo banner as a real DOM CHILD
-   of the button itself (see snippets/shopflo.liquid) and pins it as a small
-   absolutely-positioned badge over one corner - settings.
-   shopflo_promo_position_checkout/_buy_now (Position on button:
-   top_left/top_right/bottom_left/bottom_right) picks which corner via the
-   .sf-promo-position--* classes below. The button is already
-   position:relative (see "core layout & wrapper" above), so it's the
-   positioning context here with no extra rule needed. Being a real child
-   also means the badge automatically inherits every hover/animation effect
-   applied to the button (transform, filter, box-shadow, the ::before/::after
-   sweeps) for free - no separate mirroring rules needed, unlike "attached"
-   further below.
-   ========================================================================== */
 .shopflo-checkout__button .shopflo-checkout--promo {
     position: absolute !important;
     z-index: 1 !important;
@@ -381,7 +421,6 @@
     border-radius: var(--shopflo-buy-now-promo-border-radius) !important;
 }
 
-/* Truncate rather than wrap/overflow - these badges sit in a fixed corner with limited room. */
 .shopflo-checkout__button .shopflo-checkout--promo__text,
 .shopflo-buy-now__button .shopflo-buy-now--promo__text {
     min-width: 0 !important;
@@ -410,28 +449,6 @@
     right: 0.6rem !important;
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — promo banner mirrors the button's own hover
-   effect (settings.shopflo_hover_effect_checkout/_buy_now) when "Banner
-   Layout" is "Attached" (flush against the button, forming one rounded
-   pill - see the border-radius pairing further above): the effect is
-   applied to the WRAPPER as a single unit instead of to the button alone,
-   so the pill moves/scales/shines together rather than visibly tearing at
-   the seam. The button's own individual hover effect is explicitly
-   cancelled here for that reason - the wrapper-level rule is the only
-   source of the effect while attached.
-
-   "Top of button" needs no equivalent treatment here - as noted above, the
-   promo banner is a real DOM child of the button in that layout, so it
-   already moves/scales/shines with the button natively.
-
-   "Separate" has a real gap between banner and button, so it's left out
-   entirely - the banner isn't part of the button's shape there, so it
-   shouldn't move/react with it at all.
-   ========================================================================== */
-
-/* --- Attached: cancel the button's own individual effect - the wrapper-level
-   rules below are the only source of the effect for this layout. --- */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled]),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled]) {
     transform: none !important;
@@ -458,7 +475,6 @@
     display: none !important;
 }
 
-/* --- Attached: apply the effect once, to the wrapper - button + banner move as one unit. --- */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled])),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled])) {
     transform: translateY(-2px) !important;
@@ -480,10 +496,6 @@
     filter: brightness(1.12) !important;
 }
 
-/* shine needs position:relative on the wrapper for its ::after (inset:0) to size against the
-   whole pill instead of just the button - deliberately no overflow:hidden here, since inset:0 +
-   an explicit border-radius already bounds the sweep exactly, and overflow:hidden would clip any
-   persistent (non-hover) button box-shadow from settings.shopflo_shadow_style_checkout/_buy_now. */
 .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine),
 .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine) {
     position: relative !important;
@@ -531,14 +543,6 @@
     align-items: center !important;
 }
 
-/* snippets/shopflo.liquid wraps .shopflo-buy-now__button in a .shopify-payment-button div purely
-   so the Shopflo bundle's own quantity/variant detection (keyed off Shopify's native dynamic
-   checkout button convention) resolves correctly - display:contents keeps that wrapper out of
-   layout entirely, so .shopflo-buy-now__button is still effectively a direct flex item of this
-   wrapper (full-width, alignment, etc. all still apply exactly as if the div weren't there).
-   Scoped to THIS wrapper only - the real native .shopify-payment-button rendered by
-   {{ form | payment_button }} in the international-redirect fallback further down in
-   shopflo.liquid must keep Shopify's own default layout untouched. */
 .shopflo-buy-now__wrapper > .shopify-payment-button {
     display: contents !important;
 }
@@ -560,11 +564,6 @@
     border-radius: var(--sf-checkout-border-radius);
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — payment icons
-   ========================================================================== */
-
-/* --- box & sizing basics -------------------------------------------------- */
 .shopflo-payment-icons__wrapper {
     display: flex !important;
     flex-direction: row !important;
@@ -618,7 +617,6 @@
     box-shadow: inset 0px 0px 0px 1px #5f259f !important;
 }
 
-/* --- icon position: left vs right of the label ---------------------------- */
 .sf-checkout-payment-icon--left {
     flex-direction: row !important;
 }
@@ -643,7 +641,6 @@
     flex-direction: row-reverse !important;
 }
 
-/* --- overlap stacking: icons 2 & 3 slide left to sit on top of icon 1 ----- */
 .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
     background: var(--sf-payment-icon-background_checkout_1) !important;
 }
@@ -676,9 +673,6 @@
     left: calc(var(--sf-buy-now-payment-icon-overlap) * -2) !important;
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — content, label & "Powered by Shopflo" badge
-   ========================================================================== */
 .shopflo-checkout__button--content {
     display: flex !important;
     align-items: center !important;
@@ -687,12 +681,6 @@
 
 .shopflo-checkout__button--label {
     flex-basis: 70% !important;
-    /* Claims any space left unclaimed by the icons wrapper/badge - both are flex-grow:0, so this
-       is a no-op when they're rendered at their full 15%/15% share, but lets the label expand to
-       fill the button on its own when one or both are omitted from the DOM entirely (payment
-       icons disabled via settings.shopflo_payment_icons_checkout or the shopflo_payment_icons
-       render param, and/or shopflo_badge: false) rather than leaving a dead gap where they'd
-       have sat. */
     flex-grow: 1 !important;
     height: 100% !important;
     min-height: var(--sf-checkout-font-size) !important;
@@ -710,7 +698,6 @@
 
 .shopflo-buy-now__button--label {
     flex-basis: 70% !important;
-    /* See the matching comment on .shopflo-checkout__button--label above. */
     flex-grow: 1 !important;
     height: 100% !important;
     min-height: var(--sf-buy-now-font-size) !important;
@@ -740,12 +727,6 @@
     width: unset !important;
 }
 
-/* UI check: keeps the button label readable when space is tight - bindLabelWidthGuard() in
-   assets/shopflo-script.js adds .sf-label-squeezed to the button whenever its label's own
-   rendered width would otherwise be squeezed to <=60% of the button's width (long/translated
-   label text competing with the payment icons and the "Powered by Shopflo" badge for room).
-   Hiding both here lets .shopflo-checkout__button--label/.shopflo-buy-now__button--label's
-   existing flex-grow:1 (above) claim the freed-up space automatically. */
 .shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
 .shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield,
 .shopflo-buy-now__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
@@ -753,15 +734,6 @@
     display: none !important;
 }
 
-/* ==========================================================================
-   Checkout / Buy Now button — promo banner
-   ========================================================================== */
-/* Purely decorative - never a click target. In "Top of button" layout the
-   badge is a DOM child of the button (see snippets/shopflo.liquid), so a
-   click on it already bubbles up to the button's own shopflo-popup-trigger
-   handler (see bindPopupMorph() in assets/shopflo-script.js) regardless;
-   pointer-events:none here just keeps it from ever being its own
-   hit-target (e.g. text selection) in any layout. */
 .shopflo-checkout--promo,
 .shopflo-buy-now--promo {
     pointer-events: none !important;
@@ -820,13 +792,6 @@
     line-height: var(--shopflo-buy-now-promo-font-size) !important;
 }
 
-/* ==========================================================================
-   Dummy popup — button <-> full-screen FLIP animation
-   (see bindPopupMorph() in assets/shopflo-script.js)
-   ========================================================================== */
-
-/* Mounted/unmounted with display -- this is the ONLY thing that
-     controls whether it exists visually. No visibility toggling. */
 .dummy-popup-overlay {
     display: none;
     position: fixed;
@@ -849,39 +814,15 @@
     top: 0;
     left: 0;
     width: var(--popup-w);
-    /* --h is FLIP'd by JS between the trigger button's own real (px) height and --popup-h, same
-       technique as --radius - a REAL height transition rather than scaling the Y axis via
-       transform, so border-radius/box-shadow/content don't get vertically stretched/squashed
-       the way a non-uniform scale(sx, sy) would distort them. See
-       triggerHeightFor()/setPopupHeight() in assets/shopflo-script.js. */
     height: var(--h, var(--popup-h));
-    /* Fixed solid background - deliberately NOT animated/FLIP'd, unlike transform/radius/height.
-       Stays this exact color for the entire open+close timeline. */
     background-color: #fff;
-    /* --radius is FLIP'd by JS between the trigger button's own computed border-radius and
-       --popup-radius, same technique as --tx/--ty/--sx/--h. The var(--popup-radius) fallback
-       only matters before JS has set an explicit value (first paint / after a full close). */
     border-radius: var(--radius, var(--popup-radius));
     overflow: hidden;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
     transform-origin: 0 0;
-    /* Y scale is fixed at 1 - height above now does the real vertical FLIP, so scale only
-       needs to handle X (width). */
     transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--sx, 1), 1);
     will-change: transform, height, opacity;
-    /* Resting/closed state - JS fades this in on open and back out on close. Unlike
-       transform/border-radius, the fade only plays over a short ~8% slice of the total
-       duration (--opacity-duration), placed at the very start on open (--opacity-delay: 0)
-       or at the very end on close (--opacity-delay: ~92% of --duration) - see
-       setPopupOpacityTiming() in assets/shopflo-script.js. */
     opacity: 0;
-    /* This is the "on" state. JS temporarily sets an inline
-       transition:none to disable it, then clears the inline style
-       (wrapper.style.transition = '') to fall back to THIS rule. */
-    /* opacity uses `linear` deliberately - it has to match the trigger button's own opacity
-       transition (assets/shopflo-script.js fadeTrigger), which is linear. Different curves
-       progressing at different rates would break the parallel crossfade even with identical
-       duration/delay. background-color is intentionally absent here - it's fixed, not animated. */
     transition: transform var(--duration) var(--ease), border-radius var(--duration) var(--ease),
         height var(--duration) var(--ease),
         opacity var(--opacity-duration, 40ms) linear var(--opacity-delay, 0ms);
@@ -915,66 +856,19 @@
     }
 }
 
-/* Blocks clicks on the real trigger button while the dummy popup sits over its spot -
-   opacity is handled separately, in JS, so it can be timed/eased in sync with the popup's
-   own fade (see fadeTrigger() in assets/shopflo-script.js). */
 .sf-popup-trigger--hidden {
     pointer-events: none !important;
 }
 
-/* ==========================================================================
-   Shopflo Accounts (shop_pass) — Dummy markup for the bundle's own queries
-   ==========================================================================
-   Rendered by `{% render 'shopflo', type: 'shop_pass_bundle_markup' %}` (see
-   snippets/shopflo.liquid) - satisfies the Shopflo bundle script's OWN internal
-   getElementById lookups, independently of anything shop_pass_primary/
-   shop_pass_secondary/shop_pass_tertiary themselves read or write.
-
-   Do NOT switch this to display:none / visibility:hidden / zero-size
-   clipping. The bundle's own scripts toggle inline styles on these
-   elements directly; those techniques can silently override a
-   display/visibility-based hiding technique, and zero-size clipping
-   breaks handleDrawer's internal position:absolute layout.
-   ========================================================================== */
 .shopflo-accounts-hidden {
     position: fixed !important;
     top: 0 !important;
     left: -99999px !important;
     opacity: 0 !important;
     pointer-events: none !important;
-    /* Defensive: forces this element to become a containing block for
-       any descendant using position:fixed, so such a descendant stays
-       trapped in this off-screen box rather than escaping to real
-       viewport coordinates. Has no effect on position:absolute
-       descendants (those are already relative to this wrapper by
-       default) — kept as a harmless safety net regardless. */
     transform: translateZ(0) !important;
 }
 
-/* ==========================================================================
-   Shopflo Accounts (shop_pass) — Real bundle login UI
-   ==========================================================================
-   DESKTOP ONLY (screen width 800px+): the bundle appends its real login UI
-   somewhere in the DOM on handleShopifyLogin() click - #flo-shopify-login-iframe,
-   its #flo-shopify-login-popup-container / #flo-shopify-login-popup-wrapper
-   chrome, and potentially the same #flo-shopify-login-sheet-overlay /
-   #flo-shopify-login-sheet wrapper/overlay it also uses on mobile. ALL of it
-   is kept permanently off-screen here, since assets/shopflo-script.js only
-   ever reads the iframe's src and mirrors that into our own, always-visible
-   .shopflo-accounts__drawer-iframe instead (see _openIframeFlow in
-   shopflo-script.js) — none of the bundle's own chrome should ever paint
-   on desktop.
-
-   MOBILE (up to 799px): left fully untouched. The bundle's own real
-   #flo-shopify-login-sheet-overlay / #flo-shopify-login-sheet /
-   #flo-shopify-login-iframe stack renders and shows/hides itself - nothing
-   here interferes with it, and this theme does not mirror it into its own
-   drawer-iframe on mobile (see the isMobile branch in _openIframeFlow).
-
-   Do NOT switch this to display:none / visibility:hidden — the bundle's own
-   scripts may toggle inline styles on these elements directly, and either
-   technique can silently override / be overridden by that.
-   ========================================================================== */
 @media screen and (min-width: 800px) {
 
     #flo-shopify-login-iframe,
@@ -990,14 +884,6 @@
     }
 }
 
-/* ==========================================================================
-   Shopflo Accounts (shop_pass) — Proxy markup
-   ==========================================================================
-   Fully customizable — restyle freely. The only things that must be
-   preserved elsewhere (in snippets/shopflo.liquid's 'shop_pass_primary' /
-   'shop_pass_secondary' cases) are the data-flo-trigger / data-flo-state
-   attributes; nothing below is load-bearing for functionality.
-   ========================================================================== */
 shopflo-accounts {
     display: inline-flex !important;
     position: relative !important;
@@ -1005,25 +891,10 @@ shopflo-accounts {
     justify-content: center !important;
 }
 
-/* "Full width" (Theme Editor > Shopflo Shop Pass > Login Button A/B/C) - opt-in, off by default
-   (unlike checkout/buy-now's own Full width, which defaults on): this element is normally placed
-   inline among other header icons, where 100% width would swallow the whole row, so it only makes
-   sense where a caller has deliberately given it a dedicated row to itself (e.g. a mobile menu
-   drawer utility link). The element selector alone (shopflo-accounts{}, above) never sets its own
-   width, so this could just be the plain .sf-full-width utility class - but
-   .shopflo-accounts__icon-button (below) DOES set its own width:fit-content, so ITS override
-   needs the extra element+class specificity to reliably win regardless of source order; matching
-   the wrapper's selector shape here too, for consistency. */
 shopflo-accounts.sf-full-width {
     width: 100% !important;
 }
 
-/* Primary/Secondary settings are independent (see snippets/shopflo.liquid's 'assets' case), but
-   the markup/rules below only ever reference the generic --shopflo-account-* names. Whichever
-   modifier class snippets/shopflo.liquid put on <shopflo-accounts> (--primary from
-   type: 'shop_pass_primary', --secondary from type: 'shop_pass_secondary') remaps those generic
-   names onto the right slot's values for everything nested inside it - no rule duplication
-   needed below. */
 .shopflo-accounts--primary {
     --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-primary) !important;
     --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-primary) !important;
@@ -1035,15 +906,6 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-button-radius: var(--shopflo-account-button-radius-primary) !important;
     --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-primary) !important;
     --shopflo-account-label-color: var(--shopflo-account-label-color-primary) !important;
-    /* Drawer (see .shopflo-accounts__drawer below) - independent of the icon/button vars above,
-       so the dropdown menu can be styled/positioned differently per slot. No -primary-suffixed
-       source vars exist yet (no Theme Editor settings for these), so every one of these
-       currently just falls through to the same hardcoded default every slot always had -
-       purely a hook for future settings or manual CSS overrides, zero visual change today.
-       --shopflo-account-button-shadow-primary (above) is the one exception - it DOES have a real
-       setting (Theme Editor > Shopflo Shop Pass > Primary Login Button > Show button shadow +
-       Button shadow direction/horizontal offset/vertical offset/blur/spread/color) - see the
-       account_button_shadow_primary capture in snippets/shopflo.liquid's 'assets' case. */
     --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-primary, #fff) !important;
     --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-primary, 8px) !important;
     --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-primary, 4rem) !important;
@@ -1062,7 +924,6 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-button-radius: var(--shopflo-account-button-radius-secondary) !important;
     --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-secondary) !important;
     --shopflo-account-label-color: var(--shopflo-account-label-color-secondary) !important;
-    /* Drawer - see the matching comment in .shopflo-accounts--primary above. */
     --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-secondary, #fff) !important;
     --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-secondary, 8px) !important;
     --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-secondary, 4rem) !important;
@@ -1081,7 +942,6 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-button-radius: var(--shopflo-account-button-radius-tertiary) !important;
     --shopflo-account-button-shadow: var(--shopflo-account-button-shadow-tertiary) !important;
     --shopflo-account-label-color: var(--shopflo-account-label-color-tertiary) !important;
-    /* Drawer - see the matching comment in .shopflo-accounts--primary above. */
     --shopflo-account-drawer-bg: var(--shopflo-account-drawer-bg-tertiary, #fff) !important;
     --shopflo-account-drawer-radius: var(--shopflo-account-drawer-radius-tertiary, 8px) !important;
     --shopflo-account-drawer-min-width: var(--shopflo-account-drawer-min-width-tertiary, 4rem) !important;
@@ -1089,10 +949,6 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-tertiary, #f9fafb) !important;
 }
 
-/* "Visible on" (Theme Editor > Shopflo Shop Pass > Primary/Secondary Login Button > Visible on)
-   - applied by snippets/shopflo.liquid as sf-account-visible--desktop-only /
-   --mobile-only on <shopflo-accounts> itself (no class at all = "Both", always visible).
-   Breakpoint matches the rest of the theme's own desktop/mobile split (see sections/header.liquid). */
 .sf-account-visible--desktop-only {
     display: none !important;
 }
@@ -1133,30 +989,20 @@ shopflo-accounts.sf-full-width {
     opacity: 0.5 !important;
 }
 
-/* Overrides this rule's own width:fit-content above - needs the extra class+class specificity to
-   win reliably: the plain .sf-full-width utility class (defined near the top of this file, under
-   "Utility classes") is otherwise EQUAL specificity to .shopflo-accounts__icon-button above, and
-   .shopflo-accounts__icon-button comes later in source order, so it would win the tie and the
-   toggle would silently do nothing without this. See the matching comment on
-   shopflo-accounts.sf-full-width further up. */
 .shopflo-accounts__icon-button.sf-full-width {
     width: 100% !important;
 }
 
-/* Icon color settings are `color_background` (solid or gradient), same as the checkout/buy-now
-   button text below - and neither `color`/`currentColor` nor an SVG `stroke` can hold a gradient
-   value (invalid CSS, silently dropped). So instead of colouring the stroke directly, the SVG
-   is painted via `background` + `mask-image`: the mask (a data-URI copy of the same two
-   currentColor paths, PLUS the fixed-color "flash" accent path so it isn't clipped away by the
-   mask - the accent keeps its own hardcoded #01CCA7 fill/stroke regardless, since it draws on
-   top of the masked background) punches the icon's silhouette out of the gradient/solid
-   background, and the SVG's own `stroke="currentColor"` is neutralised via `color: transparent`
-   since it's now invisible underneath anyway. Stroke width is no longer settings-driven, so the
-   mask's hardcoded stroke-width="1.611" always matches the visible SVG's own inline value. */
 .shopflo-accounts__icon-button svg {
     width: var(--shopflo-account-icon-size, 20px) !important;
     height: var(--shopflo-account-icon-size, 20px) !important;
     flex-shrink: 0 !important;
+}
+
+/* Shopflo's own hardcoded icon only (see `sf-account-icon--default` in snippets/shopflo.liquid) -
+   a merchant-pasted theme SVG (Theme Editor > Shopflo Shop Pass > Login Button A/B/C > Icon)
+   paints itself natively and must not be clipped into this icon's silhouette via mask-image. */
+.shopflo-accounts__icon-button svg.sf-account-icon--default {
     color: transparent !important;
     transition: background 0.2s ease !important;
     background: var(--shopflo-account-icon-color, linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)) !important;
@@ -1170,8 +1016,24 @@ shopflo-accounts.sf-full-width {
     mask-position: center !important;
 }
 
-/* Label is rendered after the icon in markup (default flex row = "Icon left" layout); this
-   flips the visual order for "Icon right" without touching the DOM/markup order. */
+/* "Match header text color" (Theme Editor > Shopflo Shop Pass > Login Button A/B/C) - the icon's
+   default painting technique (background + mask-image, above) exists specifically to support
+   GRADIENT icon colors, but currentColor can't hold a gradient, and can't be resolved here
+   anyway: currentColor always means "this exact element's own `color`", and the base rule above
+   deliberately sets `color: transparent` on this same svg (to neutralize its raw
+   stroke="currentColor" paths, since they're painted via the mask instead) - so simply setting
+   `background: currentColor` on the same selector would just resolve to transparent, not
+   whatever color the header provides. Instead: undo the mask/background technique entirely for
+   this instance and let the SVG's own native stroke="currentColor" paths paint themselves,
+   inheriting `color` normally from wherever the header sets it at this DOM position - solid
+   color only, no gradient support, by design (see the Theme Editor setting's own info text). */
+.shopflo-accounts__icon-button.sf-icon-sync-header svg.sf-account-icon--default {
+    color: inherit !important;
+    background: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+}
+
 .sf-account-layout--icon-right {
     flex-direction: row-reverse !important;
 }
@@ -1209,9 +1071,6 @@ shopflo-accounts.sf-full-width {
     z-index: 999 !important;
 }
 
-/* Applied by _positionDrawer() in shopflo-script.js when the trigger
-   sits too close to that edge of the viewport for the drawer's fixed
-   size to fit in its default open-below/open-right position. */
 .shopflo-accounts__drawer--open-top {
     top: auto !important;
     bottom: 100% !important;
@@ -1224,12 +1083,6 @@ shopflo-accounts.sf-full-width {
     left: 0 !important;
 }
 
-/* Centered on the account icon's own horizontal midpoint (its containing block,
-   .shopflo-accounts__logged-in, is the same position:relative box --open-left/the default
-   right:0 already anchor against) rather than either of its edges. Applied by
-   _computeDrawerPosition() in shopflo-script.js only when the drawer actually fits centered
-   without overflowing either side of the viewport - falls back to plain left/right otherwise,
-   same as any other preferred direction that doesn't fit. */
 .shopflo-accounts__drawer--open-center {
     right: auto !important;
     left: 50% !important;
@@ -1262,15 +1115,6 @@ shopflo-accounts.sf-full-width {
     background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb) !important;
 }
 
-/* A separate floating circular button, NOT part of the dropdown card itself - positioned
-   relative to .shopflo-accounts__drawer (its own nearest positioned ancestor, already
-   position:absolute above) via a NEGATIVE bottom/top offset, which pushes it past the drawer's
-   own edge into the gap below/above it rather than sitting inside the card's padded, rounded
-   content area. Its own background+shadow (matching the drawer's) is what makes it read as a
-   distinct floating badge instead of a transparent cutout of whatever's behind it. Still a real
-   DOM child of the drawer, so display:none on the drawer's own [data-flo-visible="false"] (see
-   the "Visibility" section further down) hides this along with everything else in one shot - no
-   separate visibility wiring needed. */
 .shopflo-accounts__drawer-close {
     display: flex !important;
     align-items: center !important;
@@ -1291,10 +1135,6 @@ shopflo-accounts.sf-full-width {
     transition: background 0.2s ease !important;
 }
 
-/* Mirrors .shopflo-accounts__drawer--open-top (above) flipping the drawer itself from below-icon
-   to above-icon: the close button flips from just past the BOTTOM edge to just past the TOP edge
-   in lockstep, so it's always on the outside edge farthest from the icon rather than the one
-   closest to it. */
 .shopflo-accounts__drawer--open-top .shopflo-accounts__drawer-close {
     bottom: auto !important;
     top: -30px !important;
@@ -1304,11 +1144,6 @@ shopflo-accounts.sf-full-width {
     background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb) !important;
 }
 
-/* Sibling of .shopflo-accounts__drawer, positioned the same way — width matches the bundle's own
-   real iframe (400px, 16px radius). Height stays live via --flo-sso-iframe-height, synced from
-   the real iframe's actual size (see _startIframeSizeSync in shopflo-script.js), since it changes
-   as the customer interacts with the iframe's content. 225px is only the fallback before the
-   first sync happens. */
 .shopflo-accounts__drawer-iframe {
     position: absolute !important;
     top: 100% !important;
@@ -1323,11 +1158,6 @@ shopflo-accounts.sf-full-width {
     z-index: 999 !important;
 }
 
-/* NOTE: no mobile-specific sizing for .shopflo-accounts__drawer-iframe here — our own copy is
-   never shown on mobile at all (see the isMobile branch in _openIframeFlow in
-   shopflo-script.js), so data-flo-iframe-active never gets set there and this would never fire.
-   The bundle's real sheet handles its own mobile layout entirely on its own. */
-
 .shopflo-accounts__overlay {
     display: block !important;
     position: fixed !important;
@@ -1336,14 +1166,6 @@ shopflo-accounts.sf-full-width {
     z-index: 998 !important;
 }
 
-/* ==========================================================================
-   Shopflo Accounts (shop_pass) — Visibility
-   ==========================================================================
-   Driven entirely by data-flo-visible (toggled by the <shopflo-accounts>
-   custom element in shopflo-script.js). Hiding rule is universal and
-   high-priority; "true" states restore whatever display value each
-   element needs.
-   ========================================================================== */
 [data-flo-visible="false"] {
     display: none !important;
 }

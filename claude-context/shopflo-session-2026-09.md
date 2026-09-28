@@ -1,4 +1,4 @@
-# Shopflo integration - session context (2026-08-31 → 2026-09-03+)
+# Shopflo integration - session context (2026-08-31 → 2026-09-28)
 
 Working notes from an extended Claude Code session on the Shopflo checkout/buy-now/cart/shop-pass
 integration (`snippets/shopflo.liquid`, `assets/shopflo-script.js`, `assets/shopflo-styles.css`,
@@ -279,3 +279,403 @@ checkout settings when matching). `assets/shopflo-styles.css` buttons now use
 `calc()`s (`.shopflo-icon[class*="shopflo-payment-icon--"]` and its per-button overrides, ~line
 577-592) measure vertical space inside the button, so they were repointed at the `-block`
 variable specifically, not `-inline`.
+
+---
+
+## 8. Render param / setting renames
+
+- `show_icon` → `show_user_icon` (shop_pass icon-visibility render param, `snippets/shopflo.liquid`
+  - doc comment, safe-boolean-pattern assignment, both `{%- if -%}` usages). Purely a naming
+  clarity request, no behavior change. No other call site in the repo passed this param.
+- `shopflo_customer_account_enabled` → `shopflo_customer_account_provider` (the select deciding
+  whether the header/mobile-drawer account icon renders Shopflo's `shop_pass_secondary` or the
+  theme's own native account link) - across `config/settings_schema.json`,
+  `snippets/shopflo.liquid`, and `sections/header.liquid` (both the desktop and mobile-drawer
+  `{%- if -%}` checks). Naming clarity only - same two option values (`'shopflo'`/`'shopify'`),
+  same behavior.
+
+---
+
+## 9. `!important` added to all Shopflo CSS
+
+On request, every declaration in every rule whose selector touches a `.shopflo-*`/`.sf-*` class,
+a `[class*="shopflo-…"/"sf-…"]` attribute pattern, or the `shopflo-accounts` custom element got
+`!important` appended (443 additions on top of the pre-existing 20) - so a host theme's own CSS
+can never silently override Shopflo's styling when this integration is copy-pasted elsewhere.
+Left untouched: `@keyframes` bodies (the spec disallows `!important` there), the
+`.dummy-popup-*` popup-morph rules, `#shopify-buy-now__button--wrapper`,
+`.buy-now__button--radius`/`.checkout__button--radius`, the `#flo-shopify-login-*` IDs, and
+`[data-flo-visible]`/`#flo-marketing-popup-wrapper` - none carry the `shopflo-`/`sf-` prefix
+literally, so they fell outside the requested scope.
+
+Cascade-order-dependent pairs (e.g. the promo-banner "cancel the button's own hover effect, apply
+it once to the wrapper instead" pair, and the `.shopflo-accounts__icon-button`/`.sf-full-width`
+override pair) got `!important` on BOTH sides of the pair, on request - since `!important` vs
+`!important` still resolves by source order, the later-declared rule keeps winning, so behavior
+is unchanged.
+
+**Gotcha hit while implementing**: a mechanical "add `!important` before every `;`" script must
+mask `/* … */` comments before doing any brace-matching - two comments in this file contain
+literal `{`/`}` characters in their PROSE (`shopflo-accounts{}, above` and a Liquid
+`{% render ... %}` snippet quoted inside a comment), which broke naive brace-counting and produced
+a corrupted `!important}` fragment near the `shopflo-accounts` custom-element rule. Fixed by
+regex-stashing every comment as a placeholder token before parsing, restoring verbatim after -
+verified after the fix via a balanced-brace count and a full diff review with zero non-`!important`
+line changes. Re-ran the exact same (corrected) script later in the same session, after the whole
+change was reverted (an unrelated third-party error, per the user) and re-requested - if
+`assets/shopflo-styles.css` needs bulk-editing again, mask comments FIRST, every time.
+
+---
+
+## 10. `shopflo_third_party_cart_mutation` wired up (was dead config)
+
+`window.shopfloThemeConfig.shopflo_third_party_cart_mutation` (`snippets/shopflo.liquid`, a
+hardcoded object literal - `enabled`, `is_shadow_dom`, `checkout_parent_wrapper`
+`{type, selector}`, `checkout_button` `{type, selector}`) existed with zero JS consumer. Added
+`bindThirdPartyCartMutation()` to `assets/shopflo-script.js` (called from `init()`) to actually use
+it: when a theme we're integrated into renders its OWN native cart-drawer checkout button (not
+`.shopflo-checkout__button`), this replaces that button's click behavior with
+`openThemeFloCheckout()`.
+
+- **Delegated document-level click listener (capture phase), not a MutationObserver** - the
+  third-party cart drawer's contents get wholesale re-rendered on every cart mutation
+  (add/update/remove), which would orphan a once-bound listener on the old button node; matching
+  by CSS selector at click time survives any number of re-renders. Same idiom as the pre-existing
+  `.shopflo-popup-trigger` delegation.
+- **`is_shadow_dom` handling**: a click through an open shadow root gets retargeted at the
+  document (`event.target` becomes the shadow HOST, not the real button), so
+  `event.target.closest()` alone would miss it - uses `event.composedPath()` instead when this
+  flag is true, to walk the real click path across the shadow boundary.
+- `_resolveThirdPartyCartSelector({type, selector})` normalizes whether `selector` already
+  includes its own leading `.`/`#` or not.
+- On match: `preventDefault()` + `stopPropagation()` (not just `preventDefault` - the third-party
+  button may navigate via its own JS click handler rather than a plain `<a href>`, so only
+  capture-phase + stopPropagation reliably pre-empts it), then routes through the existing
+  `openThemeFloCheckout()` so it inherits the same `shouldTriggerFloDirectly()` international
+  fallback every other Shopflo trigger already has.
+
+---
+
+## 11. Cross-theme bug: ATC click sometimes opened the CHECKOUT overlay
+
+**Symptom** (reported after integrating into a different theme): clicking that theme's own native
+Add to Cart button occasionally popped Shopflo's full checkout overlay instead of just adding to
+cart.
+
+**Root cause**: `bindPopupMorph()`'s document-level `.shopflo-popup-trigger` delegated click
+listener (both the `reduceMotion` branch and the animated branch's `runPendingFloAction()`)
+treated **anything that wasn't exactly `data-flo-action="buy-now"` as a checkout trigger** -
+including no `data-flo-action` at all. If a foreign theme's native ATC button ever ends up
+carrying the `.shopflo-popup-trigger` class during integration (e.g. a shared button-group utility
+class, or a dev following `shopflo.liquid`'s own doc comment about wiring custom buttons into the
+popup flow) without an exact `data-flo-action="buy-now"`, the click added to cart AND fell through
+to the default-checkout branch.
+
+**Fix**: all three spots (`assets/shopflo-script.js` - the `reduceMotion` click handler, the
+animated click handler, and `runPendingFloAction()`) now require an EXACT match on
+`data-flo-action === 'checkout'` before calling `openThemeFloCheckout()`; anything else is a
+no-op, not a silent default. Safe because both real Shopflo buttons already set the attribute
+explicitly (`data-flo-action="checkout"` on `#flo-checkout-button`, `="buy-now"` on
+`#flo-buy-now-button`) - nothing legitimate relied on the old implicit fallback.
+
+---
+
+## 12. Buy Now quantity not syncing to Shopflo checkout
+
+**Symptom**: selecting quantity 4/6 on the product page, then clicking Buy Now, opened Shopflo
+checkout with quantity 1 regardless.
+
+**Root cause, confirmed by direct A/B test against the working reference markup Shopflo provided**:
+the Shopflo bundle's own quantity/variant detection for buy-now keys off *Shopify's native dynamic
+checkout button convention* - the `.shopify-payment-button` wrapper div +
+`.shopify-payment-button__button`/`--unbranded` classes that `{{ form | payment_button }}` itself
+renders (likely because Shopify's own platform-injected script - not the Shopflo bundle - scans
+for exactly this class to wire up live quantity sync using the correct `form.elements`/`FormData`
+API, which correctly picks up Dawn's quantity `<input>` even though it lives outside the `<form>`
+tag, associated only via `form="…"`). `#flo-buy-now-button` never carried those classes/wrapper,
+so nothing resolved the real quantity.
+
+**Fix**: `snippets/shopflo.liquid`'s buy-now button markup now ALSO carries
+`shopify-payment-button__button shopify-payment-button__button--unbranded` (appended, not
+replacing, the existing `shopflo-buy-now__button shopflo-popup-trigger` etc.) and is wrapped in an
+extra `<div class="shopify-payment-button">` - matching Shopify's convention without touching our
+own click-handling/styling. `assets/shopflo-styles.css` adds
+`.shopflo-buy-now__wrapper > .shopify-payment-button { display: contents !important; }` scoped
+ONLY to our own wrapper, so the extra div stays invisible to flex layout (full-width/alignment
+unaffected) without touching the DIFFERENT, real `.shopify-payment-button` that
+`{{ form | payment_button }}` renders separately in the international-redirect fallback further
+down the same file.
+
+**Explicitly decided NOT to pursue** (discussed, user chose to keep the classes-based fix instead):
+reading quantity ourselves via `form.elements.namedItem('quantity')` and passing it as an explicit
+second arg to `window.handleFloBuyNowBtn(event, quantity)` - unconfirmed whether the bundle even
+accepts a second argument, so lower confidence than the empirically-verified classes approach.
+
+**Related question answered, no code change**: could the international-redirect fallback
+(`bindBuyNowIntlFallback()` swapping to `{{ form | payment_button }}`) be replaced with our own
+styled button + a hand-built `/cart/{variant_id}:{quantity}` permalink instead? **No** -
+`payment_button` is Shopify's native *dynamic checkout* button, which can render Apple Pay/Google
+Pay/PayPal/Shop Pay express-checkout buttons (not just a plain link) depending on shopper
+eligibility, plus handles selling plans/gift cards/inventory rules natively. Hand-rolling a
+permalink would lose all of that. Left as-is.
+
+---
+
+## 13. Font-weight / letter-spacing settings, and a stale-editor-save data-loss incident
+
+- `shopflo_font_weight_checkout` (select, Bold/Normal) default changed `bold` → `normal`.
+- `shopflo_letter_spacing_checkout` (range, px) default changed `0` → `1`.
+- Buy-now's font-weight control was a `checkbox` (`shopflo_bold_text_buy_now`, default `true`,
+  converted from boolean to `'bold'`/`'normal'` in Liquid) while checkout used a `select`
+  (`shopflo_font_weight_checkout`) for the exact same two states - inconsistent control type, no
+  functional difference. Converted buy-now to match: `shopflo_bold_text_buy_now` → new `select`
+  `shopflo_font_weight_buy_now` (Bold/Normal, default `normal`), same `visible_if` gate.
+  `snippets/shopflo.liquid`'s `buy_now_font_weight` assignment simplified to read the new setting
+  directly (no more boolean→string conversion needed).
+
+**Data-loss incident worth remembering**: the FIRST time the `font_weight_checkout`/
+`letter_spacing_checkout` default changes and the buy-now bold-text default flip (`true` → `false`)
+were made, they silently reverted on disk before being committed - `config/settings_schema.json`
+came back showing the OLD defaults (`bold`/`0`/`true`) days later, even though the button-padding
+split and other edits made in the same file around the same time survived intact. Most likely
+cause: the user had the file open in their own editor, and an editor save wrote back a stale
+in-memory buffer that predated those specific small edits, silently clobbering just that slice of
+changes on disk (matches the "file changed on disk since you last read it" pattern the harness
+flagged for `assets/shopflo-styles.css` elsewhere in this same session). **Lesson**: after a batch
+of small default-value tweaks to a file the user also has open in an IDE, it's worth re-reading
+the file before trusting it's still in the state just written, especially before committing -
+don't assume a prior Edit call is still on disk just because no error was reported at the time.
+
+---
+
+## 14. Repo hygiene
+
+Added a root `.gitignore` (`.shopify/`, `.env*`, `node_modules/`, OS/editor junk, logs) - none
+existed before. `claude-context/` added to it on request; the existing tracked
+`claude-context/shopflo-session-2026-09.md` remains tracked (gitignore only stops NEW files in
+that folder from being added, doesn't untrack what's already committed) - untrack it explicitly
+with `git rm --cached` if that's ever actually wanted.
+
+---
+
+## 15. Three requirements - IMPLEMENTED (were specced-only in an earlier revision of this doc)
+
+### 15a. Header-adaptive icon color (Shop Pass) - done
+Per-slot (A/B/C) checkbox `shopflo_account_icon_sync_header_button_a/b/c`
+(`config/settings_schema.json`, default `false`, hides the icon-color/gradient picker when `true`
+via `visible_if`). Implemented as a MARKUP class, not a CSS-var swap to `currentColor` - see the
+"critical self-caught error" note below, this is the one real design pitfall in this feature.
+`snippets/shopflo.liquid`'s `'shop_pass_*'` case resolves `account_icon_sync_header` through the
+same two-pass B/C cascade as every other per-button field (§5 pattern), then appends
+`sf-icon-sync-header` to `account_icon_button_class` when true. `assets/shopflo-styles.css`:
+`.shopflo-accounts__icon-button.sf-icon-sync-header svg.sf-account-icon--default` resets
+`color: inherit` and turns off the mask/background/gradient technique entirely, letting the SVG's
+own native `stroke="currentColor"` paths inherit `color` from wherever the header cascades it in -
+solid color only, no gradient support, by design. **No fallback anchoring** (e.g. NOT wired to
+Dawn's `--color-foreground`) - bare inheritance, accepting the risk it may pick up the "wrong"
+color in some placements.
+
+**Pitfall hit and self-corrected while implementing**: first attempt set the icon's CSS custom
+property directly to the literal string `currentColor` inside the `'assets'` case's STYLE cascade.
+Broken by construction - `currentColor` always resolves to THAT SAME element's own computed
+`color`, and the base rule (`.shopflo-accounts__icon-button svg`) also sets `color: transparent`
+on that exact selector for the mask technique to work, so it would always resolve to transparent.
+Caught before running any validation; reverted, then correctly re-implemented as the markup-class
+approach above (a different, separate cascade in the `'shop_pass_*'` case, since it drives a class
+not a CSS var - see the two-cascade-locations note in §5).
+
+### 15b. Use theme's own account icon (Shop Pass) - done
+Settled on the `type: "html"` raw-SVG-paste option (not the icon-snippet-name option originally
+considered) for portability. Per-slot (A/B/C): `shopflo_account_icon_source_button_a/b/c` (select,
+`shopflo`/`theme`, default `shopflo`) reveals `shopflo_account_theme_icon_button_a/b/c` (`type:
+"html"`, raw SVG markup) via `visible_if`. Both wired through the standard two-pass B/C
+inheritance cascade (§5 pattern) alongside every other per-button field, so B/C match A (or each
+other) until explicitly overridden - `account_icon_source`/`account_theme_icon` resolve per-slot
+exactly like `account_label_text` etc.
+
+Both hardcoded `<svg>` blocks in `snippets/shopflo.liquid` (logged-out AND logged-in button
+states) now branch: `{% if account_icon_source == 'theme' and account_theme_icon != blank %}` -
+output the pasted markup verbatim - `{% else %}` the existing hardcoded icon, now tagged with a
+new `sf-account-icon--default` class to distinguish it from a theme-pasted icon. This class
+matters because Shopflo's own icon is painted via the `background`+`mask-image` technique (needed
+for gradient support - see §15a) which would otherwise clip a theme-pasted SVG into Shopflo's own
+icon silhouette. `assets/shopflo-styles.css`'s `.shopflo-accounts__icon-button svg` rule was split:
+generic sizing (`width`/`height`/`flex-shrink`) stays on the bare `svg` selector so it still
+applies to a theme icon too; the mask/background/`color:transparent` block moved to
+`svg.sf-account-icon--default` only, so a theme-pasted SVG paints itself natively, untouched.
+15a's `sf-icon-sync-header` override was updated the same way (`svg.sf-account-icon--default`
+scoped) since header-color-sync is a Shopflo-icon-only feature - a theme icon manages its own
+color.
+
+### 15c. Header `overflow: hidden` clipping the account drawer/iframe - done, Shop-Pass-only
+Went with the merchant-facing Theme Editor option (not the hardcoded-per-integration array
+originally considered): one text setting `shopflo_account_overflow_fix_selectors` (comma-separated
+CSS selectors, e.g. `.header-wrapper, #shopify-section-header`), placed in the global Shop Pass
+settings block (not per-button A/B/C - one shared list, since it's about ANCESTOR elements, not
+per-button styling). Exposed to JS via `window.shopfloThemeConfig.shopflo_account_overflow_fix_selectors`
+in the `'assets'` case. **Explicitly scoped to Shop Pass only, not checkout/cart** - confirmed by
+the user; the popup-morph overlay doesn't need it (not nested inside the header the way
+`<shopflo-accounts>` is).
+
+Mechanism as planned: `.sf-header-overflow-visible { overflow: visible !important; }` toggled via
+`classList.toggle` (not inline-style snapshot/restore) on each selector match. New
+`_setHeaderOverflowVisible(visible)` method on `ShopfloAccounts` (`assets/shopflo-script.js`),
+called from the EXISTING `_setOverlayVisible(visible)` (both the drawer-open and login-panel-open
+paths already funnel through this one function) - no new open/close tracking needed. Blank/unset
+setting is a no-op.
+
+---
+
+## 16. Bug: `shopflo_badge: false` render param silently ignored
+
+Same unsafe-default bug documented (but left unfixed) in §5's "Boolean render params" pattern
+section - `shopflo_badge` was the one remaining param using
+`assign shopflo_badge = shopflo_badge | default: true`, which treats an explicit `false` the same
+as "not passed". Fixed by switching it to the same safe pattern already used for
+`shopflo_payment_icons`/`show_user_icon` right next to it in `snippets/shopflo.liquid`.
+
+---
+
+## 17. Bug: label doesn't fill full width when icons/badge hidden - the §1 fix was incomplete
+
+§1 already added `flex-grow: 1` to the label classes for the "both icons AND badge omitted from
+DOM" case. Turns out the payment-icons ANCESTOR span itself
+(`<span class="shopflo-payment-icons__wrapper">`) was rendered **unconditionally** in
+`snippets/shopflo.liquid` - only the icons *inside* the loop were gated on
+`checkout_icons_enabled`/`buy_now_icons_enabled`. So disabling icons left an EMPTY wrapper span
+still occupying its `flex-basis: 15%` (`assets/shopflo-styles.css`) with no `flex-grow`,
+permanently blocking the label from reclaiming that space - `flex-grow: 1` had nothing to grow
+into. Fixed by moving the `{%- if …icons_enabled… -%}…{%- endif -%}` to wrap the
+`<span class="shopflo-payment-icons__wrapper">` element itself (both checkout and buy-now), so an
+empty wrapper is never left in the DOM at all - matches how the badge already correctly worked
+(gated by a real `{%- if shopflo_badge -%}` around the whole element, not just its content).
+
+---
+
+## 18. New setting: Hover text color (checkout + buy-now)
+
+**Bug that prompted it**: `.shopflo-checkout__button:hover`/`.shopflo-buy-now__button:hover` only
+ever repainted the BUTTON's `background` - the label's text color (painted via `background` +
+`background-clip: text`, same gradient-support technique as everywhere else in this file) had no
+hover variant at all, so a dark "Hover background" with unchanged (also dark) text could go
+unreadable on hover.
+
+Added `shopflo_hover_text_color_checkout`/`shopflo_hover_text_color_buy_now`
+(`config/settings_schema.json`, `color_background` type, mirrors "Hover background"'s
+visibility rules exactly - buy-now's version shares its `visible_if` with its own Hover background
+sibling). New `--sf-checkout-hover-color`/`--sf-buy-now-hover-color` CSS vars
+(`snippets/shopflo.liquid`, wired through the buy-now "match checkout animation" branch same as
+hover background), each falling back to the BASE (non-hover) text color when unset - zero visual
+change for existing stores until a merchant opts in. New CSS rules target the label specifically
+via `background` (not `color` - has to match the same property the base/hover-background techique
+already overrides for gradient support).
+
+**Related, unresolved question raised by the user**: "background still changes on hover even with
+Hover background left unset" - traced to `.sf-button-hover--darken`/`.sf-button-hover--lighten`
+(`filter: brightness(0.9)`/`brightness(1.12)`) applying to the WHOLE rendered button regardless of
+the Hover background setting - this is only a bug if it happens with a hover effect OTHER than
+Darken/Lighten selected; waiting on the user to confirm which Hover effect they were testing with
+before investigating further.
+
+---
+
+## 19. Bug: Buy Now checks out the wrong product/variant (Quick View from collection grid)
+
+**Symptom**: on a collection page, opening Quick View on ANY product and clicking Buy Now always
+checked out the collection's FIRST product/variant instead of the one actually shown in the open
+Quick View modal.
+
+**Investigation - dead ends ruled out in order, each confirmed by an actual test, not just
+reasoning**:
+1. *Suspected first*: `id="flo-buy-now-button"` is a hardcoded, non-unique literal emitted by
+   every `{% render 'shopflo', type: 'buy_now' %}` call, and `ShopfloTheme`'s constructor
+   (`assets/shopflo-script.js`) cached `document.getElementById('flo-buy-now-button')` ONCE at
+   initial page load, before Quick View ever opens. Switched the button to a direct
+   `onclick="handleFloBuyNowBtn(event)"` to bypass that stale cached reference and the
+   `.shopflo-popup-trigger` delegated-click path entirely. **Did not fix it** - ruled out that the
+   click-routing/caching layer was the (sole) cause.
+2. *Suspected next*: the user had briefly reintroduced a SECOND element also carrying
+   `id="flo-buy-now-button"` (an old commented-out plain button block in
+   `product-main-block__add-to-cart.liquid`, un-commented alongside the live
+   `{% render 'shopflo', type: 'buy_now' %}` call). Removed the duplicate so only one
+   `#flo-buy-now-button` exists at a time. **Still did not fix it** - ruled out literal button-ID
+   duplication.
+3. *Confirmed root cause, by elimination plus direct DOM evidence*: every single-variant product
+   card in the collection grid (`snippets/product-actions__add-to-cart.liquid:59-88`) renders its
+   OWN live `<form>` with Shopify's standard hidden `<input name="id" value="{variant_id}">`,
+   unconditionally, as part of the page's initial HTML - well before Quick View's modal (which
+   injects its own product's `input[name="id"]`) even exists in the DOM. `window.handleFloBuyNowBtn`
+   (defined by the externally-hosted Shopflo bundle,
+   `https://bridge.shopflo.com/js/shopflo.bundle.js` - not present in this repo, its internals
+   can't be read directly) does not resolve product/variant context purely from the clicked
+   element - confirmed by testing that with only ONE `#flo-buy-now-button` on the page (dead end
+   #2, above) it still grabbed the FIRST `input[name="id"]` in DOM order (the first grid card),
+   not the one inside the currently-open Quick View modal.
+
+**A user-proposed additional theory ("nested clickable child steals `event.target`") was
+considered but never actually confirmed or denied** - the shopflo-rendered buy-now button wraps
+its label in nested `<span>`s (icons/promo/badge) that a real click could land on instead of the
+`<button>` itself, which would matter if `handleFloBuyNowBtn` reads attributes off `event.target`
+directly rather than doing its own `.closest()` walk. Addressed defensively (see fix below) but
+this was never isolated as the sole/actual cause - the root cause in item 3 above was already
+sufficient to reproduce the bug on its own.
+
+**Fix - two parts, both confined to Shopflo-owned files only (`snippets/shopflo.liquid`,
+`assets/shopflo-script.js`, `assets/shopflo-styles.css`) per explicit user constraint, and
+required to be THEME-AGNOSTIC** (this integration is copy-pasted across many merchant themes -
+see the new Patterns bullet below):
+
+1. **`assets/shopflo-script.js` - `bindQuickViewVariantIsolation()`** (called from `init()`).
+   Wraps `window.handleFloBuyNowBtn` itself (polling briefly if the Shopflo bundle hasn't defined
+   it yet, since script-load order relative to this file isn't guaranteed) rather than hooking
+   into any theme-specific modal/quick-view mechanism. On every call: resolves the clicked
+   trigger's own `<form>` via `event.target.closest('form, product-form, [data-product-id]')`,
+   temporarily strips the `name` attribute off every OTHER `input[name="id"]` in the document for
+   the duration of the call (restored immediately after, plus a 2s safety-net restore, so native
+   add-to-cart elsewhere is never left broken), so only the clicked form's own variant input is
+   discoverable by whatever internal query the bundle runs. Portable because it only assumes (a)
+   Shopflo's own `handleFloBuyNowBtn` global and `onclick="handleFloBuyNowBtn(event)"` convention
+   (both already Shopflo's, not the theme's) and (b) Shopify's own standard
+   `input[name="id"]` variant-input convention (near-universal across Shopify themes) - no
+   dependency on Bootstrap, a specific modal element id, or this theme's Quick View
+   implementation.
+
+   **First attempt at this fix was theme-specific and got explicitly rejected by the user**:
+   listening for Bootstrap's `shown.bs.modal`/`hidden.bs.modal` on a hardcoded
+   `#gsp-modal__quick-view` element id (this theme's own Quick View modal). Correctly fixed the
+   bug IN THIS THEME but would silently no-op in any other theme that doesn't happen to use
+   Bootstrap modals with that exact id for its quick view/quick-add. Replaced with the
+   function-wrapping approach above before shipping. **Do not reintroduce a fix hooked to this
+   theme's own modal/DOM ids - route through `window.handleFloBuyNowBtn` (or the equivalent
+   Shopflo global) instead.**
+
+2. **`assets/shopflo-styles.css`**: `.shopflo-buy-now__button * { pointer-events: none !important; }`
+   - defense-in-depth for the nested-span click-target theory above (not confirmed as the actual
+   cause, but zero-risk to keep). No visual change - only affects which element a click inside the
+   button reports as `event.target`. Also fixes `bindBuyNowAtcSync()` to `disconnect()` its
+   previous `MutationObserver` before creating a new one, since it's now effectively re-run more
+   than once per page load in some flows.
+
+**Verification note**: could not fully confirm `handleFloBuyNowBtn`'s internal resolution logic
+from source (it's loaded externally, not in this repo) - the fix targets the DOM-level evidence
+(duplicate `input[name="id"]`) that was actually isolated by testing, not a guess.
+
+**New pattern for section 5, above**: any future fix in `assets/shopflo-script.js` must stay
+theme-agnostic - hook into Shopflo's OWN global functions/conventions
+(`window.handleFloBuyNowBtn`, `window.handleFloCheckoutBtn`, `.shopflo-popup-trigger` + exact
+`data-flo-action` values, etc.), never into a specific host theme's own element ids, classes, or
+modal/JS-framework mechanics (e.g. a Bootstrap `shown.bs.modal` listener tied to one theme's
+quick-view modal id) - this integration is dropped into many different themes verbatim.
+
+---
+
+## 20. Loose threads closed, no code change
+
+- **`shopflo_badge: false` re-validated, no bug found**: re-traced the full render-param flow (the
+  safe-boolean assignment fixed in §16, both `{%- if shopflo_badge -%}` guards) and found it
+  correct and complete. Left open pending a concrete repro from the user - not reproducible from
+  reading the code alone.
+- **"Separate copy" of the code, clarified**: the `/* shopflo-neo:v1.0.0 */`-prefixed content
+  pasted into this conversation at two points (see §9/§13 stale-buffer context) was itself copied
+  FROM this repo, not maintained as a genuinely separate external source - so the earlier warning
+  about needing to manually patch a separate copy doesn't apply. Confirmed by the user.
