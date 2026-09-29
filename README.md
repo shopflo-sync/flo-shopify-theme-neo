@@ -45,6 +45,23 @@ Master on/off is a hardcoded value in `window.shopfloThemeConfig` (see `snippets
 not a Theme Editor setting — `assets/shopflo-script.js` reads it at click time and decides whether
 to open Shopflo's real checkout/cart or fall back to a plain native navigation.
 
+### Events
+
+Plain `CustomEvent`s on `document` — listen the normal way:
+`document.addEventListener('shopflo-event:checkout-opened', () => myModal.close())`.
+
+- `shopflo-event:add-to-cart` — **inbound**: dispatch this after your own add-to-cart to open
+  Shopflo's cart.
+- `shopflo-event:checkout-opened` — before the checkout overlay opens.
+- `shopflo-event:cart-opened` — before the cart overlay opens.
+- `shopflo-event:account-drawer-opened` / `-closed` — this theme's own Account dropdown.
+- `shopflo-event:account-login-opened` — before handing off to Shopflo's login UI (no `-closed`).
+- `shopflo-event:account-iframe-opened` / `-closed` — the account-management SSO iframe
+  (`-closed` desktop only).
+
+Full detail in the `{% doc %}` block at the top of `snippets/shopflo.liquid`
+("OUTBOUND EVENTS" section).
+
 ## Development
 
 This theme is managed with [Shopify CLI](https://shopify.dev/docs/api/shopify-cli):
