@@ -70,13 +70,30 @@
    this, a hover background dark enough to clash with the (unchanged) text color could make the
    label unreadable during hover. --sf-checkout-hover-color/--sf-buy-now-hover-color fall back to
    the base (non-hover) text color when unset, so this is a no-op until a merchant opts in via
-   Theme Editor > Shopflo Checkout/Buy Now > Hover text color. */
+   Theme Editor > Shopflo Checkout/Buy Now > Hover text color.
+
+   The `background-clip`/`-webkit-text-fill-color`/`color` redeclarations below are REQUIRED, not
+   defensive filler: the `background` shorthand implicitly resets `background-clip` (and every
+   other background-* sub-property not named in its own value) to its initial `border-box` on
+   ANY element it's applied to - including here, where it's re-declared at higher specificity than
+   the base label rule below. Without repeating them, this rule silently un-clips the label's
+   background-painted text on hover, so it renders as a solid box (often unreadably light/white)
+   instead of clipping to the glyphs - hit and fixed 2026-09-29, keep these four lines whenever
+   this hover rule is touched. */
 .shopflo-checkout__button:hover:not([disabled]) .shopflo-checkout__button--label {
     background: var(--sf-checkout-hover-color, var(--sf-checkout-color)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
 }
 
 .shopflo-buy-now__button:hover:not([disabled]) .shopflo-buy-now__button--label {
     background: var(--sf-buy-now-hover-color, var(--sf-buy-now-color)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: transparent !important;
 }
 
 .sf-button-hover--lift:hover:not([disabled]) {
