@@ -738,3 +738,22 @@ color were silently invisible-background before this fix, on every prior state o
 not something introduced this session.** If a similar gradient-capable two-layer background trick
 is added anywhere else in this file, wrap non-final-layer fills as `linear-gradient(x, x)` from the
 start.
+
+**Follow-up report from the user ("still not matching") turned out to be a stale deploy, not a
+code bug.** Verified the checkbox mechanism three separate ways before concluding this:
+1. Synthetic HTML with solid colors - border correctly switched on hover.
+2. Synthetic HTML with two DIFFERENT real multi-stop gradients (background vs. hover background,
+   plus a third distinct border color) - border correctly switched to match the hover gradient,
+   confirmed via headless-Chrome screenshot.
+3. The ACTUAL unmodified `assets/shopflo-styles.css` from this repo (not a reproduction), loaded
+   against the real `.shopflo-checkout__button`/`shopflo-popup-trigger`/`sf-button-hover--scale`
+   classes - same correct result, both in computed styles and a rendered screenshot.
+
+Since the exact shipped code provably worked in isolation, the user was asked to check the LIVE
+deployed `shopflo-styles.css` asset (via the browser Network tab or opening its URL directly) for
+the literal string `hover-border-color` - confirming whether the live theme actually had this
+change or was serving a stale/cached build. That was indeed the cause - after re-deploying, the
+user confirmed it's fixed. **Lesson for this session**: when a fix is verified correct via direct
+testing of the actual shipped file but the user still reports it's broken, suspect a stale
+deploy/CDN cache before writing more code - ask the user to inspect the live deployed asset content
+directly rather than continuing to patch code that already demonstrably works.
