@@ -1985,6 +1985,13 @@
         "label": "Hover text color"
       },
       {
+        "type": "checkbox",
+        "id": "shopflo_hover_border_match_bg_checkout",
+        "label": "Match border color to hover background",
+        "info": "On hover, the button's border recolors to match the hover background instead of staying the base border color.",
+        "default": false
+      },
+      {
         "type": "header",
         "content": "Checkout Promo Banner"
       },
@@ -2540,6 +2547,14 @@
         "type": "color_background",
         "id": "shopflo_hover_text_color_buy_now",
         "label": "Hover text color",
+        "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_hover_border_match_bg_buy_now",
+        "label": "Match border color to hover background",
+        "info": "On hover, the button's border recolors to match the hover background instead of staying the base border color.",
+        "default": false,
         "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
       },
       {

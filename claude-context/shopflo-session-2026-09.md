@@ -679,3 +679,62 @@ quick-view modal id) - this integration is dropped into many different themes ve
   pasted into this conversation at two points (see §9/§13 stale-buffer context) was itself copied
   FROM this repo, not maintained as a genuinely separate external source - so the earlier warning
   about needing to manually patch a separate copy doesn't apply. Confirmed by the user.
+
+---
+
+## 21. Bug: hover label showed a solid box instead of clipped text - and a deeper CSS bug it exposed
+
+**Symptom #1 (surface bug)**: hovering a checkout/buy-now button showed the label as a solid
+(often white-looking) box instead of recoloring the text, even with "Hover background"/"Hover text
+color" both left unset.
+
+**Root cause**: `.shopflo-checkout__button--label`/`.shopflo-buy-now__button--label`'s hover rules
+(`assets/shopflo-styles.css`) only set `background: ... !important` - a SHORTHAND. The `background`
+shorthand implicitly resets every background-* sub-property NOT named in its own value, including
+`background-clip`, back to its initial `border-box` - even when a different, lower-specificity
+rule (the base label rule) had separately declared `background-clip: text`. Since the hover rule
+wins on specificity, its shorthand silently un-clipped the label's text-painted background into a
+solid box, while `-webkit-text-fill-color: transparent` (a different, untouched property) kept the
+glyphs invisible - net visual result: an opaque box with invisible text.
+
+**Fix**: both hover label rules now re-declare `background-clip`/`-webkit-background-clip`/
+`-webkit-text-fill-color`/`color` alongside `background`. Lesson for this codebase: any rule that
+sets `background` as a shorthand on an element whose OWN base rule relies on a background
+sub-property set via a SEPARATE declaration (clip, origin, position, image, repeat, attachment)
+must repeat that sub-property in the shorthand rule too, or it silently resets.
+
+**New setting added while fixing hover behavior further**: `shopflo_hover_border_match_bg_checkout`/
+`_buy_now` (checkbox, "Match border color to hover background") - on hover, the button's border
+recolors to the hover background instead of staying the base border color. Wired via new
+`--sf-checkout-hover-border-color`/`--sf-buy-now-hover-border-color` CSS vars, consumed by the
+existing border-box paint layer in the general `:hover` rule.
+
+**Symptom #2 (the checkbox above didn't visibly do anything at first) - a much deeper, pre-existing
+bug uncovered while debugging it**: verified directly in headless Chrome via the DevTools Protocol
+(dispatching a real `Input.dispatchMouseEvent` hover and reading `getComputedStyle()` - see §5's
+"Verification technique") that `background: SOLID_COLOR_A padding-box, SOLID_COLOR_B border-box;`
+computes to **no background at all** (`background-image: none`, `background-color: transparent`) -
+completely dropped by the browser - while the exact same pattern with either value wrapped as
+`linear-gradient(X, X)` renders correctly. Root cause: per the CSS Backgrounds spec, a plain
+`<color>` may only appear in the shorthand's LAST (final) comma-separated layer; this codebase's
+whole "gradient-capable border ring" trick (used for EVERY checkout/buy-now background+border
+combo, base and hover, plus the Darken/Lighten `::before` overlays) puts the FILL color in the
+FIRST layer - which is only valid when the fill happens to be a gradient (an `<image>`, not a
+`<color>`), and silently invalidates the entire declaration whenever a merchant picks a plain solid
+color for Background/Hover background instead.
+
+**Fix**: added `-img` sibling CSS custom properties (`--sf-checkout-background-img`,
+`--sf-checkout-hover-background-img`, and the `--sf-buy-now-*` equivalents) computed in
+`snippets/shopflo.liquid` via a `contains: 'gradient'` check - pass a gradient value through
+unchanged, wrap a solid color as `linear-gradient(color, color)` (visually identical to a flat
+fill, but now a real `<image>`, valid in any layer position). Only the FIRST-layer (fill) position
+in `assets/shopflo-styles.css` was repointed at these `-img` vars (8 call sites: base
+checkout/buy-now, general hover checkout/buy-now, and the 4 Darken/Lighten `::before` variants) -
+the original plain `--sf-checkout-background`/`--sf-buy-now-background` vars are UNCHANGED and
+still used as plain colors elsewhere (e.g. the payment-icon `border: 1px solid var(...)` rule at
+~line 625/630), which would have broken if they'd been converted to always-gradient form directly.
+**This means checkout/buy-now buttons using a solid (non-gradient) Background or Hover background
+color were silently invisible-background before this fix, on every prior state of this codebase -
+not something introduced this session.** If a similar gradient-capable two-layer background trick
+is added anywhere else in this file, wrap non-final-layer fills as `linear-gradient(x, x)` from the
+start.

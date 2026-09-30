@@ -477,6 +477,70 @@
           assign account_button_shadow_tertiary = account_button_shadow_tertiary | append: ' inset'
         endif
       endif
+      comment
+        Button fill colors, wrapped as an "always-an-image" value for the two-layer background
+        trick just below (background: FILL padding-box, BORDER border-box) - the FILL sits in the
+        first/non-final layer, and CSS only allows a plain color in a shorthand background's LAST
+        layer; a plain color anywhere else makes the WHOLE declaration invalid (verified directly
+        in Chrome - "background: red padding-box, blue border-box" computes to no background at
+        all, while "background: linear-gradient(red,red) padding-box, blue border-box" renders
+        correctly). So every FILL value used in that first-layer position goes through a -img
+        variable that's a real gradient string as-is when the merchant already picked a gradient,
+        or gets wrapped as linear-gradient(color, color) (visually identical to a solid fill) when
+        they picked a solid color - either way it's always a valid image. The BORDER color, which
+        sits in the shorthand's LAST layer, doesn't need this - a plain color is always valid
+        there. Bug hit and fixed 2026-09-29 while wiring the "Match border color to hover
+        background" checkbox: with a solid (non-gradient) fill, the checkbox visibly did nothing
+        because the ENTIRE background declaration - not just the border layer - was already
+        silently invalid before this fix.
+      endcomment
+      assign checkout_bg_raw = settings.shopflo_background_color_checkout
+      assign checkout_bg_img = checkout_bg_raw
+      assign checkout_bg_is_gradient = false
+      if checkout_bg_raw contains 'gradient'
+        assign checkout_bg_is_gradient = true
+      endif
+      unless checkout_bg_raw == blank or checkout_bg_is_gradient
+        assign checkout_bg_img = 'linear-gradient(' | append: checkout_bg_raw | append: ', ' | append: checkout_bg_raw | append: ')'
+      endunless
+
+      assign checkout_hover_bg_raw = settings.shopflo_hover_background_checkout | default: checkout_bg_raw
+      assign checkout_hover_bg_img = checkout_hover_bg_raw
+      assign checkout_hover_bg_is_gradient = false
+      if checkout_hover_bg_raw contains 'gradient'
+        assign checkout_hover_bg_is_gradient = true
+      endif
+      unless checkout_hover_bg_raw == blank or checkout_hover_bg_is_gradient
+        assign checkout_hover_bg_img = 'linear-gradient(' | append: checkout_hover_bg_raw | append: ', ' | append: checkout_hover_bg_raw | append: ')'
+      endunless
+
+      if settings.shopflo_match_checkout_style_buy_now
+        assign buy_now_bg_raw = settings.shopflo_background_color_checkout
+      else
+        assign buy_now_bg_raw = settings.shopflo_background_color_buy_now
+      endif
+      assign buy_now_bg_img = buy_now_bg_raw
+      assign buy_now_bg_is_gradient = false
+      if buy_now_bg_raw contains 'gradient'
+        assign buy_now_bg_is_gradient = true
+      endif
+      unless buy_now_bg_raw == blank or buy_now_bg_is_gradient
+        assign buy_now_bg_img = 'linear-gradient(' | append: buy_now_bg_raw | append: ', ' | append: buy_now_bg_raw | append: ')'
+      endunless
+
+      if settings.shopflo_match_checkout_animation_buy_now
+        assign buy_now_hover_bg_raw = settings.shopflo_hover_background_checkout | default: checkout_bg_raw
+      else
+        assign buy_now_hover_bg_raw = settings.shopflo_hover_background_buy_now | default: buy_now_bg_raw
+      endif
+      assign buy_now_hover_bg_img = buy_now_hover_bg_raw
+      assign buy_now_hover_bg_is_gradient = false
+      if buy_now_hover_bg_raw contains 'gradient'
+        assign buy_now_hover_bg_is_gradient = true
+      endif
+      unless buy_now_hover_bg_raw == blank or buy_now_hover_bg_is_gradient
+        assign buy_now_hover_bg_img = 'linear-gradient(' | append: buy_now_hover_bg_raw | append: ', ' | append: buy_now_hover_bg_raw | append: ')'
+      endunless
     -%}
 
     {% style %}
@@ -487,12 +551,19 @@
         --sf-checkout-font-size: {{ settings.shopflo_font_size_checkout | append: 'px' }};
         --sf-checkout-letter-spacing: {{ settings.shopflo_letter_spacing_checkout | append: 'px' }};
         --sf-checkout-background: {{ settings.shopflo_background_color_checkout }};
+        --sf-checkout-background-img: {{ checkout_bg_img }};
         --sf-checkout-color: {{ settings.shopflo_text_color_checkout }};
         --sf-checkout-border-color: {{ settings.shopflo_border_color_checkout }};
         --sf-checkout-border-width: {{ settings.shopflo_border_width_checkout | append: 'px' }};
         --sf-checkout-border-radius: {{ settings.shopflo_corner_radius_checkout | append: 'px' }};
         --sf-checkout-hover-background: {{ settings.shopflo_hover_background_checkout | default: settings.shopflo_background_color_checkout }};
+        --sf-checkout-hover-background-img: {{ checkout_hover_bg_img }};
         --sf-checkout-hover-color: {{ settings.shopflo_hover_text_color_checkout | default: settings.shopflo_text_color_checkout }};
+        {% if settings.shopflo_hover_border_match_bg_checkout %}
+          --sf-checkout-hover-border-color: var(--sf-checkout-hover-background);
+        {% else %}
+          --sf-checkout-hover-border-color: {{ settings.shopflo_border_color_checkout }};
+        {% endif %}
 
         {% if settings.shopflo_match_checkout_layout_buy_now %}
           --sf-buy-now-height: {{ settings.shopflo_button_height_checkout | append: 'px' }};
@@ -510,12 +581,14 @@
 
         {% if settings.shopflo_match_checkout_style_buy_now %}
           --sf-buy-now-background: {{ settings.shopflo_background_color_checkout }};
+          --sf-buy-now-background-img: {{ buy_now_bg_img }};
           --sf-buy-now-color: {{ settings.shopflo_text_color_checkout }};
           --sf-buy-now-border-color: {{ settings.shopflo_border_color_checkout }};
           --sf-buy-now-border-width: {{ settings.shopflo_border_width_checkout | append: 'px' }};
           --sf-buy-now-border-radius: {{ settings.shopflo_corner_radius_checkout | append: 'px' }};
         {% else %}
           --sf-buy-now-background: {{ settings.shopflo_background_color_buy_now }};
+          --sf-buy-now-background-img: {{ buy_now_bg_img }};
           --sf-buy-now-color: {{ settings.shopflo_text_color_buy_now }};
           --sf-buy-now-border-color: {{ settings.shopflo_border_color_buy_now }};
           --sf-buy-now-border-width: {{ settings.shopflo_border_width_buy_now | append: 'px' }};
@@ -524,10 +597,22 @@
 
         {% if settings.shopflo_match_checkout_animation_buy_now %}
           --sf-buy-now-hover-background: {{ settings.shopflo_hover_background_checkout | default: settings.shopflo_background_color_checkout }};
+          --sf-buy-now-hover-background-img: {{ buy_now_hover_bg_img }};
           --sf-buy-now-hover-color: {{ settings.shopflo_hover_text_color_checkout | default: settings.shopflo_text_color_checkout }};
+          {% if settings.shopflo_hover_border_match_bg_checkout %}
+            --sf-buy-now-hover-border-color: var(--sf-buy-now-hover-background);
+          {% else %}
+            --sf-buy-now-hover-border-color: var(--sf-buy-now-border-color);
+          {% endif %}
         {% else %}
           --sf-buy-now-hover-background: {{ settings.shopflo_hover_background_buy_now | default: settings.shopflo_background_color_buy_now }};
+          --sf-buy-now-hover-background-img: {{ buy_now_hover_bg_img }};
           --sf-buy-now-hover-color: {{ settings.shopflo_hover_text_color_buy_now | default: settings.shopflo_text_color_buy_now }};
+          {% if settings.shopflo_hover_border_match_bg_buy_now %}
+            --sf-buy-now-hover-border-color: var(--sf-buy-now-hover-background);
+          {% else %}
+            --sf-buy-now-hover-border-color: var(--sf-buy-now-border-color);
+          {% endif %}
         {% endif %}
 
         --shopflo-checkout-promo-background: {{ settings.shopflo_promo_background_checkout }};

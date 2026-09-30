@@ -53,14 +53,14 @@
 
 .shopflo-checkout__button:hover:not([disabled]) {
     background:
-        var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
-        var(--sf-checkout-border-color) border-box !important;
+        var(--sf-checkout-hover-background-img, var(--sf-checkout-background-img)) padding-box,
+        var(--sf-checkout-hover-border-color, var(--sf-checkout-border-color)) border-box !important;
 }
 
 .shopflo-buy-now__button:hover:not([disabled]) {
     background:
-        var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
-        var(--sf-buy-now-border-color) border-box !important;
+        var(--sf-buy-now-hover-background-img, var(--sf-buy-now-background-img)) padding-box,
+        var(--sf-buy-now-hover-border-color, var(--sf-buy-now-border-color)) border-box !important;
 }
 
 /* The label's text color is painted via `background` + `background-clip: text` (see
@@ -150,28 +150,28 @@
 
 .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before {
     background:
-        var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
+        var(--sf-checkout-hover-background-img, var(--sf-checkout-background-img)) padding-box,
         var(--sf-checkout-border-color) border-box !important;
     filter: brightness(0.9) !important;
 }
 
 .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before {
     background:
-        var(--sf-checkout-hover-background, var(--sf-checkout-background)) padding-box,
+        var(--sf-checkout-hover-background-img, var(--sf-checkout-background-img)) padding-box,
         var(--sf-checkout-border-color) border-box !important;
     filter: brightness(1.12) !important;
 }
 
 .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before {
     background:
-        var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
+        var(--sf-buy-now-hover-background-img, var(--sf-buy-now-background-img)) padding-box,
         var(--sf-buy-now-border-color) border-box !important;
     filter: brightness(0.9) !important;
 }
 
 .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
     background:
-        var(--sf-buy-now-hover-background, var(--sf-buy-now-background)) padding-box,
+        var(--sf-buy-now-hover-background-img, var(--sf-buy-now-background-img)) padding-box,
         var(--sf-buy-now-border-color) border-box !important;
     filter: brightness(1.12) !important;
 }
@@ -340,7 +340,7 @@
 .shopflo-checkout__button {
     border: var(--sf-checkout-border-width) solid transparent !important;
     background:
-        var(--sf-checkout-background) padding-box,
+        var(--sf-checkout-background-img) padding-box,
         var(--sf-checkout-border-color) border-box !important;
     height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2)) !important;
     max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-border-width) * 2)) !important;
@@ -391,7 +391,7 @@
 .shopflo-buy-now__button {
     border: var(--sf-buy-now-border-width) solid transparent !important;
     background:
-        var(--sf-buy-now-background) padding-box,
+        var(--sf-buy-now-background-img) padding-box,
         var(--sf-buy-now-border-color) border-box !important;
     height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2)) !important;
     max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-border-width) * 2)) !important;
