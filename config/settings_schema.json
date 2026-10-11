@@ -2820,6 +2820,14 @@
           {
             "value": "icon_right",
             "label": "Icon right"
+          },
+          {
+            "value": "icon_top",
+            "label": "Icon above (stacked)"
+          },
+          {
+            "value": "icon_bottom",
+            "label": "Icon below (stacked)"
           }
         ]
       },
@@ -3120,6 +3128,14 @@
           {
             "value": "icon_right",
             "label": "Icon right"
+          },
+          {
+            "value": "icon_top",
+            "label": "Icon above (stacked)"
+          },
+          {
+            "value": "icon_bottom",
+            "label": "Icon below (stacked)"
           }
         ]
       },
@@ -3429,6 +3445,14 @@
           {
             "value": "icon_right",
             "label": "Icon right"
+          },
+          {
+            "value": "icon_top",
+            "label": "Icon above (stacked)"
+          },
+          {
+            "value": "icon_bottom",
+            "label": "Icon below (stacked)"
           }
         ]
       },

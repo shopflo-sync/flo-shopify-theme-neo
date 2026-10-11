@@ -1,5 +1,5 @@
 /* shopflo-neo:v1.0.0 */
-.sf-hidden {
+.shopflo-scope:is(.sf-hidden), .shopflo-scope .sf-hidden {
     display: none !important;
     visibility: hidden !important;
 }
@@ -8,56 +8,45 @@
    elements Theme Editor > Shopflo Shop Pass > "Force overflow visible on" names - forces
    overflow:visible on a host header that would otherwise clip the account dropdown/login panel
    while it's open, removed again on close. */
-.sf-header-overflow-visible {
+.shopflo-scope:is(.sf-header-overflow-visible), .shopflo-scope .sf-header-overflow-visible {
     overflow: visible !important;
 }
-
-.sf-full-width {
+.shopflo-scope:is(.sf-full-width), .shopflo-scope .sf-full-width {
     width: 100% !important;
 }
-
-.sf-text--bold {
+.shopflo-scope:is(.sf-text--bold), .shopflo-scope .sf-text--bold {
     font-weight: 700 !important;
 }
-
-.sf-text--normal {
+.shopflo-scope:is(.sf-text--normal), .shopflo-scope .sf-text--normal {
     font-weight: 400 !important;
 }
-
-.sf-label--center {
+.shopflo-scope:is(.sf-label--center), .shopflo-scope .sf-label--center {
     text-align: center !important;
     justify-content: center !important;
 }
-
-.sf-label--left {
+.shopflo-scope:is(.sf-label--left), .shopflo-scope .sf-label--left {
     text-align: left !important;
     justify-content: left !important;
 }
-
-.sf-label--right {
+.shopflo-scope:is(.sf-label--right), .shopflo-scope .sf-label--right {
     text-align: right !important;
     justify-content: right !important;
 }
-
-.sf-button-shadow--soft {
+.shopflo-scope:is(.sf-button-shadow--soft), .shopflo-scope .sf-button-shadow--soft {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
-
-.sf-button-shadow--medium {
+.shopflo-scope:is(.sf-button-shadow--medium), .shopflo-scope .sf-button-shadow--medium {
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16) !important;
 }
-
-.sf-button-shadow--strong {
+.shopflo-scope:is(.sf-button-shadow--strong), .shopflo-scope .sf-button-shadow--strong {
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
 }
-
-.shopflo-checkout__button:hover:not([disabled]) {
+.shopflo-scope:is(.shopflo-checkout__button:hover:not([disabled])), .shopflo-scope .shopflo-checkout__button:hover:not([disabled]) {
     background:
         var(--sf-checkout-hover-background-img, var(--sf-checkout-background-img)) padding-box,
         var(--sf-checkout-hover-border-color, var(--sf-checkout-border-color)) border-box !important;
 }
-
-.shopflo-buy-now__button:hover:not([disabled]) {
+.shopflo-scope:is(.shopflo-buy-now__button:hover:not([disabled])), .shopflo-scope .shopflo-buy-now__button:hover:not([disabled]) {
     background:
         var(--sf-buy-now-hover-background-img, var(--sf-buy-now-background-img)) padding-box,
         var(--sf-buy-now-hover-border-color, var(--sf-buy-now-border-color)) border-box !important;
@@ -80,32 +69,28 @@
    background-painted text on hover, so it renders as a solid box (often unreadably light/white)
    instead of clipping to the glyphs - hit and fixed 2026-09-29, keep these four lines whenever
    this hover rule is touched. */
-.shopflo-checkout__button:hover:not([disabled]) .shopflo-checkout__button--label {
+.shopflo-scope:is(.shopflo-checkout__button:hover:not([disabled]) .shopflo-checkout__button--label), .shopflo-scope .shopflo-checkout__button:hover:not([disabled]) .shopflo-checkout__button--label {
     background: var(--sf-checkout-hover-color, var(--sf-checkout-color)) !important;
     -webkit-background-clip: text !important;
     background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     color: transparent !important;
 }
-
-.shopflo-buy-now__button:hover:not([disabled]) .shopflo-buy-now__button--label {
+.shopflo-scope:is(.shopflo-buy-now__button:hover:not([disabled]) .shopflo-buy-now__button--label), .shopflo-scope .shopflo-buy-now__button:hover:not([disabled]) .shopflo-buy-now__button--label {
     background: var(--sf-buy-now-hover-color, var(--sf-buy-now-color)) !important;
     -webkit-background-clip: text !important;
     background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     color: transparent !important;
 }
-
-.sf-button-hover--lift:hover:not([disabled]) {
+.shopflo-scope:is(.sf-button-hover--lift:hover:not([disabled])), .shopflo-scope .sf-button-hover--lift:hover:not([disabled]) {
     transform: translateY(-2px) !important;
     box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22) !important;
 }
-
-.sf-button-hover--scale:hover:not([disabled]) {
+.shopflo-scope:is(.sf-button-hover--scale:hover:not([disabled])), .shopflo-scope .sf-button-hover--scale:hover:not([disabled]) {
     transform: scale(1.02) !important;
 }
-
-.sf-button-hover--shine::after {
+.shopflo-scope:is(.sf-button-hover--shine)::after, .shopflo-scope .sf-button-hover--shine::after {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -119,8 +104,7 @@
     background-position: 150% 0 !important;
     transition: background-position 0.6s ease !important;
 }
-
-.sf-button-hover--shine:hover:not([disabled])::after {
+.shopflo-scope:is(.sf-button-hover--shine:hover:not([disabled]))::after, .shopflo-scope .sf-button-hover--shine:hover:not([disabled])::after {
     background-position: -120% 0 !important;
 }
 
@@ -136,10 +120,10 @@
    (--sf-checkout-* vs --sf-buy-now-*). Deliberately NOT extended to also cover the button's own
    border ring (inset: 0 sits at the padding edge, inside the border) - a minor, accepted
    trade-off to keep this simple; the border color itself doesn't darken/lighten on hover. */
-.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before,
-.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before,
-.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before,
-.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
+.shopflo-scope:is(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]))::before, .shopflo-scope .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before,
+.shopflo-scope:is(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]))::before, .shopflo-scope .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before,
+.shopflo-scope:is(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]))::before, .shopflo-scope .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before,
+.shopflo-scope:is(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]))::before, .shopflo-scope .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -147,29 +131,25 @@
     pointer-events: none !important;
     z-index: -1 !important;
 }
-
-.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before {
+.shopflo-scope:is(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]))::before, .shopflo-scope .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])::before {
     background:
         var(--sf-checkout-hover-background-img, var(--sf-checkout-background-img)) padding-box,
         var(--sf-checkout-border-color) border-box !important;
     filter: brightness(0.9) !important;
 }
-
-.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before {
+.shopflo-scope:is(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]))::before, .shopflo-scope .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])::before {
     background:
         var(--sf-checkout-hover-background-img, var(--sf-checkout-background-img)) padding-box,
         var(--sf-checkout-border-color) border-box !important;
     filter: brightness(1.12) !important;
 }
-
-.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before {
+.shopflo-scope:is(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]))::before, .shopflo-scope .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])::before {
     background:
         var(--sf-buy-now-hover-background-img, var(--sf-buy-now-background-img)) padding-box,
         var(--sf-buy-now-border-color) border-box !important;
     filter: brightness(0.9) !important;
 }
-
-.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
+.shopflo-scope:is(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]))::before, .shopflo-scope .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])::before {
     background:
         var(--sf-buy-now-hover-background-img, var(--sf-buy-now-background-img)) padding-box,
         var(--sf-buy-now-border-color) border-box !important;
@@ -186,8 +166,7 @@
         background-position: -70% 0;
     }
 }
-
-.sf-button-animation--swipe::before {
+.shopflo-scope:is(.sf-button-animation--swipe)::before, .shopflo-scope .sf-button-animation--swipe::before {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -211,8 +190,7 @@
         background-position: 44px 0;
     }
 }
-
-.sf-button-animation--stripes::before {
+.shopflo-scope:is(.sf-button-animation--stripes)::before, .shopflo-scope .sf-button-animation--stripes::before {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -236,8 +214,7 @@
         transform: scale(1.02);
     }
 }
-
-.sf-button-animation--pulse {
+.shopflo-scope:is(.sf-button-animation--pulse), .shopflo-scope .sf-button-animation--pulse {
     animation: sf-pulse 1.8s ease-in-out infinite !important;
 }
 
@@ -259,8 +236,7 @@
         transform: translateY(-2px);
     }
 }
-
-.sf-button-animation--bounce {
+.shopflo-scope:is(.sf-button-animation--bounce), .shopflo-scope .sf-button-animation--bounce {
     animation: sf-bounce 2.2s ease infinite !important;
 }
 
@@ -275,8 +251,7 @@
         transform: translateY(-3px);
     }
 }
-
-.sf-button-animation--float {
+.shopflo-scope:is(.sf-button-animation--float), .shopflo-scope .sf-button-animation--float {
     animation: sf-float 3s ease-in-out infinite !important;
 }
 
@@ -291,43 +266,37 @@
         opacity: 0.82;
     }
 }
-
-.sf-button-animation--breathe {
+.shopflo-scope:is(.sf-button-animation--breathe), .shopflo-scope .sf-button-animation--breathe {
     animation: sf-breathe 2.4s ease-in-out infinite !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .shopflo-checkout__button,
-    .shopflo-buy-now__button,
-    .shopflo-button::before,
-    .shopflo-button::after,
-    [class*="sf-button-animation--"] {
+.shopflo-scope:is(.shopflo-checkout__button), .shopflo-scope .shopflo-checkout__button,
+.shopflo-scope:is(.shopflo-buy-now__button), .shopflo-scope .shopflo-buy-now__button,
+.shopflo-scope:is(.shopflo-button)::before, .shopflo-scope .shopflo-button::before,
+.shopflo-scope:is(.shopflo-button)::after, .shopflo-scope .shopflo-button::after,
+.shopflo-scope:is([class*="sf-button-animation--"]), .shopflo-scope [class*="sf-button-animation--"] {
         transition: none !important;
         animation: none !important;
         transform: none !important;
     }
-
-    .sf--animation-swipe::before,
-    .sf--animation-stripes::before {
+.shopflo-scope:is(.sf--animation-swipe)::before, .shopflo-scope .sf--animation-swipe::before,
+.shopflo-scope:is(.sf--animation-stripes)::before, .shopflo-scope .sf--animation-stripes::before {
         display: none !important;
     }
-
-    .sf--hover-chevrons:hover .shopflo-main,
-    .sf--hover-chevrons:hover .shopflo-badge {
+.shopflo-scope:is(.sf--hover-chevrons:hover .shopflo-main), .shopflo-scope .sf--hover-chevrons:hover .shopflo-main,
+.shopflo-scope:is(.sf--hover-chevrons:hover .shopflo-badge), .shopflo-scope .sf--hover-chevrons:hover .shopflo-badge {
         opacity: 1 !important;
     }
 }
-
-.shopflo-checkout__wrapper {
+.shopflo-scope:is(.shopflo-checkout__wrapper), .shopflo-scope .shopflo-checkout__wrapper {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
 }
-
-.shopflo-buy-now__button,
-.shopflo-checkout__button {
+.shopflo-scope:is(.shopflo-buy-now__button), .shopflo-scope .shopflo-buy-now__button,
+.shopflo-scope:is(.shopflo-checkout__button), .shopflo-scope .shopflo-checkout__button {
     position: relative !important;
     display: flex !important;
     align-items: center !important;
@@ -336,8 +305,7 @@
     transition: all 50ms ease-in-out !important;
     cursor: pointer !important;
 }
-
-.shopflo-checkout__button {
+.shopflo-scope:is(.shopflo-checkout__button), .shopflo-scope .shopflo-checkout__button {
     border: var(--sf-checkout-border-width) solid transparent !important;
     background:
         var(--sf-checkout-background-img) padding-box,
@@ -349,33 +317,26 @@
     font-size: var(--sf-checkout-font-size) !important;
     outline: none !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--separate {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--separate), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--separate {
     gap: var(--shopflo-checkout-promo-gap) !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached {
     backface-visibility: hidden !important;
 }
-
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached {
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached {
     backface-visibility: hidden !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button {
     border-radius: 0 0 var(--sf-checkout-border-radius) var(--sf-checkout-border-radius) !important;
 }
-
-.shopflo-checkout__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-checkout__button,
-.shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout__button {
+.shopflo-scope.shopflo-checkout__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-checkout__button,
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout__button {
     border-radius: var(--sf-checkout-border-radius) !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout--promo {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout--promo {
     border-radius: var(--sf-checkout-border-radius) var(--sf-checkout-border-radius) 0 0 !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout--promo {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--separate .shopflo-checkout--promo {
     border-radius: var(--shopflo-checkout-promo-border-radius) !important;
 }
 
@@ -384,11 +345,10 @@
    bridge.shopflo.com) reads product/variant context off the clicked element, and a click that
    lands on a nested child instead of the <button id="flo-buy-now-button"> element resolves the
    wrong context. No visual change - only disables pointer targeting on inner elements. */
-.shopflo-buy-now__button * {
+.shopflo-scope:is(.shopflo-buy-now__button *), .shopflo-scope .shopflo-buy-now__button * {
     pointer-events: none !important;
 }
-
-.shopflo-buy-now__button {
+.shopflo-scope:is(.shopflo-buy-now__button), .shopflo-scope .shopflo-buy-now__button {
     border: var(--sf-buy-now-border-width) solid transparent !important;
     background:
         var(--sf-buy-now-background-img) padding-box,
@@ -400,125 +360,102 @@
     font-size: var(--sf-buy-now-font-size) !important;
     outline: none !important;
 }
-
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button {
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button {
     border-radius: 0 0 var(--sf-buy-now-border-radius) var(--sf-buy-now-border-radius) !important;
 }
-
-.shopflo-buy-now__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-buy-now__button,
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--separate .shopflo-buy-now__button {
+.shopflo-scope.shopflo-buy-now__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-buy-now__button,
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--separate .shopflo-buy-now__button {
     border-radius: var(--sf-buy-now-border-radius) !important;
 }
-
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now--promo {
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now--promo {
     border-radius: var(--sf-buy-now-border-radius) var(--sf-buy-now-border-radius) 0 0 !important;
 }
-
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--separate .shopflo-buy-now--promo {
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--separate .shopflo-buy-now--promo {
     border-radius: var(--shopflo-buy-now-promo-border-radius) !important;
 }
-
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--separate {
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--separate), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--separate {
     gap: var(--shopflo-buy-now-promo-gap) !important;
 }
-
-.shopflo-checkout__button .shopflo-checkout--promo {
+.shopflo-scope:is(.shopflo-checkout__button .shopflo-checkout--promo), .shopflo-scope .shopflo-checkout__button .shopflo-checkout--promo {
     position: absolute !important;
     z-index: 1 !important;
     width: auto !important;
     max-width: calc(100% - 0.8rem) !important;
     border-radius: var(--shopflo-checkout-promo-border-radius) !important;
 }
-
-.shopflo-buy-now__button .shopflo-buy-now--promo {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-buy-now--promo), .shopflo-scope .shopflo-buy-now__button .shopflo-buy-now--promo {
     position: absolute !important;
     z-index: 1 !important;
     width: auto !important;
     max-width: calc(100% - 0.8rem) !important;
     border-radius: var(--shopflo-buy-now-promo-border-radius) !important;
 }
-
-.shopflo-checkout__button .shopflo-checkout--promo__text,
-.shopflo-buy-now__button .shopflo-buy-now--promo__text {
+.shopflo-scope:is(.shopflo-checkout__button .shopflo-checkout--promo__text), .shopflo-scope .shopflo-checkout__button .shopflo-checkout--promo__text,
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-buy-now--promo__text), .shopflo-scope .shopflo-buy-now__button .shopflo-buy-now--promo__text {
     min-width: 0 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
-
-.sf-promo-position--top_left {
+.shopflo-scope:is(.sf-promo-position--top_left), .shopflo-scope .sf-promo-position--top_left {
     top: -0.6rem !important;
     left: 0.6rem !important;
 }
-
-.sf-promo-position--top_right {
+.shopflo-scope:is(.sf-promo-position--top_right), .shopflo-scope .sf-promo-position--top_right {
     top: -0.6rem !important;
     right: 0.6rem !important;
 }
-
-.sf-promo-position--bottom_left {
+.shopflo-scope:is(.sf-promo-position--bottom_left), .shopflo-scope .sf-promo-position--bottom_left {
     bottom: -0.6rem !important;
     left: 0.6rem !important;
 }
-
-.sf-promo-position--bottom_right {
+.shopflo-scope:is(.sf-promo-position--bottom_right), .shopflo-scope .sf-promo-position--bottom_right {
     bottom: -0.6rem !important;
     right: 0.6rem !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled]),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled]) {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled]),
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled]) {
     transform: none !important;
     box-shadow: none !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled]),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled]) {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled]),
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled]) {
     transform: none !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]) {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]),
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]) {
     filter: none !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]) {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]),
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]) {
     filter: none !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--shine::after,
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--shine::after {
+.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button.sf-button-hover--shine::after,
+.shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button.sf-button-hover--shine::after {
     display: none !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled])),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled])) {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled]))), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lift:hover:not([disabled])),
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled]))), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lift:hover:not([disabled])) {
     transform: translateY(-2px) !important;
     box-shadow: -1px 4px 8px 1px rgba(0, 0, 0, 0.22) !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled])),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled])) {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled]))), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--scale:hover:not([disabled])),
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled]))), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--scale:hover:not([disabled])) {
     transform: scale(1.02) !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])) {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled]))), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--darken:hover:not([disabled])),
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled]))), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--darken:hover:not([disabled])) {
     filter: brightness(0.9) !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])) {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled]))), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--lighten:hover:not([disabled])),
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled]))), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--lighten:hover:not([disabled])) {
     filter: brightness(1.12) !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine),
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine) {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine)), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine),
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine)), .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine) {
     position: relative !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine)::after {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine))::after, .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine)::after {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -532,8 +469,7 @@
     background-position: 150% 0 !important;
     transition: background-position 0.6s ease !important;
 }
-
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine)::after {
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine))::after, .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine)::after {
     content: "" !important;
     position: absolute !important;
     inset: 0 !important;
@@ -547,41 +483,33 @@
     background-position: 150% 0 !important;
     transition: background-position 0.6s ease !important;
 }
-
-.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine:hover:not([disabled]))::after,
-.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine:hover:not([disabled]))::after {
+.shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine:hover:not([disabled])))::after, .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--attached:has(.shopflo-checkout__button.sf-button-hover--shine:hover:not([disabled]))::after,
+.shopflo-scope:is(.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine:hover:not([disabled])))::after, .shopflo-scope .shopflo-buy-now__wrapper.sf-promo-banner__layout--attached:has(.shopflo-buy-now__button.sf-button-hover--shine:hover:not([disabled]))::after {
     background-position: -120% 0 !important;
 }
-
-.shopflo-buy-now__wrapper {
+.shopflo-scope:is(.shopflo-buy-now__wrapper), .shopflo-scope .shopflo-buy-now__wrapper {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
 }
-
-.shopflo-buy-now__wrapper > .shopify-payment-button {
+.shopflo-scope.shopflo-buy-now__wrapper > .shopify-payment-button {
     display: contents !important;
 }
-
-.shopflo-buy-now__button:disabled {
+.shopflo-scope:is(.shopflo-buy-now__button:disabled), .shopflo-scope .shopflo-buy-now__button:disabled {
     cursor: not-allowed !important;
     opacity: 0.6 !important;
 }
-
 #shopify-buy-now__button--wrapper {
     display: none;
 }
-
 .buy-now__button--radius {
     border-radius: var(--sf-buy-now-border-radius);
 }
-
 .checkout__button--radius {
     border-radius: var(--sf-checkout-border-radius);
 }
-
-.shopflo-payment-icons__wrapper {
+.shopflo-scope:is(.shopflo-payment-icons__wrapper), .shopflo-scope .shopflo-payment-icons__wrapper {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -589,114 +517,91 @@
     flex-basis: 15% !important;
     max-width: calc((var(--sf-checkout-height) * 2) - (var(--sf-payment-icon-overlap_checkout) * 2)) !important;
 }
-
-.shopflo-icon {
+.shopflo-scope:is(.shopflo-icon), .shopflo-scope .shopflo-icon {
     display: flex !important;
     align-items: center !important;
     justify-content: end !important;
 }
-
-.shopflo-svg {
+.shopflo-scope:is(.shopflo-svg), .shopflo-scope .shopflo-svg {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     height: 100% !important;
     width: 100% !important;
 }
-
-.shopflo-icon[class*="shopflo-payment-icon--"] {
+.shopflo-scope:is(.shopflo-icon[class*="shopflo-payment-icon--"]), .shopflo-scope .shopflo-icon[class*="shopflo-payment-icon--"] {
     position: relative !important;
     width: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size))) !important;
     height: calc(min(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block) * 1.5), var(--sf-payment-icon-size))) !important;
 }
-
-.shopflo-checkout__button .shopflo-icon[class*="shopflo-payment-icon--"] {
+.shopflo-scope:is(.shopflo-checkout__button .shopflo-icon[class*="shopflo-payment-icon--"]), .shopflo-scope .shopflo-checkout__button .shopflo-icon[class*="shopflo-payment-icon--"] {
     max-height: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block))) !important;
     max-width: calc(var(--sf-checkout-height) - calc(var(--sf-checkout-padding-block))) !important;
 }
-
-.shopflo-buy-now__button .shopflo-icon[class*="shopflo-payment-icon--"] {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-icon[class*="shopflo-payment-icon--"]), .shopflo-scope .shopflo-buy-now__button .shopflo-icon[class*="shopflo-payment-icon--"] {
     max-height: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block))) !important;
     max-width: calc(var(--sf-buy-now-height) - calc(var(--sf-buy-now-padding-block))) !important;
 }
-
-.shopflo-checkout__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
+.shopflo-scope:is(.shopflo-checkout__button .shopflo-icon:not(.shopflo-badge-icon--shield)), .shopflo-scope .shopflo-checkout__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
     border-radius: 50% !important;
     border: 1px solid var(--sf-checkout-background) !important;
 }
-
-.shopflo-buy-now__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-icon:not(.shopflo-badge-icon--shield)), .shopflo-scope .shopflo-buy-now__button .shopflo-icon:not(.shopflo-badge-icon--shield) {
     border-radius: 50% !important;
     border: 1px solid var(--sf-buy-now-background) !important;
 }
-
-.shopflo-payment-icon--phonepe {
+.shopflo-scope:is(.shopflo-payment-icon--phonepe), .shopflo-scope .shopflo-payment-icon--phonepe {
     box-shadow: inset 0px 0px 0px 1px #5f259f !important;
 }
-
-.sf-checkout-payment-icon--left {
+.shopflo-scope:is(.sf-checkout-payment-icon--left), .shopflo-scope .sf-checkout-payment-icon--left {
     flex-direction: row !important;
 }
-
-.sf-checkout-payment-icon--left .shopflo-payment-icons__wrapper {
+.shopflo-scope:is(.sf-checkout-payment-icon--left .shopflo-payment-icons__wrapper), .shopflo-scope .sf-checkout-payment-icon--left .shopflo-payment-icons__wrapper {
     margin-left: calc(var(--sf-payment-icon-overlap_checkout)) !important;
 }
-
-.sf-checkout-payment-icon--left .shopflo-checkout__button--label {
+.shopflo-scope:is(.sf-checkout-payment-icon--left .shopflo-checkout__button--label), .shopflo-scope .sf-checkout-payment-icon--left .shopflo-checkout__button--label {
     margin-left: calc(var(--sf-payment-icon-overlap_checkout) * -3) !important;
 }
-
-.sf-checkout-payment-icon--right {
+.shopflo-scope:is(.sf-checkout-payment-icon--right), .shopflo-scope .sf-checkout-payment-icon--right {
     flex-direction: row-reverse !important;
 }
-
-.sf-buy-now-payment-icon--left {
+.shopflo-scope:is(.sf-buy-now-payment-icon--left), .shopflo-scope .sf-buy-now-payment-icon--left {
     flex-direction: row !important;
 }
-
-.sf-buy-now-payment-icon--right {
+.shopflo-scope:is(.sf-buy-now-payment-icon--right), .shopflo-scope .sf-buy-now-payment-icon--right {
     flex-direction: row-reverse !important;
 }
-
-.shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
+.shopflo-scope:is(.shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1)), .shopflo-scope .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
     background: var(--sf-payment-icon-background_checkout_1) !important;
 }
-
-.shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2) {
+.shopflo-scope:is(.shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2)), .shopflo-scope .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2) {
     background: var(--sf-payment-icon-background_checkout_2) !important;
     left: calc(var(--sf-payment-icon-overlap_checkout) * -1) !important;
 }
-
-.shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3) {
+.shopflo-scope:is(.shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3)), .shopflo-scope .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3) {
     background: var(--sf-payment-icon-background_checkout_3) !important;
     left: calc(var(--sf-payment-icon-overlap_checkout) * -2) !important;
 }
-
-.shopflo-buy-now__button .shopflo-payment-icons__wrapper {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-payment-icons__wrapper), .shopflo-scope .shopflo-buy-now__button .shopflo-payment-icons__wrapper {
     max-width: calc((var(--sf-buy-now-height) * 2) - (var(--sf-buy-now-payment-icon-overlap) * 2)) !important;
 }
-
-.shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1)), .shopflo-scope .shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(1) {
     background: var(--sf-buy-now-payment-icon-background-1) !important;
 }
-
-.shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2) {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2)), .shopflo-scope .shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(2) {
     background: var(--sf-buy-now-payment-icon-background-2) !important;
     left: calc(var(--sf-buy-now-payment-icon-overlap) * -1) !important;
 }
-
-.shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3) {
+.shopflo-scope:is(.shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3)), .shopflo-scope .shopflo-buy-now__button .shopflo-payment-icons__wrapper .shopflo-icon:nth-child(3) {
     background: var(--sf-buy-now-payment-icon-background-3) !important;
     left: calc(var(--sf-buy-now-payment-icon-overlap) * -2) !important;
 }
-
-.shopflo-checkout__button--content {
+.shopflo-scope:is(.shopflo-checkout__button--content), .shopflo-scope .shopflo-checkout__button--content {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 }
-
-.shopflo-checkout__button--label {
+.shopflo-scope:is(.shopflo-checkout__button--label), .shopflo-scope .shopflo-checkout__button--label {
     flex-basis: 70% !important;
     flex-grow: 1 !important;
     height: 100% !important;
@@ -712,8 +617,7 @@
     -webkit-text-fill-color: transparent !important;
     color: transparent !important;
 }
-
-.shopflo-buy-now__button--label {
+.shopflo-scope:is(.shopflo-buy-now__button--label), .shopflo-scope .shopflo-buy-now__button--label {
     flex-basis: 70% !important;
     flex-grow: 1 !important;
     height: 100% !important;
@@ -730,41 +634,35 @@
     color: transparent !important;
     min-width: fit-content !important;
 }
-
-.shopflo-badge-icon--shield {
+.shopflo-scope:is(.shopflo-badge-icon--shield), .shopflo-scope .shopflo-badge-icon--shield {
     flex-basis: 15% !important;
     height: 100% !important;
     min-height: 2rem !important;
 }
-
-.shopflo-svg--badge {
+.shopflo-scope:is(.shopflo-svg--badge), .shopflo-scope .shopflo-svg--badge {
     display: block !important;
     height: 100% !important;
     max-width: 100% !important;
     width: unset !important;
 }
-
-.shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
-.shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield,
-.shopflo-buy-now__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
-.shopflo-buy-now__button.sf-label-squeezed .shopflo-badge-icon--shield {
+.shopflo-scope:is(.shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper), .shopflo-scope .shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
+.shopflo-scope:is(.shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield), .shopflo-scope .shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield,
+.shopflo-scope:is(.shopflo-buy-now__button.sf-label-squeezed .shopflo-payment-icons__wrapper), .shopflo-scope .shopflo-buy-now__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
+.shopflo-scope:is(.shopflo-buy-now__button.sf-label-squeezed .shopflo-badge-icon--shield), .shopflo-scope .shopflo-buy-now__button.sf-label-squeezed .shopflo-badge-icon--shield {
     display: none !important;
 }
-
-.shopflo-checkout--promo,
-.shopflo-buy-now--promo {
+.shopflo-scope:is(.shopflo-checkout--promo), .shopflo-scope .shopflo-checkout--promo,
+.shopflo-scope:is(.shopflo-buy-now--promo), .shopflo-scope .shopflo-buy-now--promo {
     pointer-events: none !important;
 }
-
-.shopflo-checkout--promo {
+.shopflo-scope:is(.shopflo-checkout--promo), .shopflo-scope .shopflo-checkout--promo {
     background: var(--shopflo-checkout-promo-background) !important;
     display: flex !important;
     align-items: center !important;
     padding: 0.4rem !important;
     overflow: hidden !important;
 }
-
-.shopflo-checkout--promo__text {
+.shopflo-scope:is(.shopflo-checkout--promo__text), .shopflo-scope .shopflo-checkout--promo__text {
     font-size: var(--shopflo-checkout-promo-font-size) !important;
     line-height: calc(var(--shopflo-checkout-promo-font-size) * 2.1) !important;
     letter-spacing: var(--shopflo-checkout-promo-letter-spacing) !important;
@@ -775,22 +673,19 @@
     color: transparent !important;
     padding-inline: 0.4rem !important;
 }
-
-.shopflo-checkout--promo__text p {
+.shopflo-scope:is(.shopflo-checkout--promo__text p), .shopflo-scope .shopflo-checkout--promo__text p {
     margin: 0 !important;
     height: var(--shopflo-checkout-promo-font-size) !important;
     font-size: var(--shopflo-checkout-promo-font-size) !important;
     line-height: var(--shopflo-checkout-promo-font-size) !important;
 }
-
-.shopflo-buy-now--promo {
+.shopflo-scope:is(.shopflo-buy-now--promo), .shopflo-scope .shopflo-buy-now--promo {
     background: var(--shopflo-buy-now-promo-background) !important;
     display: flex !important;
     align-items: center !important;
     overflow: hidden !important;
 }
-
-.shopflo-buy-now--promo__text {
+.shopflo-scope:is(.shopflo-buy-now--promo__text), .shopflo-scope .shopflo-buy-now--promo__text {
     font-size: var(--shopflo-buy-now-promo-font-size) !important;
     line-height: calc(var(--shopflo-buy-now-promo-font-size) * 2.1) !important;
     letter-spacing: var(--shopflo-buy-now-promo-letter-spacing) !important;
@@ -801,15 +696,13 @@
     color: transparent !important;
     padding: 0.2rem 0.4rem !important;
 }
-
-.shopflo-buy-now--promo__text p {
+.shopflo-scope:is(.shopflo-buy-now--promo__text p), .shopflo-scope .shopflo-buy-now--promo__text p {
     margin: 0 !important;
     height: var(--shopflo-buy-now-promo-font-size) !important;
     font-size: var(--shopflo-buy-now-promo-font-size) !important;
     line-height: var(--shopflo-buy-now-promo-font-size) !important;
 }
-
-.dummy-popup-overlay {
+.shopflo-scope:is(.dummy-popup-overlay), .shopflo-scope .dummy-popup-overlay {
     display: none;
     position: fixed;
     inset: 0;
@@ -817,16 +710,13 @@
     transition: background var(--duration) var(--ease);
     z-index: 1000;
 }
-
-.dummy-popup-overlay.is-open {
+.shopflo-scope:is(.dummy-popup-overlay.is-open), .shopflo-scope .dummy-popup-overlay.is-open {
     display: block;
 }
-
-.dummy-popup-overlay.active {
+.shopflo-scope:is(.dummy-popup-overlay.active), .shopflo-scope .dummy-popup-overlay.active {
     background: rgba(0, 0, 0, 0.33);
 }
-
-.dummy-popup-wrapper {
+.shopflo-scope:is(.dummy-popup-wrapper), .shopflo-scope .dummy-popup-wrapper {
     position: fixed;
     top: 0;
     left: 0;
@@ -844,20 +734,17 @@
         height var(--duration) var(--ease),
         opacity var(--opacity-duration, 40ms) linear var(--opacity-delay, 0ms);
 }
-
-.dummy-popup-content {
+.shopflo-scope:is(.dummy-popup-content), .shopflo-scope .dummy-popup-content {
     position: absolute;
     inset: 0;
     opacity: 0;
     transition: opacity 180ms ease;
 }
-
-.dummy-popup-overlay.active .dummy-popup-content {
+.shopflo-scope.dummy-popup-overlay.active .dummy-popup-content {
     opacity: 1;
     transition-delay: 260ms;
 }
-
-.dummy-popup-iframe {
+.shopflo-scope:is(.dummy-popup-iframe), .shopflo-scope .dummy-popup-iframe {
     width: 100%;
     height: 100%;
     border: none;
@@ -865,19 +752,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .dummy-popup-wrapper,
-    .dummy-popup-overlay,
-    .dummy-popup-content {
+.shopflo-scope:is(.dummy-popup-wrapper), .shopflo-scope .dummy-popup-wrapper,
+.shopflo-scope:is(.dummy-popup-overlay), .shopflo-scope .dummy-popup-overlay,
+.shopflo-scope:is(.dummy-popup-content), .shopflo-scope .dummy-popup-content {
         transition: none !important;
     }
 }
-
-.sf-popup-trigger--hidden {
+.shopflo-scope:is(.sf-popup-trigger--hidden), .shopflo-scope .sf-popup-trigger--hidden {
     pointer-events: none !important;
 }
-
-.shopflo-accounts-hidden {
+.shopflo-scope:is(.shopflo-accounts-hidden), .shopflo-scope .shopflo-accounts-hidden {
     position: fixed !important;
     top: 0 !important;
     left: -99999px !important;
@@ -887,12 +771,11 @@
 }
 
 @media screen and (min-width: 800px) {
-
-    #flo-shopify-login-iframe,
-    #flo-shopify-login-sheet,
-    #flo-shopify-login-sheet-overlay,
-    #flo-shopify-login-popup-container,
-    #flo-shopify-login-popup-wrapper {
+#flo-shopify-login-iframe,
+#flo-shopify-login-sheet,
+#flo-shopify-login-sheet-overlay,
+#flo-shopify-login-popup-container,
+#flo-shopify-login-popup-wrapper {
         position: fixed !important;
         top: 0 !important;
         left: -99999px !important;
@@ -900,19 +783,16 @@
         pointer-events: none !important;
     }
 }
-
-shopflo-accounts {
+.shopflo-scope:is(shopflo-accounts), .shopflo-scope shopflo-accounts {
     display: inline-flex !important;
     position: relative !important;
     align-items: center !important;
     justify-content: center !important;
 }
-
-shopflo-accounts.sf-full-width {
+.shopflo-scope:is(shopflo-accounts.sf-full-width), .shopflo-scope shopflo-accounts.sf-full-width {
     width: 100% !important;
 }
-
-.shopflo-accounts--primary {
+.shopflo-scope:is(.shopflo-accounts--primary), .shopflo-scope .shopflo-accounts--primary {
     --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-primary) !important;
     --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-primary) !important;
     --shopflo-account-icon-size: var(--shopflo-account-icon-size-primary) !important;
@@ -929,8 +809,7 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-primary, #344054) !important;
     --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-primary, #f9fafb) !important;
 }
-
-.shopflo-accounts--secondary {
+.shopflo-scope:is(.shopflo-accounts--secondary), .shopflo-scope .shopflo-accounts--secondary {
     --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-secondary) !important;
     --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-secondary) !important;
     --shopflo-account-icon-size: var(--shopflo-account-icon-size-secondary) !important;
@@ -947,8 +826,7 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-secondary, #344054) !important;
     --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-secondary, #f9fafb) !important;
 }
-
-.shopflo-accounts--tertiary {
+.shopflo-scope:is(.shopflo-accounts--tertiary), .shopflo-scope .shopflo-accounts--tertiary {
     --shopflo-account-label-font-size: var(--shopflo-account-label-font-size-tertiary) !important;
     --shopflo-account-icon-gap: var(--shopflo-account-icon-gap-tertiary) !important;
     --shopflo-account-icon-size: var(--shopflo-account-icon-size-tertiary) !important;
@@ -965,26 +843,22 @@ shopflo-accounts.sf-full-width {
     --shopflo-account-drawer-item-color: var(--shopflo-account-drawer-item-color-tertiary, #344054) !important;
     --shopflo-account-drawer-item-hover-bg: var(--shopflo-account-drawer-item-hover-bg-tertiary, #f9fafb) !important;
 }
-
-.sf-account-visible--desktop-only {
+.shopflo-scope:is(.sf-account-visible--desktop-only), .shopflo-scope .sf-account-visible--desktop-only {
     display: none !important;
 }
-
-.sf-account-visible--mobile-only {
+.shopflo-scope:is(.sf-account-visible--mobile-only), .shopflo-scope .sf-account-visible--mobile-only {
     display: inline-flex !important;
 }
 
 @media screen and (min-width: 750px) {
-    .sf-account-visible--desktop-only {
+.shopflo-scope:is(.sf-account-visible--desktop-only), .shopflo-scope .sf-account-visible--desktop-only {
         display: inline-flex !important;
     }
-
-    .sf-account-visible--mobile-only {
+.shopflo-scope:is(.sf-account-visible--mobile-only), .shopflo-scope .sf-account-visible--mobile-only {
         display: none !important;
     }
 }
-
-.shopflo-accounts__icon-button {
+.shopflo-scope:is(.shopflo-accounts__icon-button), .shopflo-scope .shopflo-accounts__icon-button {
     height: fit-content !important;
     width: fit-content !important;
     display: inline-flex !important;
@@ -1000,17 +874,14 @@ shopflo-accounts.sf-full-width {
     transition: background 0.2s ease !important;
     box-shadow: var(--shopflo-account-button-shadow, none) !important;
 }
-
-.shopflo-accounts__icon-button[disabled] {
+.shopflo-scope:is(.shopflo-accounts__icon-button[disabled]), .shopflo-scope .shopflo-accounts__icon-button[disabled] {
     cursor: not-allowed !important;
     opacity: 0.5 !important;
 }
-
-.shopflo-accounts__icon-button.sf-full-width {
+.shopflo-scope:is(.shopflo-accounts__icon-button.sf-full-width), .shopflo-scope .shopflo-accounts__icon-button.sf-full-width {
     width: 100% !important;
 }
-
-.shopflo-accounts__icon-button svg {
+.shopflo-scope:is(.shopflo-accounts__icon-button svg), .shopflo-scope .shopflo-accounts__icon-button svg {
     width: var(--shopflo-account-icon-size, 20px) !important;
     height: var(--shopflo-account-icon-size, 20px) !important;
     flex-shrink: 0 !important;
@@ -1019,7 +890,7 @@ shopflo-accounts.sf-full-width {
 /* Shopflo's own hardcoded icon only (see `sf-account-icon--default` in snippets/shopflo.liquid) -
    a merchant-pasted theme SVG (Theme Editor > Shopflo Shop Pass > Login Button A/B/C > Icon)
    paints itself natively and must not be clipped into this icon's silhouette via mask-image. */
-.shopflo-accounts__icon-button svg.sf-account-icon--default {
+.shopflo-scope:is(.shopflo-accounts__icon-button svg.sf-account-icon--default), .shopflo-scope .shopflo-accounts__icon-button svg.sf-account-icon--default {
     color: transparent !important;
     transition: background 0.2s ease !important;
     background: var(--shopflo-account-icon-color, linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)) !important;
@@ -1044,18 +915,22 @@ shopflo-accounts.sf-full-width {
    this instance and let the SVG's own native stroke="currentColor" paths paint themselves,
    inheriting `color` normally from wherever the header sets it at this DOM position - solid
    color only, no gradient support, by design (see the Theme Editor setting's own info text). */
-.shopflo-accounts__icon-button.sf-icon-sync-header svg.sf-account-icon--default {
+.shopflo-scope:is(.shopflo-accounts__icon-button.sf-icon-sync-header svg.sf-account-icon--default), .shopflo-scope .shopflo-accounts__icon-button.sf-icon-sync-header svg.sf-account-icon--default {
     color: inherit !important;
     background: none !important;
     -webkit-mask-image: none !important;
     mask-image: none !important;
 }
-
-.sf-account-layout--icon-right {
+.shopflo-scope:is(.sf-account-layout--icon-right), .shopflo-scope .sf-account-layout--icon-right {
     flex-direction: row-reverse !important;
 }
-
-.shopflo-accounts__label {
+.shopflo-scope:is(.sf-account-layout--icon-top), .shopflo-scope .sf-account-layout--icon-top {
+    flex-direction: column !important;
+}
+.shopflo-scope:is(.sf-account-layout--icon-bottom), .shopflo-scope .sf-account-layout--icon-bottom {
+    flex-direction: column-reverse !important;
+}
+.shopflo-scope:is(.shopflo-accounts__label), .shopflo-scope .shopflo-accounts__label {
     font-size: var(--shopflo-account-label-font-size, 14px) !important;
     line-height: 1 !important;
     white-space: nowrap !important;
@@ -1067,15 +942,13 @@ shopflo-accounts.sf-full-width {
     color: transparent !important;
     padding-block: 1px !important;
 }
-
-.shopflo-accounts__logged-in {
+.shopflo-scope:is(.shopflo-accounts__logged-in), .shopflo-scope .shopflo-accounts__logged-in {
     position: relative !important;
     display: inline-flex !important;
     justify-self: center !important;
     align-items: center !important;
 }
-
-.shopflo-accounts__drawer {
+.shopflo-scope:is(.shopflo-accounts__drawer), .shopflo-scope .shopflo-accounts__drawer {
     position: absolute !important;
     top: 100% !important;
     right: 0 !important;
@@ -1087,32 +960,27 @@ shopflo-accounts.sf-full-width {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25) !important;
     z-index: 999 !important;
 }
-
-.shopflo-accounts__drawer--open-top {
+.shopflo-scope:is(.shopflo-accounts__drawer--open-top), .shopflo-scope .shopflo-accounts__drawer--open-top {
     top: auto !important;
     bottom: 100% !important;
     margin-top: 0 !important;
     margin-bottom: 4px !important;
 }
-
-.shopflo-accounts__drawer--open-left {
+.shopflo-scope:is(.shopflo-accounts__drawer--open-left), .shopflo-scope .shopflo-accounts__drawer--open-left {
     right: auto !important;
     left: 0 !important;
 }
-
-.shopflo-accounts__drawer--open-center {
+.shopflo-scope:is(.shopflo-accounts__drawer--open-center), .shopflo-scope .shopflo-accounts__drawer--open-center {
     right: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
 }
-
-.shopflo-accounts__drawer-list {
+.shopflo-scope:is(.shopflo-accounts__drawer-list), .shopflo-scope .shopflo-accounts__drawer-list {
     margin: 0 !important;
     padding: 0 !important;
     list-style: none !important;
 }
-
-.shopflo-accounts__drawer-item {
+.shopflo-scope:is(.shopflo-accounts__drawer-item), .shopflo-scope .shopflo-accounts__drawer-item {
     display: block !important;
     width: 100% !important;
     text-align: left !important;
@@ -1127,12 +995,10 @@ shopflo-accounts.sf-full-width {
     border-radius: var(--shopflo-account-drawer-radius, 8px) !important;
     transition: background 0.2s ease !important;
 }
-
-.shopflo-accounts__drawer-item:hover {
+.shopflo-scope:is(.shopflo-accounts__drawer-item:hover), .shopflo-scope .shopflo-accounts__drawer-item:hover {
     background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb) !important;
 }
-
-.shopflo-accounts__drawer-close {
+.shopflo-scope:is(.shopflo-accounts__drawer-close), .shopflo-scope .shopflo-accounts__drawer-close {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1151,17 +1017,14 @@ shopflo-accounts.sf-full-width {
     color: var(--shopflo-account-drawer-item-color, #344054) !important;
     transition: background 0.2s ease !important;
 }
-
-.shopflo-accounts__drawer--open-top .shopflo-accounts__drawer-close {
+.shopflo-scope:is(.shopflo-accounts__drawer--open-top .shopflo-accounts__drawer-close), .shopflo-scope .shopflo-accounts__drawer--open-top .shopflo-accounts__drawer-close {
     bottom: auto !important;
     top: -30px !important;
 }
-
-.shopflo-accounts__drawer-close:hover {
+.shopflo-scope:is(.shopflo-accounts__drawer-close:hover), .shopflo-scope .shopflo-accounts__drawer-close:hover {
     background: var(--shopflo-account-drawer-item-hover-bg, #f9fafb) !important;
 }
-
-.shopflo-accounts__drawer-iframe {
+.shopflo-scope:is(.shopflo-accounts__drawer-iframe), .shopflo-scope .shopflo-accounts__drawer-iframe {
     position: absolute !important;
     top: 100% !important;
     right: 0 !important;
@@ -1174,27 +1037,22 @@ shopflo-accounts.sf-full-width {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25) !important;
     z-index: 999 !important;
 }
-
-.shopflo-accounts__overlay {
+.shopflo-scope:is(.shopflo-accounts__overlay), .shopflo-scope .shopflo-accounts__overlay {
     display: block !important;
     position: fixed !important;
     inset: 0 !important;
     background: rgba(0, 0, 0, 0.3) !important;
     z-index: 998 !important;
 }
-
-[data-flo-visible="false"] {
+.shopflo-scope:is([data-flo-visible="false"]), .shopflo-scope [data-flo-visible="false"] {
     display: none !important;
 }
-
-.shopflo-accounts__logged-in[data-flo-visible="true"] {
+.shopflo-scope:is(.shopflo-accounts__logged-in[data-flo-visible="true"]), .shopflo-scope .shopflo-accounts__logged-in[data-flo-visible="true"] {
     display: inline-flex !important;
 }
-
-.shopflo-accounts__drawer[data-flo-visible="true"] {
+.shopflo-scope:is(.shopflo-accounts__drawer[data-flo-visible="true"]), .shopflo-scope .shopflo-accounts__drawer[data-flo-visible="true"] {
     display: block !important;
 }
-
 body:has([data-flo-state="login-icon"][data-flo-visible=false]) #flo-marketing-popup-wrapper {
     display: none;
 }

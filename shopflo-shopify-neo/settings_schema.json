@@ -1,0 +1,2074 @@
+[
+  {
+    "name": "Shopflo-NEO",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "[SHOPFLO](https://www.shopflo.com) is a conversion-focused e-commerce SaaS platform that optimizes [ CHECKOUT ](https://www.shopflo.com/payments), [ CART ](https://www.shopflo.com/cart), and [ SHOP PASS ](https://www.shopflo.com/shop-pass) to identity website visitors, elevating the shopping experience to boost store revenue and customer retention."
+      },
+      {
+        "type": "header",
+        "content": "Shopflo Support",
+        "info": "Need help? Contact our team."
+      },
+      {
+        "type": "paragraph",
+        "content": "💬 WhatsApp:* [https://wa.me/918105543573](https://wa.me/918105543573)"
+      },
+      {
+        "type": "paragraph",
+        "content": "✉️ Email: [support@shopflo.com](mailto:support@shopflo.com)"
+      },
+      {
+        "type": "paragraph",
+        "content": "🌐 Web: [dashboard.shopflo.com/support](https://dashboard.shopflo.com/support)"
+      },
+      {
+        "type": "header",
+        "content": "General (Internal)",
+        "info": "Restricted to Shopflo support team configuration."
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_international_redirect_enabled",
+        "label": "International redirection",
+        "info": "Contact Shopflo before changing this setting",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Shopflo Checkout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Button Labels"
+      },
+      {
+        "type": "text",
+        "id": "shopflo_button_label_checkout",
+        "label": "Checkout label",
+        "default": "Checkout"
+      },
+      {
+        "type": "header",
+        "content": "Checkout Button Layout"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_full_width_checkout",
+        "label": "Full width",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_height_checkout",
+        "label": "Button height",
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 55
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_padding_block_checkout",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 10
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_padding_inline_checkout",
+        "label": "Horizontal padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 10
+      },
+      {
+        "type": "range",
+        "id": "shopflo_font_size_checkout",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 15
+      },
+      {
+        "type": "select",
+        "id": "shopflo_font_weight_checkout",
+        "label": "Font weight",
+        "default": "normal",
+        "options": [
+          {
+            "value": "bold",
+            "label": "Bold"
+          },
+          {
+            "value": "normal",
+            "label": "Normal"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_letter_spacing_checkout",
+        "label": "Letter spacing",
+        "min": 0,
+        "max": 15,
+        "step": 1,
+        "unit": "px",
+        "default": 1
+      },
+      {
+        "type": "text_alignment",
+        "id": "shopflo_label_alignment_checkout",
+        "label": "Label alignment",
+        "default": "center"
+      },
+      {
+        "type": "header",
+        "content": "Checkout Button Style"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_background_color_checkout",
+        "label": "Background color",
+        "default": "linear-gradient(90deg,rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_text_color_checkout",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_border_color_checkout",
+        "label": "Border color",
+        "default": "linear-gradient(90deg,rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%)"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_border_width_checkout",
+        "label": "Border width",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "default": 1
+      },
+      {
+        "type": "range",
+        "id": "shopflo_corner_radius_checkout",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 10
+      },
+      {
+        "type": "select",
+        "id": "shopflo_shadow_style_checkout",
+        "label": "Drop shadow",
+        "default": "medium",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "soft",
+            "label": "Soft"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "strong",
+            "label": "Strong"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Checkout Payment Icons"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_payment_icons_checkout",
+        "label": "Show payment icons",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_position_checkout",
+        "label": "Icon position",
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_checkout_1",
+        "label": "Icon 1",
+        "default": "paytm",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "phonepe",
+            "label": "PhonePe"
+          },
+          {
+            "value": "googlepay",
+            "label": "Google Pay"
+          },
+          {
+            "value": "paytm",
+            "label": "Paytm"
+          },
+          {
+            "value": "bhim",
+            "label": "BHIM"
+          },
+          {
+            "value": "cred",
+            "label": "CRED"
+          },
+          {
+            "value": "mobiqwik",
+            "label": "Mobikwik"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true }}"
+      },
+      {
+        "type": "color",
+        "id": "shopflo_payment_icon_background_checkout_1",
+        "label": "Background color",
+        "default": "#FFFFFF",
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true and settings.shopflo_payment_icon_checkout_1 != 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_checkout_2",
+        "label": "Icon 2",
+        "default": "phonepe",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "phonepe",
+            "label": "PhonePe"
+          },
+          {
+            "value": "googlepay",
+            "label": "Google Pay"
+          },
+          {
+            "value": "paytm",
+            "label": "Paytm"
+          },
+          {
+            "value": "bhim",
+            "label": "BHIM"
+          },
+          {
+            "value": "cred",
+            "label": "CRED"
+          },
+          {
+            "value": "mobiqwik",
+            "label": "Mobikwik"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true }}"
+      },
+      {
+        "type": "color",
+        "id": "shopflo_payment_icon_background_checkout_2",
+        "label": "Background color",
+        "default": "#FFFFFF",
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true and settings.shopflo_payment_icon_checkout_2 != 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_checkout_3",
+        "label": "Icon 3",
+        "default": "googlepay",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "phonepe",
+            "label": "PhonePe"
+          },
+          {
+            "value": "googlepay",
+            "label": "Google Pay"
+          },
+          {
+            "value": "paytm",
+            "label": "Paytm"
+          },
+          {
+            "value": "bhim",
+            "label": "BHIM"
+          },
+          {
+            "value": "cred",
+            "label": "CRED"
+          },
+          {
+            "value": "mobiqwik",
+            "label": "Mobikwik"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true }}"
+      },
+      {
+        "type": "color",
+        "id": "shopflo_payment_icon_background_checkout_3",
+        "label": "Background color",
+        "default": "#FFFFFF",
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true and settings.shopflo_payment_icon_checkout_3 != 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_payment_icon_size_checkout",
+        "label": "Icon size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 26,
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_payment_icon_overlap_checkout",
+        "label": "Icon overlap",
+        "min": 0,
+        "max": 15,
+        "step": 1,
+        "unit": "px",
+        "default": 8,
+        "visible_if": "{{ settings.shopflo_payment_icons_checkout == true }}"
+      },
+      {
+        "type": "header",
+        "content": "Checkout Button Animations"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_hover_effect_checkout",
+        "label": "Hover effect",
+        "default": "scale",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "lift",
+            "label": "Lift"
+          },
+          {
+            "value": "scale",
+            "label": "Scale up"
+          },
+          {
+            "value": "shine",
+            "label": "Shine"
+          },
+          {
+            "value": "darken",
+            "label": "Darken"
+          },
+          {
+            "value": "lighten",
+            "label": "Lighten"
+          }
+        ]
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_hover_background_checkout",
+        "label": "Hover background"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_hover_text_color_checkout",
+        "label": "Hover text color"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_hover_border_match_bg_checkout",
+        "label": "Match border color to hover background",
+        "info": "On hover, the button's border recolors to match the hover background instead of staying the base border color.",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Checkout Promo Banner"
+      },
+      {
+        "type": "richtext",
+        "id": "shopflo_promo_text_checkout",
+        "label": "Text"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_promo_banner_layout_checkout",
+        "label": "Banner Layout",
+        "default": "attached",
+        "options": [
+          {
+            "value": "attached",
+            "label": "Attached"
+          },
+          {
+            "value": "separate",
+            "label": "Separate"
+          },
+          {
+            "value": "top_of_button",
+            "label": "Top of button"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_promo_position_checkout",
+        "label": "Position on button",
+        "default": "top_right",
+        "options": [
+          {
+            "value": "top_left",
+            "label": "Top left"
+          },
+          {
+            "value": "top_right",
+            "label": "Top right"
+          },
+          {
+            "value": "bottom_left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "bottom_right",
+            "label": "Bottom right"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank and settings.shopflo_promo_banner_layout_checkout == 'top_of_button' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_font_size_checkout",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 16,
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_letter_spacing_checkout",
+        "label": "Letter spacing",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "text_alignment",
+        "id": "shopflo_promo_text_alignment_checkout",
+        "label": "Text alignment",
+        "default": "center",
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_promo_background_checkout",
+        "label": "Background color",
+        "default": "linear-gradient(90deg,rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_promo_color_checkout",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_gap_checkout",
+        "label": "Gap",
+        "min": 1,
+        "max": 25,
+        "step": 1,
+        "unit": "px",
+        "default": 2,
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank and settings.shopflo_promo_banner_layout_checkout == 'separate' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_border_radius_checkout",
+        "label": "Border Radius",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_promo_text_checkout != blank and settings.shopflo_promo_banner_layout_checkout != 'attached' }}"
+      }
+    ]
+  },
+  {
+    "name": "Shopflo Buy Now",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Button Labels"
+      },
+      {
+        "type": "text",
+        "id": "shopflo_button_label_buy_now",
+        "label": "Buy now label",
+        "default": "Buy it now"
+      },
+      {
+        "type": "header",
+        "content": "Buy Now Button Layout"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_out_of_stock_buy_now",
+        "label": "When out of stock",
+        "default": "disable",
+        "options": [
+          {
+            "value": "disable",
+            "label": "Disable button"
+          },
+          {
+            "value": "hide",
+            "label": "Hide button"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_match_checkout_layout_buy_now",
+        "label": "Match Checkout button layout",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_full_width_buy_now",
+        "label": "Full width",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_height_buy_now",
+        "label": "Button height",
+        "min": 1,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 55,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_padding_block_buy_now",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 10,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_button_padding_inline_buy_now",
+        "label": "Horizontal padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 10,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_font_size_buy_now",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 15,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_bold_text_buy_now",
+        "label": "Bold text",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_letter_spacing_buy_now",
+        "label": "Letter spacing",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "text_alignment",
+        "id": "shopflo_label_alignment_buy_now",
+        "label": "Label alignment",
+        "default": "center",
+        "visible_if": "{{ settings.shopflo_match_checkout_layout_buy_now == false }}"
+      },
+      {
+        "type": "header",
+        "content": "Buy Now Button Style"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_match_checkout_style_buy_now",
+        "label": "Match Checkout button style",
+        "default": true
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_background_color_buy_now",
+        "label": "Background color",
+        "default": "linear-gradient(90deg,rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_match_checkout_style_buy_now == false }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_text_color_buy_now",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_match_checkout_style_buy_now == false }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_border_color_buy_now",
+        "label": "Border color",
+        "default": "linear-gradient(90deg,rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_match_checkout_style_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_border_width_buy_now",
+        "label": "Border width",
+        "min": 0,
+        "max": 4,
+        "step": 1,
+        "unit": "px",
+        "default": 1,
+        "visible_if": "{{ settings.shopflo_match_checkout_style_buy_now == false }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_corner_radius_buy_now",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "default": 10,
+        "visible_if": "{{ settings.shopflo_match_checkout_style_buy_now == false }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_shadow_style_buy_now",
+        "label": "Drop shadow",
+        "default": "medium",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "soft",
+            "label": "Soft"
+          },
+          {
+            "value": "medium",
+            "label": "Medium"
+          },
+          {
+            "value": "strong",
+            "label": "Strong"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_style_buy_now == false }}"
+      },
+      {
+        "type": "header",
+        "content": "Buy Now Payment Icons"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_match_checkout_icon_buy_now",
+        "label": "Match Checkout payment icons",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_payment_icons_buy_now",
+        "label": "Show payment icons",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_position_buy_now",
+        "label": "Icon position",
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_1_buy_now",
+        "label": "Icon 1",
+        "default": "paytm",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "phonepe",
+            "label": "PhonePe"
+          },
+          {
+            "value": "googlepay",
+            "label": "Google Pay"
+          },
+          {
+            "value": "paytm",
+            "label": "Paytm"
+          },
+          {
+            "value": "bhim",
+            "label": "BHIM"
+          },
+          {
+            "value": "cred",
+            "label": "CRED"
+          },
+          {
+            "value": "mobiqwik",
+            "label": "Mobikwik"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true }}"
+      },
+      {
+        "type": "color",
+        "id": "shopflo_payment_icon_background_buy_now_1",
+        "label": "Background color",
+        "default": "#FFFFFF",
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true and settings.shopflo_payment_icon_1_buy_now != 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_2_buy_now",
+        "label": "Icon 2",
+        "default": "phonepe",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "phonepe",
+            "label": "PhonePe"
+          },
+          {
+            "value": "googlepay",
+            "label": "Google Pay"
+          },
+          {
+            "value": "paytm",
+            "label": "Paytm"
+          },
+          {
+            "value": "bhim",
+            "label": "BHIM"
+          },
+          {
+            "value": "cred",
+            "label": "CRED"
+          },
+          {
+            "value": "mobiqwik",
+            "label": "Mobikwik"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true }}"
+      },
+      {
+        "type": "color",
+        "id": "shopflo_payment_icon_background_buy_now_2",
+        "label": "Background color",
+        "default": "#FFFFFF",
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true and settings.shopflo_payment_icon_2_buy_now != 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_payment_icon_3_buy_now",
+        "label": "Icon 3",
+        "default": "googlepay",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "phonepe",
+            "label": "PhonePe"
+          },
+          {
+            "value": "googlepay",
+            "label": "Google Pay"
+          },
+          {
+            "value": "paytm",
+            "label": "Paytm"
+          },
+          {
+            "value": "bhim",
+            "label": "BHIM"
+          },
+          {
+            "value": "cred",
+            "label": "CRED"
+          },
+          {
+            "value": "mobiqwik",
+            "label": "Mobikwik"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true }}"
+      },
+      {
+        "type": "color",
+        "id": "shopflo_payment_icon_background_buy_now_3",
+        "label": "Background color",
+        "default": "#FFFFFF",
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true and settings.shopflo_payment_icon_3_buy_now != 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_payment_icon_size_buy_now",
+        "label": "Icon size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 26,
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_payment_icon_overlap_buy_now",
+        "label": "Icon overlap",
+        "min": 0,
+        "max": 15,
+        "step": 1,
+        "unit": "px",
+        "default": 8,
+        "visible_if": "{{ settings.shopflo_match_checkout_icon_buy_now == false and settings.shopflo_payment_icons_buy_now == true }}"
+      },
+      {
+        "type": "header",
+        "content": "Buy Now Button Animations"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_match_checkout_animation_buy_now",
+        "label": "Match Checkout button animations",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "shopflo_hover_effect_buy_now",
+        "label": "Hover effect",
+        "default": "scale",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          },
+          {
+            "value": "lift",
+            "label": "Lift"
+          },
+          {
+            "value": "scale",
+            "label": "Scale up"
+          },
+          {
+            "value": "shine",
+            "label": "Shine"
+          },
+          {
+            "value": "darken",
+            "label": "Darken"
+          },
+          {
+            "value": "lighten",
+            "label": "Lighten"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_hover_background_buy_now",
+        "label": "Hover background",
+        "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_hover_text_color_buy_now",
+        "label": "Hover text color",
+        "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_hover_border_match_bg_buy_now",
+        "label": "Match border color to hover background",
+        "info": "On hover, the button's border recolors to match the hover background instead of staying the base border color.",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_match_checkout_animation_buy_now == false and settings.shopflo_hover_effect_buy_now != 'none' }}"
+      },
+      {
+        "type": "header",
+        "content": "Buy Now Promo Banner"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_match_checkout_promo_buy_now",
+        "label": "Match Checkout promo banner",
+        "default": true
+      },
+      {
+        "type": "richtext",
+        "id": "shopflo_promo_text_buy_now",
+        "label": "Text",
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_promo_banner_layout_buy_now",
+        "label": "Banner Layout",
+        "default": "attached",
+        "options": [
+          {
+            "value": "attached",
+            "label": "Attached"
+          },
+          {
+            "value": "separate",
+            "label": "Separate"
+          },
+          {
+            "value": "top_of_button",
+            "label": "Top of button"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_promo_position_buy_now",
+        "label": "Position on button",
+        "default": "top_right",
+        "options": [
+          {
+            "value": "top_left",
+            "label": "Top left"
+          },
+          {
+            "value": "top_right",
+            "label": "Top right"
+          },
+          {
+            "value": "bottom_left",
+            "label": "Bottom left"
+          },
+          {
+            "value": "bottom_right",
+            "label": "Bottom right"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank and settings.shopflo_promo_banner_layout_buy_now == 'top_of_button' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_font_size_buy_now",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 16,
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_letter_spacing_buy_now",
+        "label": "Letter spacing",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "text_alignment",
+        "id": "shopflo_promo_text_alignment_buy_now",
+        "label": "Text alignment",
+        "default": "center",
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_promo_background_buy_now",
+        "label": "Background color",
+        "default": "linear-gradient(90deg,rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_promo_color_buy_now",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_gap_buy_now",
+        "label": "Gap",
+        "min": 1,
+        "max": 25,
+        "step": 1,
+        "unit": "px",
+        "default": 2,
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank and settings.shopflo_promo_banner_layout_buy_now == 'separate' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_promo_border_radius_buy_now",
+        "label": "Border Radius",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_match_checkout_promo_buy_now == false and settings.shopflo_promo_text_buy_now != blank and settings.shopflo_promo_banner_layout_buy_now != 'attached' }}"
+      }
+    ]
+  },
+  {
+    "name": "Shopflo Shop Pass",
+    "settings": [
+      {
+        "type": "select",
+        "id": "shopflo_customer_account_provider",
+        "label": "Login provider",
+        "info": "Choose the primary service used for customer accounts.",
+        "default": "shopify",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo"
+          },
+          {
+            "value": "shopify",
+            "label": "Shopify"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "shopflo_account_overflow_fix_selectors",
+        "label": "Force overflow visible on",
+        "info": "Comma-separated list of CSS classes or IDs (e.g. .header-wrapper, #shopify-section-header) for ancestor elements that clip the account dropdown/login panel with overflow:hidden - their overflow is forced visible while the dropdown or login panel is open. Leave blank if your header doesn't clip it."
+      },
+      {
+        "type": "header",
+        "content": "Login Button A"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_visible_on_button_a",
+        "label": "Device visibility",
+        "default": "desktop",
+        "options": [
+          {
+            "value": "desktop",
+            "label": "Desktop only"
+          },
+          {
+            "value": "mobile",
+            "label": "Mobile only"
+          },
+          {
+            "value": "both",
+            "label": "Both"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_full_width_button_a",
+        "label": "Full width",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_dropdown_vertical_button_a",
+        "label": "Dropdown position",
+        "default": "below-left",
+        "options": [
+          {
+            "value": "above-left",
+            "label": "Open above left"
+          },
+          {
+            "value": "above-right",
+            "label": "Open above right"
+          },
+          {
+            "value": "above-center",
+            "label": "Open above center"
+          },
+          {
+            "value": "below-left",
+            "label": "Open below left"
+          },
+          {
+            "value": "below-right",
+            "label": "Open below right"
+          },
+          {
+            "value": "below-center",
+            "label": "Open below center"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "shopflo_account_text_button_a",
+        "label": "Button text",
+        "default": "Login",
+        "info": "Leave blank to display icon only."
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_font_size_button_a",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 14
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_bold_text_button_a",
+        "label": "Bold text",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_size_button_a",
+        "label": "Icon size",
+        "min": 16,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "default": 20
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_button_layout_button_a",
+        "label": "Icon placement",
+        "default": "icon_left",
+        "options": [
+          {
+            "value": "icon_left",
+            "label": "Icon left"
+          },
+          {
+            "value": "icon_right",
+            "label": "Icon right"
+          },
+          {
+            "value": "icon_top",
+            "label": "Icon above (stacked)"
+          },
+          {
+            "value": "icon_bottom",
+            "label": "Icon below (stacked)"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_gap_button_a",
+        "label": "Icon spacing",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 6
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_color_button_a",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_icon_source_button_a",
+        "label": "Icon",
+        "default": "shopflo",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo icon"
+          },
+          {
+            "value": "theme",
+            "label": "Theme icon"
+          }
+        ]
+      },
+      {
+        "type": "html",
+        "id": "shopflo_account_theme_icon_button_a",
+        "label": "Theme icon SVG",
+        "info": "Paste your theme's own account/login icon SVG markup here.",
+        "visible_if": "{{ settings.shopflo_account_icon_source_button_a == 'theme' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_icon_sync_header_button_a",
+        "label": "Match header text color",
+        "info": "Icon inherits whatever text color the header itself is using at that spot, instead of a fixed color/gradient. Only a plain color - a gradient can't be matched.",
+        "default": false
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_icon_color_button_a",
+        "label": "Icon color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_account_icon_source_button_a == 'shopflo' and settings.shopflo_account_icon_sync_header_button_a == false }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_button_background_button_a",
+        "label": "Background color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 100%)"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_padding_block_button_a",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_padding_inline_button_a",
+        "label": "Horizontal padding",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_button_radius_button_a",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 8
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shopflo_account_button_shadow_button_a",
+        "label": "Enable button shadow",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_shadow_inset_button_a",
+        "label": "Shadow direction",
+        "default": "outset",
+        "options": [
+          {
+            "value": "inset",
+            "label": "Inwards"
+          },
+          {
+            "value": "outset",
+            "label": "Outwards"
+          }
+        ],
+        "visible_if": "{{ settings.show_shopflo_account_button_shadow_button_a == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_horizontal_offset_button_a",
+        "label": "Shadow horizontal offset",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.show_shopflo_account_button_shadow_button_a == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_vertical_offset_button_a",
+        "label": "Shadow vertical offset",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.show_shopflo_account_button_shadow_button_a == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_blur_button_a",
+        "label": "Shadow blur",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.show_shopflo_account_button_shadow_button_a == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_spread_button_a",
+        "label": "Shadow spread",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.show_shopflo_account_button_shadow_button_a == true }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_shadow_color_button_a",
+        "label": "Shadow color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 100%)",
+        "visible_if": "{{ settings.show_shopflo_account_button_shadow_button_a == true }}"
+      },
+      {
+        "type": "header",
+        "content": "Login Button B"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_visible_on_button_b",
+        "label": "Device visibility",
+        "default": "mobile",
+        "options": [
+          {
+            "value": "desktop",
+            "label": "Desktop only"
+          },
+          {
+            "value": "mobile",
+            "label": "Mobile only"
+          },
+          {
+            "value": "both",
+            "label": "Both"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_full_width_button_b",
+        "label": "Full width",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_dropdown_vertical_button_b",
+        "label": "Dropdown position",
+        "default": "below-right",
+        "options": [
+          {
+            "value": "above-left",
+            "label": "Open above left"
+          },
+          {
+            "value": "above-right",
+            "label": "Open above right"
+          },
+          {
+            "value": "above-center",
+            "label": "Open above center"
+          },
+          {
+            "value": "below-left",
+            "label": "Open below left"
+          },
+          {
+            "value": "below-right",
+            "label": "Open below right"
+          },
+          {
+            "value": "below-center",
+            "label": "Open below center"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_match_with_button_b",
+        "label": "Inherit styles from",
+        "default": "button_a",
+        "options": [
+          {
+            "value": "button_a",
+            "label": "Button A"
+          },
+          {
+            "value": "button_c",
+            "label": "Button C"
+          },
+          {
+            "value": "none",
+            "label": "Custom (None)"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "shopflo_account_text_button_b",
+        "label": "Button text",
+        "default": "Login",
+        "info": "Leave blank to display icon only.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_font_size_button_b",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 14,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_bold_text_button_b",
+        "label": "Bold text",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_size_button_b",
+        "label": "Icon size",
+        "min": 16,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "default": 20,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_button_layout_button_b",
+        "label": "Icon placement",
+        "default": "icon_left",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}",
+        "options": [
+          {
+            "value": "icon_left",
+            "label": "Icon left"
+          },
+          {
+            "value": "icon_right",
+            "label": "Icon right"
+          },
+          {
+            "value": "icon_top",
+            "label": "Icon above (stacked)"
+          },
+          {
+            "value": "icon_bottom",
+            "label": "Icon below (stacked)"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_gap_button_b",
+        "label": "Icon spacing",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 6,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_color_button_b",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_icon_source_button_b",
+        "label": "Icon",
+        "default": "shopflo",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo icon"
+          },
+          {
+            "value": "theme",
+            "label": "Theme icon"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "html",
+        "id": "shopflo_account_theme_icon_button_b",
+        "label": "Theme icon SVG",
+        "info": "Paste your theme's own account/login icon SVG markup here.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.shopflo_account_icon_source_button_b == 'theme' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_icon_sync_header_button_b",
+        "label": "Match header text color",
+        "info": "Icon inherits whatever text color the header itself is using at that spot, instead of a fixed color/gradient. Only a plain color - a gradient can't be matched.",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_icon_color_button_b",
+        "label": "Icon color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.shopflo_account_icon_source_button_b == 'shopflo' and settings.shopflo_account_icon_sync_header_button_b == false }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_button_background_button_b",
+        "label": "Background color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_padding_block_button_b",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 4,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_padding_inline_button_b",
+        "label": "Horizontal padding",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 4,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_button_radius_button_b",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 8,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shopflo_account_button_shadow_button_b",
+        "label": "Enable button shadow",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_shadow_inset_button_b",
+        "label": "Shadow direction",
+        "default": "outset",
+        "options": [
+          {
+            "value": "inset",
+            "label": "Inwards"
+          },
+          {
+            "value": "outset",
+            "label": "Outwards"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.show_shopflo_account_button_shadow_button_b == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_horizontal_offset_button_b",
+        "label": "Shadow horizontal offset",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.show_shopflo_account_button_shadow_button_b == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_vertical_offset_button_b",
+        "label": "Shadow vertical offset",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.show_shopflo_account_button_shadow_button_b == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_blur_button_b",
+        "label": "Shadow blur",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.show_shopflo_account_button_shadow_button_b == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_spread_button_b",
+        "label": "Shadow spread",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.show_shopflo_account_button_shadow_button_b == true }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_shadow_color_button_b",
+        "label": "Shadow color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_b == 'none' and settings.show_shopflo_account_button_shadow_button_b == true }}"
+      },
+      {
+        "type": "header",
+        "content": "Login Button C"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_visible_on_button_c",
+        "label": "Device visibility",
+        "default": "both",
+        "options": [
+          {
+            "value": "desktop",
+            "label": "Desktop only"
+          },
+          {
+            "value": "mobile",
+            "label": "Mobile only"
+          },
+          {
+            "value": "both",
+            "label": "Both"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_full_width_button_c",
+        "label": "Full width",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_dropdown_vertical_button_c",
+        "label": "Dropdown position",
+        "default": "below-right",
+        "options": [
+          {
+            "value": "above-left",
+            "label": "Open above left"
+          },
+          {
+            "value": "above-right",
+            "label": "Open above right"
+          },
+          {
+            "value": "above-center",
+            "label": "Open above center"
+          },
+          {
+            "value": "below-left",
+            "label": "Open below left"
+          },
+          {
+            "value": "below-right",
+            "label": "Open below right"
+          },
+          {
+            "value": "below-center",
+            "label": "Open below center"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_match_with_button_c",
+        "label": "Inherit styles from",
+        "default": "button_b",
+        "options": [
+          {
+            "value": "button_a",
+            "label": "Button A"
+          },
+          {
+            "value": "button_b",
+            "label": "Button B"
+          },
+          {
+            "value": "none",
+            "label": "Custom (None)"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "shopflo_account_text_button_c",
+        "label": "Button text",
+        "default": "Login",
+        "info": "Leave blank to display icon only.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_font_size_button_c",
+        "label": "Font size",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 14,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_bold_text_button_c",
+        "label": "Bold text",
+        "default": true,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_size_button_c",
+        "label": "Icon size",
+        "min": 16,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "default": 20,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_button_layout_button_c",
+        "label": "Icon placement",
+        "default": "icon_left",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}",
+        "options": [
+          {
+            "value": "icon_left",
+            "label": "Icon left"
+          },
+          {
+            "value": "icon_right",
+            "label": "Icon right"
+          },
+          {
+            "value": "icon_top",
+            "label": "Icon above (stacked)"
+          },
+          {
+            "value": "icon_bottom",
+            "label": "Icon below (stacked)"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_icon_gap_button_c",
+        "label": "Icon spacing",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "default": 6,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_color_button_c",
+        "label": "Text color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_icon_source_button_c",
+        "label": "Icon",
+        "default": "shopflo",
+        "options": [
+          {
+            "value": "shopflo",
+            "label": "Shopflo icon"
+          },
+          {
+            "value": "theme",
+            "label": "Theme icon"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "html",
+        "id": "shopflo_account_theme_icon_button_c",
+        "label": "Theme icon SVG",
+        "info": "Paste your theme's own account/login icon SVG markup here.",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.shopflo_account_icon_source_button_c == 'theme' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "shopflo_account_icon_sync_header_button_c",
+        "label": "Match header text color",
+        "info": "Icon inherits whatever text color the header itself is using at that spot, instead of a fixed color/gradient. Only a plain color - a gradient can't be matched.",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_icon_color_button_c",
+        "label": "Icon color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 1) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.shopflo_account_icon_source_button_c == 'shopflo' and settings.shopflo_account_icon_sync_header_button_c == false }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_button_background_button_c",
+        "label": "Background color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_padding_block_button_c",
+        "label": "Vertical padding",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 4,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_padding_inline_button_c",
+        "label": "Horizontal padding",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "default": 4,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_button_radius_button_c",
+        "label": "Corner radius",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 8,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_shopflo_account_button_shadow_button_c",
+        "label": "Enable button shadow",
+        "default": false,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "shopflo_account_shadow_inset_button_c",
+        "label": "Shadow direction",
+        "default": "outset",
+        "options": [
+          {
+            "value": "inset",
+            "label": "Inwards"
+          },
+          {
+            "value": "outset",
+            "label": "Outwards"
+          }
+        ],
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.show_shopflo_account_button_shadow_button_c == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_horizontal_offset_button_c",
+        "label": "Shadow horizontal offset",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.show_shopflo_account_button_shadow_button_c == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_vertical_offset_button_c",
+        "label": "Shadow vertical offset",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.show_shopflo_account_button_shadow_button_c == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_blur_button_c",
+        "label": "Shadow blur",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.show_shopflo_account_button_shadow_button_c == true }}"
+      },
+      {
+        "type": "range",
+        "id": "shopflo_account_shadow_spread_button_c",
+        "label": "Shadow spread",
+        "min": -50,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "default": 0,
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.show_shopflo_account_button_shadow_button_c == true }}"
+      },
+      {
+        "type": "color_background",
+        "id": "shopflo_account_shadow_color_button_c",
+        "label": "Shadow color",
+        "default": "linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 100%)",
+        "visible_if": "{{ settings.shopflo_account_match_with_button_c == 'none' and settings.show_shopflo_account_button_shadow_button_c == true }}"
+      }
+    ]
+  }
+]

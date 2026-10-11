@@ -844,6 +844,11 @@ class ShopfloAccounts extends HTMLElement {
   _setupDrawerItemTriggers() {
     this.querySelectorAll('[data-flo-trigger="account-login"]').forEach((trigger) => {
       trigger.addEventListener('click', (event) => {
+        if (window.shopfloThemeConfig && window.shopfloThemeConfig.shopflo_account_drawer_redirect_to_account_page) {
+          this._log('account-login clicked, shopflo_account_drawer_redirect_to_account_page is true - navigating to /account directly.');
+          window.location.href = '/account';
+          return;
+        }
         this._log('account-login clicked, typeof window.handleShopifyLogin =', typeof window.handleShopifyLogin);
         this._callGlobalWhenReady('handleShopifyLogin', [event, '/account']);
         this._handleAccountIframeFlow();
