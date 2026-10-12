@@ -315,6 +315,22 @@
     padding-block: var(--sf-checkout-padding-block) !important;
     padding-inline: var(--sf-checkout-padding-inline) !important;
     font-size: var(--sf-checkout-font-size) !important;
+    /* <button> does NOT inherit font-family from the page by default - every
+       browser's own UA stylesheet gives form controls their own default font
+       stack, deliberately not inherited unless an author rule says otherwise
+       (verified directly: a bare <button> with no CSS reset computes a
+       different font-family than its own parent <body>). A host theme's own
+       CSS reset (e.g. Dawn's `button { font: inherit }`) usually papers over
+       this, but it's not guaranteed on every theme this is dropped into -
+       declaring it here directly is what makes .shopflo-checkout__button--label
+       (a descendant <span>, which DOES inherit normally) reliably pick up the
+       theme's real font instead of the browser's generic button font, with or
+       without a reset from the host theme. Reported 2026-10-12 as a "font
+       family sync issue" worked around with `font-family: initial` on the
+       label - `inherit` here is the correct fix (initial resets to the
+       browser's generic default, not the theme's actual font; it only
+       "worked" by coincidence if that happened to look similar). */
+    font-family: inherit !important;
     outline: none !important;
 }
 .shopflo-scope:is(.shopflo-checkout__wrapper.sf-promo-banner__layout--separate), .shopflo-scope .shopflo-checkout__wrapper.sf-promo-banner__layout--separate {
@@ -358,6 +374,9 @@
     padding-block: var(--sf-buy-now-padding-block) !important;
     padding-inline: var(--sf-buy-now-padding-inline) !important;
     font-size: var(--sf-buy-now-font-size) !important;
+    /* See the matching comment on .shopflo-checkout__button above - <button>
+       doesn't inherit font-family from the page without this. */
+    font-family: inherit !important;
     outline: none !important;
 }
 .shopflo-scope.shopflo-buy-now__wrapper.sf-promo-banner__layout--attached .shopflo-buy-now__button {
@@ -644,6 +663,15 @@
     height: 100% !important;
     max-width: 100% !important;
     width: unset !important;
+    /* The badge shield/checkmark are painted entirely in translucent-to-solid
+       WHITE (see the gradient <defs> inline in snippets/shopflo.liquid) - by
+       design, for a "glassy seal" look on a colored/dark checkout button. The
+       SVG's own embedded drop-shadow filter is a near-invisible 1px/10%-alpha
+       hint, nowhere near enough to read against a white/near-white button
+       background - the badge all but disappears there (reported 2026-10-12).
+       This CSS-level shadow is the actual fix: visible on light backgrounds,
+       still subtle enough not to look out of place on dark/colored ones. */
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.25)) !important;
 }
 .shopflo-scope:is(.shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper), .shopflo-scope .shopflo-checkout__button.sf-label-squeezed .shopflo-payment-icons__wrapper,
 .shopflo-scope:is(.shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield), .shopflo-scope .shopflo-checkout__button.sf-label-squeezed .shopflo-badge-icon--shield,
@@ -873,6 +901,11 @@
     cursor: pointer !important;
     transition: background 0.2s ease !important;
     box-shadow: var(--shopflo-account-button-shadow, none) !important;
+    /* See the matching comment on .shopflo-checkout__button in this file -
+       <button> doesn't inherit font-family from the page without this, which
+       would otherwise leave .shopflo-accounts__label on the browser's
+       generic button font instead of the theme's real one. */
+    font-family: inherit !important;
 }
 .shopflo-scope:is(.shopflo-accounts__icon-button[disabled]), .shopflo-scope .shopflo-accounts__icon-button[disabled] {
     cursor: not-allowed !important;

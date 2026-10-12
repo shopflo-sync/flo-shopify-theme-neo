@@ -1034,3 +1034,90 @@ behavior of.
 
 Did NOT touch `window.handleDrawer()`-based flows (header-icon click when not logged in) or the
 logout handler - scoped exactly to the drawer's own "Account" item, per the request.
+
+---
+
+## 27. Badge invisible on white backgrounds, button font-family mismatch, and a stale reference copy
+
+Three separate reports in one message (2026-10-12/13):
+
+### 27a. "Powered by Shopflo" badge disappears when Button background is white/light - fixed
+
+**Not a stray "transparent" CSS property** (the user's own guess) - there is no `opacity`/
+`transparent` rule anywhere in `assets/shopflo-styles.css` touching the badge. The badge SVG
+(embedded inline in `snippets/shopflo.liquid`, `shopflo-svg--badge`) is painted ENTIRELY from
+white: the shield body is a `fill: url(#...)` gradient between 20-100% opacity WHITE, its outline
+is a `stroke: url(#...)` gradient between 40-100% opacity WHITE, and the checkmark is solid
+`fill: #fff` at 70% opacity. It's designed as a translucent "glassy seal" meant to sit on a
+colored/dark button - on a white or near-white Background color, there is no color contrast at
+all, regardless of opacity, so it reads as invisible. The SVG's own embedded drop-shadow `<filter>`
+is a 1px-offset, 10%-alpha hint - nowhere near enough to rescue visibility on light backgrounds.
+Confirmed visually in headless Chrome: on a white background, only a faint ghost of the checkmark
+survives; the shield outline is essentially gone.
+
+**Fix**: added a CSS-level `filter: drop-shadow(0 0 1px rgba(0,0,0,.45)) drop-shadow(0 0 2px
+rgba(0,0,0,.25))` to `.shopflo-svg--badge` in `assets/shopflo-styles.css`. Verified visually
+side-by-side (same badge markup, white background): clearly visible shield+checkmark with the fix,
+still reads as a soft/subtle badge rather than looking harsh - and doesn't look out of place on
+dark/colored backgrounds either, since the shadow is dark-on-dark where the badge is already
+light-on-dark (minimal visual change there).
+
+### 27b. Checkout/Buy Now button label font-family mismatch - fixed, `font-family: initial` workaround explained
+
+**Root cause, verified directly in headless Chrome**: a bare `<button>` element does NOT inherit
+`font-family` from the page by default - every browser's own UA stylesheet gives FORM CONTROLS
+(button/input/select/textarea) their own default font stack, which is intentionally NOT inherited
+from the page unless an author rule says otherwise. Test: a `<body>` with `font-family: Georgia,
+serif` and a plain `<button>` with zero author CSS computed `font-family: Arial` for BOTH the
+button and a `<span>` label nested inside it (the span correctly inherits from its nearest
+ancestor - the button - which itself never got the page's real font). `.shopflo-checkout__button`/
+`.shopflo-buy-now__button` never declared their own `font-family`, so whether this bug shows up
+depends entirely on whether the HOST THEME happens to have its own `button { font: inherit; }` -
+style reset (Dawn does; not every theme does, hence "in some cases").
+
+**Fix**: added `font-family: inherit !important;` directly to `.shopflo-checkout__button`,
+`.shopflo-buy-now__button`, and `.shopflo-accounts__icon-button` (all the real `<button>` elements
+this integration renders) in `assets/shopflo-styles.css` - makes the correct font flow down to the
+label regardless of whether the host theme has its own button-font reset, matching the
+theme-agnostic design principle (§5/§19) used throughout this file. Verified in headless Chrome:
+button and label both now compute the page's real font instead of the browser default.
+
+**On the user's own `font-family: initial` workaround**: explained why it "worked" but isn't the
+correct fix - `initial` resets to the CSS specification's generic default (browser-dependent, NOT
+the theme's font), it does not pull the real body font down through inheritance. It likely only
+looked right by coincidence (their theme's actual font happening to resemble that generic
+default). `inherit` is the semantically correct value and the one applied here.
+
+### 27c. "Some shop-pass styles got removed" - a STALE REFERENCE COPY was found, not a regression
+
+Investigated by diffing the actively-used theme files (`assets/shopflo-styles.css`,
+`snippets/shopflo.liquid`, `config/settings_schema.json`) against every shop-pass class/feature
+added this session (icon layout arrangement, header-sync, overflow-fix selector, theme-icon
+support, drawer close button, etc.) - **all present and correct, nothing missing** in the files
+Shopify actually serves.
+
+**What's actually going on**: this repo now also contains a top-level `shopflo-shopify-neo/`
+directory (added in commit `5562b23`, NOT part of any standard Shopify theme folder structure -
+`assets/`/`config/`/`layout/`/`locales/`/`sections/`/`snippets/`/`templates/` are the only ones
+Shopify recognizes) holding its own copies of `shopflo.liquid`/`shopflo-styles.css`/
+`shopflo-script.js`/`settings_schema.json`. This is almost certainly the "shopflo-neo" EXTERNAL
+reference/export copy referenced earlier this session (the `/* shopflo-neo:v1.0.0 */` header
+comment atop `assets/shopflo-styles.css`, and the "separate copy" the user mentioned and later said
+was "pasted from this repo" - turns out there IS a real, persistent copy of it, now tracked in git).
+
+It is SIGNIFICANTLY behind the active files - missing roughly 60 lines of CSS, 300+ lines of
+Liquid, 50 lines of JS, and 1500+ lines of settings schema compared to the actively-maintained
+versions, meaning it predates virtually every shop-pass feature added this session (icon
+arrangement, header-sync, theme-icon, overflow-fix selector, the CSS-scoping work in §24/§25, the
+buy-now wrapper-div bug fix in §23, etc.). **If the user is comparing against or deploying from
+THIS folder anywhere, that fully explains "styles got removed, especially shop-pass" - they were
+simply never added to this older snapshot, not deleted from the real theme.**
+
+Also has an uncommitted local edit of its own (57 insertions / 96 deletions to its own
+`shopflo.liquid`) as of this writing - left untouched, since it looks like the user's own
+in-progress edit to that file, not something to reconcile without being asked.
+
+**Not resolved, needs the user's input**: whether `shopflo-shopify-neo/` should be (a) synced up to
+match the active files, (b) deleted if it's dead/unused, or (c) left alone because it serves some
+other purpose (e.g. a canonical export the user maintains for OTHER stores) this session doesn't
+have visibility into. Ask before touching it either way.
