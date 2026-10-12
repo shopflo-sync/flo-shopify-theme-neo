@@ -1,4 +1,4 @@
-# Shopflo integration - session context (2026-08-31 → 2026-09-28)
+# Shopflo integration - session context (2026-08-31 → 2026-10-07)
 
 Working notes from an extended Claude Code session on the Shopflo checkout/buy-now/cart/shop-pass
 integration (`snippets/shopflo.liquid`, `assets/shopflo-script.js`, `assets/shopflo-styles.css`,
@@ -741,6 +741,7 @@ start.
 
 **Follow-up report from the user ("still not matching") turned out to be a stale deploy, not a
 code bug.** Verified the checkbox mechanism three separate ways before concluding this:
+
 1. Synthetic HTML with solid colors - border correctly switched on hover.
 2. Synthetic HTML with two DIFFERENT real multi-stop gradients (background vs. hover background,
    plus a third distinct border color) - border correctly switched to match the hover gradient,
@@ -757,3 +758,279 @@ user confirmed it's fixed. **Lesson for this session**: when a fix is verified c
 testing of the actual shipped file but the user still reports it's broken, suspect a stale
 deploy/CDN cache before writing more code - ask the user to inspect the live deployed asset content
 directly rather than continuing to patch code that already demonstrably works.
+
+---
+
+## 22. New setting: vertical icon/label arrangement for Shop Pass Login Button A/B/C
+
+The existing `shopflo_account_button_layout_button_a/b/c` select ("Icon placement") only offered
+`icon_left`/`icon_right` - a horizontal row with the icon on either side of the label (CSS:
+default `flex-direction: row`, with `.sf-account-layout--icon-right` flipping to `row-reverse`).
+Added two more options to the SAME select (no new setting id, just new option values) in
+`config/settings_schema.json` for all three buttons:
+
+- `icon_top` ("Icon above (stacked)")
+- `icon_bottom` ("Icon below (stacked)")
+
+`snippets/shopflo.liquid`'s class-building logic (previously a single hardcoded
+`if account_button_layout == 'icon_right'` check appending one literal class) was generalized to
+work for any non-default value: `if account_button_layout != 'icon_left'` appends
+`sf-account-layout--` + the layout value with underscores swapped to hyphens (`| replace: '_',
+'-'`) - so `icon_top` becomes class `sf-account-layout--icon-top`, matching the existing
+`icon_right` -> `sf-account-layout--icon-right` naming convention without a separate branch per
+value. Still gated on `show_account_label` (layout is meaningless with no label to arrange).
+
+`assets/shopflo-styles.css` adds `.sf-account-layout--icon-top { flex-direction: column !important;
+}` and `.sf-account-layout--icon-bottom { flex-direction: column-reverse !important; }` alongside
+the existing `.sf-account-layout--icon-right { flex-direction: row-reverse !important; }` - no
+other changes needed, since `.shopflo-accounts__icon-button`'s existing `align-items: center`/
+`justify-content: center`/`gap` already center and space correctly regardless of axis.
+
+This setting already flows through the existing three-slot B/C inheritance cascade unchanged (it's
+the same `account_button_layout` variable used for the pre-existing icon_left/icon_right values,
+just with two more possible string values) - no cascade-wiring changes needed, confirming the §5
+pattern generalizes cleanly to new OPTION VALUES on an existing setting, as opposed to a brand new
+setting id (which would need full 9-point two-pass wiring).
+
+Verified visually in headless Chrome against the real `assets/shopflo-styles.css` (not a
+simplified reproduction): icon-right renders label-then-icon in a row, icon-top renders
+icon-above-label in a column, icon-bottom renders icon-below-label in a reversed column - all
+three correct.
+
+---
+
+## 23. Bug: Buy Now's corner radius setting silently had zero effect - missing wrapper div
+
+**Symptom**: changing Theme Editor > Shopflo Buy Now > Corner radius had no visible effect on the
+Buy Now button, no matter what value was set.
+
+**Root cause**: `.shopflo-buy-now__button`'s own base CSS rule (`assets/shopflo-styles.css`)
+never sets `border-radius` directly - it's ONLY ever applied via descendant selectors keyed off
+an ANCESTOR `.shopflo-buy-now__wrapper` element (e.g.
+`.shopflo-buy-now__wrapper:not(.sf-promo-banner__layout--attached) .shopflo-buy-now__button {
+border-radius: var(--sf-buy-now-border-radius) !important; }`) - exactly mirroring how Checkout's
+equivalent works via `.shopflo-checkout__wrapper`. But `snippets/shopflo.liquid`'s `'buy_now'` case
+captured a `buy_now_wrapper_class` variable (correctly including `shopflo-buy-now__wrapper`) and
+then **never actually rendered an element with that class** - there was no
+`<div class="{{ buy_now_wrapper_class }}">` anywhere in the buy-now markup, unlike checkout's
+`<div class="{{ checkout_wrapper_class }}">...</div>` which correctly wraps its whole button. The
+promo-banner `<div>` had instead accidentally picked up `{{ buy_now_wrapper_class }}` tacked onto
+its OWN class list (`class="shopflo-buy-now--promo ... {{ buy_now_wrapper_class }}"`) - a
+copy-paste artifact that doesn't achieve a real ancestor relationship (CSS requires an actual
+DOM ancestor-descendant pair for a descendant selector to match; compounding the wrapper's classes
+onto the SAME element as the promo div does not satisfy `.wrapper .promo`'s structural
+requirement).
+
+Since no element on the page ever actually carried `.shopflo-buy-now__wrapper`, EVERY
+wrapper-dependent CSS rule for Buy Now was silently inert, not just corner radius:
+
+- `.shopflo-buy-now__wrapper > .shopify-payment-button { display: contents !important; }` (the
+  trick that makes the Shopify-native quantity-sync wrapper invisible to layout - see §12) never
+  applied, meaning that wrapper div was an extra, un-styled block-level box around the real button
+  this whole time.
+- `.shopflo-buy-now__wrapper { display: flex; flex-direction: column; justify-content: center;
+  align-items: center; }` (the overall layout container) never applied.
+- The promo-banner attached/separate gap and border-radius split (`sf-promo-banner__layout--*`)
+  never applied correctly for Buy Now.
+- The `extra_class` render param (see §1) was silently a no-op for `type: 'buy_now'` specifically,
+  since it was threaded through `buy_now_wrapper_class`, which was never actually rendered as its
+  own element.
+
+**Fix**: `snippets/shopflo.liquid`'s `'buy_now'` case now wraps the entire
+`render_shopflo_buy_now_button` block (promo banner + `.shopify-payment-button` + button) in a real
+`<div class="{{ buy_now_wrapper_class }}">...</div>`, mirroring checkout's structure exactly. The
+promo-banner `<div>`'s own class list had `{{ buy_now_wrapper_class }}` removed (now matches
+checkout's promo div, which never carried `checkout_wrapper_class` either). The international-
+redirect fallback (`#shopify-buy-now__button--wrapper`, Shopify's own `{{ form | payment_button }}`
+output) deliberately stays OUTSIDE this new wrapper - it's a wholly separate, independently
+JS-toggled UI path (see `bindBuyNowIntlFallback()` in `assets/shopflo-script.js`), not something
+that belongs inside `.shopflo-buy-now__wrapper`.
+
+Verified by loading the actual unmodified `assets/shopflo-styles.css` against the real markup in
+headless Chrome: `border-radius` now correctly resolves to the configured value, and
+`.shopify-payment-button` now correctly computes `display: contents`.
+
+---
+
+## 24. CSS specificity hardening: every Shopflo selector now scoped under `.shopflo-scope`
+
+**Goal** (explicit user request): prevent a host theme's own CSS from ever silently overriding
+Shopflo's styling via an equal-or-higher-specificity selector, even one also using `!important`
+(where the LATER-declared rule wins regardless of which side "looks" more specific, if specificity
+is literally equal).
+
+**Chosen mechanism**: a single shared marker class, `shopflo-scope`, added directly onto every
+top-level Shopflo-rendered root element in `snippets/shopflo.liquid`:
+
+- `checkout_wrapper_class` capture (→ `.shopflo-checkout__wrapper`)
+- `buy_now_wrapper_class` capture (→ `.shopflo-buy-now__wrapper`, see §23 above - this fix was a
+  prerequisite, since the wrapper didn't even exist in the DOM before it)
+- `<shopflo-accounts>`'s own class list
+- `#popupOverlay` (`.dummy-popup-overlay`)
+
+Deliberately NOT done via per-component ancestor classes (e.g. prefixing every selector with its
+OWN specific wrapper class) - most of this file's utility classes (`.sf-hidden`, `.sf-full-width`,
+`.sf-text--bold`, hover-effect classes, shadow classes, etc.) are shared across checkout, buy-now,
+AND shop-pass with no single natural common ancestor; one shared marker class sidesteps needing to
+classify which component each selector "belongs to" at all.
+
+**Transform applied to every selector** in `assets/shopflo-styles.css` (via a one-off Python script
+in the session scratchpad, not checked into the repo):
+
+```text
+ORIGINAL  ->  .shopflo-scope:is(ORIGINAL), .shopflo-scope ORIGINAL
+```
+
+The first alternative matches when ORIGINAL's target IS one of the scope-tagged root elements
+themselves (compounded on the same element); the second matches when ORIGINAL targets a genuine
+DESCENDANT inside a scoped root. Using both avoids needing to know in advance which case applies -
+whichever one is structurally correct for a given selector is the one that actually matches at
+runtime; the other is simply inert.
+
+**One real exception this dual-form does NOT handle correctly, found and fixed during
+verification**: a MULTI-segment selector whose FIRST segment is itself one of the root elements,
+with a REAL descendant combinator after it - e.g.
+`.shopflo-checkout__wrapper.sf-promo-banner__layout--attached .shopflo-checkout__button`. Here the
+wrapper segment doesn't just "target a root" or "target a descendant" - it genuinely IS the
+`shopflo-scope`-tagged element, and `.shopflo-checkout__button` is a real separate descendant of
+it. Neither dual-form alternative matches this correctly (`:is(whole)` fails because the actual
+button element lacks `shopflo-scope`; `.shopflo-scope whole` fails because it'd require `shopflo-scope`
+on some OTHER ancestor ABOVE the wrapper, which doesn't exist - the wrapper IS the `shopflo-scope`
+element). Fixed by detecting this specific shape (first compound segment starts with
+`.shopflo-checkout__wrapper`, `.shopflo-buy-now__wrapper`, `.dummy-popup-overlay`, or
+`.shopflo-accounts-hidden`, AND a real top-level combinator follows) and instead compounding
+`.shopflo-scope` directly onto that first segment only, leaving everything after the combinator
+completely untouched - e.g. `.shopflo-scope.shopflo-checkout__wrapper.sf-promo-banner__layout--attached
+.shopflo-checkout__button`. Selectors where the wrapper's own compound (optionally with `:has()`/
+`:not()`) is the ENTIRE selector (no real top-level combinator - `:has()`'s own internal space
+doesn't count, tracked via paren/bracket depth) correctly stay on the dual-form path, since there
+the wrapper element IS the sole and entire match target.
+
+**Explicitly excluded, left completely untouched** (selectors targeting markup Shopflo doesn't
+render or control, or already-dead code per §5's "Known pre-existing issues"):
+
+- `#shopify-buy-now__button--wrapper`, `.buy-now__button--radius`, `.checkout__button--radius`
+  (dead/unscoped per §5, not touched by the earlier blanket-`!important` pass either - see §9).
+- Any selector mentioning `#flo-shopify-login-*` - these elements are injected by the EXTERNAL
+  Shopflo bundle script (bridge.shopflo.com), not rendered by this repo at all; we have no ability
+  to add `shopflo-scope` to their actual DOM ancestor.
+- `body:has([data-flo-state="login-icon"][data-flo-visible=false]) #flo-marketing-popup-wrapper` -
+  `#flo-marketing-popup-wrapper` is also bundle-injected, not ours.
+
+**Verification** (no browser tooling checked into the repo - all done via scratch headless-Chrome
+scripts, same technique as §5):
+
+1. Parsed BOTH the original and the transformed stylesheet via a real `document.styleSheets[0]`
+   CSSOM walk (inline `<style>`, not `<link>`, to dodge a `file://` CORS restriction on reading
+   `.cssRules` cross-origin) - both report exactly 181 total rules (161 top-level + 20 nested in
+   `@media`) - confirms the browser's parser didn't silently drop a single rule due to invalid
+   `:is()`/selector syntax anywhere in the rewrite.
+2. Adversarial test: real production CSS + markup, PLUS a fake "theme" stylesheet declaring
+   `.shopflo-checkout__button { background: purple !important; border-radius: 0 !important; }` and
+   `.shopflo-buy-now__wrapper { display: block !important; }` loaded AFTER Shopflo's own
+   stylesheet (the worst-case scenario: equal specificity before scoping, later source order,
+   both sides using `!important`) - confirmed via `getComputedStyle` AND a rendered screenshot that
+   Shopflo's own styling won on every property (correct blue/green gradient fill, correct
+   24px/30px corner radius, correct `flex` wrapper display) - none of the fake overrides took
+   effect.
+3. Same adversarial pattern repeated for shop-pass (`<shopflo-accounts>`): fake
+   `.shopflo-accounts__icon-button { background: red !important; }` and
+   `.shopflo-accounts__drawer { display: none !important; }` - both defeated.
+
+**Not checked into the repo**: the Python transform script itself lived only in the session
+scratchpad - if `assets/shopflo-styles.css` needs the SAME kind of bulk selector surgery again
+later, don't assume the script still exists; the technique (mask comments and `@keyframes` blocks
+first, walk brace-matched rules recursively through `@media`, detect root-first multi-segment
+selectors specially, dual-form everything else) is what's worth remembering, documented here.
+
+---
+
+## 25. CSS specificity hardening, part 2: inline SVG `fill`/`stroke` presentation attributes
+
+**User's observation, confirmed correct**: §24 only secured CLASS-based styling in
+`assets/shopflo-styles.css`. Every payment-icon logo (phonepe/gpay/paytm/bhim/cred/mobiqwik), the
+"Powered by Shopflo" badge SVG, and the default account icon in `snippets/shopflo.liquid` paint
+their actual brand colors via bare SVG PRESENTATION ATTRIBUTES on `<path>`/`<g>` elements -
+`fill="#5f259f"`, `stroke="currentColor"`, `fill-opacity=".4"`, etc. - not via CSS classes at all.
+None of §24's scoping work touches these, because there was no CSS rule targeting them to scope in
+the first place.
+
+**Root cause, verified directly in headless Chrome**: an SVG presentation attribute has the
+LOWEST possible priority in the CSS cascade - lower than even a single bare, unscoped selector in
+an external stylesheet. A plain theme rule like `svg path { fill: red; }` (no `!important`, no
+specificity contest needed at all) silently overrides `fill="#5f259f"` on every path in the page,
+not just Shopflo's. Confirmed with three direct tests:
+
+1. `fill="#5f259f"` attribute vs. a plain `svg path { fill: red; }` rule → red wins (attribute
+   lost, as expected per spec).
+2. Same attribute vs. a `!important` theme rule → theme still wins (even more decisively).
+3. `style="fill: #5f259f !important;"` (inline STYLE, not a bare attribute) vs. the SAME
+   `!important` theme rule → the inline style wins. Per the CSS cascade spec, an inline `style`
+   attribute with `!important` sits in the single highest-priority tier available to an author,
+   above even a stylesheet's own `!important` rules.
+
+**Fix**: every `fill`/`stroke`/`fill-opacity`/`stroke-opacity`/`opacity` PRESENTATION ATTRIBUTE on
+every `<path>`/`<g>` element actually painted by Shopflo (43 of the 57 `<path>`/`<g>` tags in the
+file - the other 14 either only carry non-paint attributes like `clip-path`/`filter`, or
+deliberately inherit their parent's `fill`/`stroke` with no color of their own) was converted into
+an inline `style="prop: value !important; ..."` attribute holding the EXACT SAME value, via a
+one-off Python script (session scratchpad, not checked into the repo - same "not persisted"
+caveat as §24's). Left completely untouched: `d`, `clip-path`, `filter`, `shape-rendering`,
+`stroke-width`, `stroke-linecap`, `stroke-linejoin`, `class`, and every attribute on `<defs>`/
+`<linearGradient>`/`<stop>`/`<feFlood>`/etc. (gradient/filter DEFINITIONS, never matched by this
+transform at all since it only targets `<path>`/`<g>` tag names - not a realistic theme-collision
+surface either way).
+
+**Scope covered**: both duplicated occurrences of the payment-icon markup (checkout's and
+buy-now's render branches - verbatim-identical content, confirmed via diff before transforming),
+the badge SVG (both occurrences, including its two `url(#shopflo-badge-b/c-{{ shopflo_badge_uid
+}})` gradient fill/stroke references - the Liquid `{{ }}` interpolation inside the attribute value
+carries through into the `style=` string unchanged, verified rendered correctly), the account
+icon's `<g style="stroke: currentColor !important;">` wrapper (both the logged-out and logged-in
+occurrences - `currentColor` still resolves dynamically exactly as before, inline style doesn't
+freeze it to a literal color), the account icon's teal accent-dot path (`fill`/`stroke` both set
+to the hex `01CCA7`), and the drawer's close-X icon (`stroke="currentColor"` → inline style).
+
+**A trap hit and fixed while writing the transform**: the first version of the script stripped the
+`fill`/`stroke` attribute text but left a stray self-closing `/` (from `... />`) STRANDED in the
+MIDDLE of the tag once `style="..."` was appended after it (`<path ... / style="fill: ...
+!important;">` - syntactically broken, the element would never self-close). Fixed by explicitly
+detecting and re-homing the trailing `/` to right before the final `>`, after the new `style=`
+attribute. Also reflowed each affected tag onto a single line rather than trying to preserve
+original multi-line indentation once an attribute was removed from the middle of it (preserving
+exact indentation after a mid-tag removal is fragile for near-zero readability benefit on tags
+whose sole real content is already a giant single-line path `d=` attribute).
+
+**Verification**: `shopify theme check` clean (same baseline, no new errors); loaded the actual
+modified markup in headless Chrome against a fake theme stylesheet declaring
+`svg path { fill: red !important; } svg g { stroke: red !important; }` - both the purple body fill
+(`#5f259f`) and white accent fill (`#fff`) on the phonepe icon resolved correctly via
+`getComputedStyle`, confirming the inline-style fix holds under the exact adversarial scenario the
+user described.
+
+---
+
+## 26. New dev config: redirect the drawer's "Account" item to /account instead of the SSO iframe
+
+**Request**: give the account drawer's "Account" item an option to do a plain navigation to
+`/account` instead of opening the bundle's SSO account-management iframe/overlay (the existing
+`window.handleShopifyLogin(event, '/account')` flow - see §4's "Drawer's Account item hard-navigated
+to /account" entry for the history here: an EARLIER attempt swapped this call for
+`window.handleDrawer()` and was explicitly reverted by the user, since that's the wrong global for
+this click). **Explicitly NOT a Theme Editor setting** - a plain hardcoded literal in
+`window.shopfloThemeConfig` (`snippets/shopflo.liquid`), same convention as `shopflo_enable`/
+`shopflo_intercept_cart_page_redirect`/`shopflo_third_party_cart_mutation` - this changes a
+structural navigation behavior a merchant shouldn't flip without understanding the iframe flow it
+bypasses, developer-only per the user's explicit instruction.
+
+**Implementation**: new key `shopflo_account_drawer_redirect_to_account_page` (default `false`,
+preserves existing behavior). `_setupDrawerItemTriggers()`'s `account-login` click handler
+(`assets/shopflo-script.js`) checks it FIRST, before the existing `handleShopifyLogin()` call - if
+true, does `window.location.href = '/account'` and returns immediately (skipping
+`_handleAccountIframeFlow()` and the `account-iframe-opened`/`-closed` events entirely, since
+nothing in-page opens when navigating away). Documented inline in the `{% doc %}` block's
+"OUTBOUND EVENTS" section right after the `account-iframe-opened`/`-closed` entry it modifies the
+behavior of.
+
+Did NOT touch `window.handleDrawer()`-based flows (header-icon click when not logged in) or the
+logout handler - scoped exactly to the drawer's own "Account" item, per the request.
